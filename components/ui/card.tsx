@@ -1,78 +1,50 @@
+"use client";
+
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { Card as MuiCard, CardContent, CardActions } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border border-slate-700 bg-slate-800 text-slate-50 shadow-sm",
-      className
-    )}
-    {...props}
-  />
-));
-Card.displayName = "Card";
+const StyledCard = styled(MuiCard)(({ theme }) => ({
+  borderRadius: "0.75rem",
+  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    transform: "translateY(-4px)",
+  },
+  [theme.breakpoints.down("md")]: {
+    borderRadius: "0.5rem",
+  },
+}));
 
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-));
-CardHeader.displayName = "CardHeader";
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
+  padding: "1.5rem",
+  "&:last-child": {
+    paddingBottom: "1.5rem",
+  },
+  [theme.breakpoints.down("md")]: {
+    padding: "1.25rem",
+    "&:last-child": {
+      paddingBottom: "1.25rem",
+    },
+  },
+}));
 
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-));
-CardTitle.displayName = "CardTitle";
+const StyledCardActions = styled(CardActions)(({ theme }) => ({
+  padding: "0 1.5rem 1.5rem",
+  [theme.breakpoints.down("md")]: {
+    padding: "0 1.25rem 1.25rem",
+  },
+}));
 
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-slate-400", className)}
-    {...props}
-  />
-));
-CardDescription.displayName = "CardDescription";
+export interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-));
-CardContent.displayName = "CardContent";
+export function Card({ children, className }: CardProps) {
+  return <StyledCard className={className}>{children}</StyledCard>;
+}
 
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-));
-CardFooter.displayName = "CardFooter";
-
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+Card.Content = StyledCardContent;
+Card.Actions = StyledCardActions;

@@ -1,83 +1,135 @@
 "use client";
 
+import * as React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Box,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
-const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
-  ];
+export default function Navbar() {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center", width: 250 }}>
+      <Typography variant="h6" sx={{ my: 2, fontWeight: 700, color: "#0f172a" }}>
+        Navansh Finserv
+      </Typography>
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.label} disablePadding>
+            <ListItemButton
+              component={Link}
+              href={item.href}
+              sx={{ textAlign: "center", minHeight: "44px" }}
+            >
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-700 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-amber-500">
-              Navansh Finserv
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-slate-300 transition-colors hover:text-amber-500"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Button asChild>
-              <Link href="/contact">Get Started</Link>
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:bg-slate-800"
-            onClick={() => setMobileMenuOpen(true)}
-            aria-label="Open menu"
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          backgroundColor: "#0f172a",
+          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, md: 4 } }}>
+          <Typography
+            variant="h6"
+            component={Link}
+            href="/"
+            sx={{
+              flexGrow: { xs: 1, md: 0 },
+              fontWeight: 700,
+              color: "#ffffff",
+              textDecoration: "none",
+              fontSize: { xs: "1.125rem", md: "1.25rem" },
+            }}
           >
-            <Menu className="h-6 w-6 text-slate-50" />
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Sheet */}
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent>
-          <div className="flex flex-col space-y-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-slate-300 transition-colors hover:text-amber-500"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Button asChild className="mt-4">
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
-                Get Started
-              </Link>
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </nav>
+            Navansh Finserv
+          </Typography>
+          {isMobile ? (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{ minWidth: "44px", minHeight: "44px" }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {navItems.map((item) => (
+                <Button
+                  key={item.label}
+                  component={Link}
+                  href={item.href}
+                  sx={{
+                    color: "#ffffff",
+                    fontWeight: 500,
+                    minHeight: "44px",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: 250,
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </>
   );
-};
-
-export default Navbar;
+}

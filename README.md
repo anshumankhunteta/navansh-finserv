@@ -1,47 +1,42 @@
-# Navansh Finserv - Insurance Firm Website
+# Navansh Financial Services Website
 
-A modern, high-performance website for a Financial Services firm specializing in Insurance. Built with Next.js 14+ (App Router), Tailwind CSS, and Shadcn/UI components.
+A modern, high-performance website for a Financial Services firm specializing in Insurance, built with Next.js 14+ (App Router), Material UI, and Tailwind CSS.
 
 ## Features
 
-- **Mobile-First & Fully Responsive**: Optimized for iPhone SE, iPad, and 4K desktops
-- **Secure**: OWASP-compliant security headers and XSS prevention
-- **Modern Stack**: Next.js 14+, Tailwind CSS, Shadcn/UI, React Hook Form + Zod
-- **Modular Architecture**: Clean, separated components for easy customization
+- ✅ Mobile-First & Fully Responsive Design
+- ✅ Material UI Components with Custom Styling
+- ✅ Security Headers (OWASP Basics)
+- ✅ Form Validation with React Hook Form + Zod
+- ✅ TypeScript Support
+- ✅ Optimized for Vercel Deployment
 
 ## Tech Stack
 
-- **Framework**: Next.js 14+ (App Router)
-- **Styling**: Tailwind CSS
-- **Components**: Shadcn/UI with Lucide React icons
-- **Font**: Inter (Google Fonts)
-- **Form Handling**: React Hook Form + Zod validation
-- **Deployment**: Vercel-ready
+- **Framework:** Next.js 14+ (App Router)
+- **Styling:** Tailwind CSS + Material UI
+- **Components:** Material UI (@mui/material, @mui/icons-material)
+- **Forms:** React Hook Form + Zod
+- **Font:** Inter (Google Fonts)
+- **Deployment:** Vercel-ready
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn/pnpm
+- Node.js 18+ installed
+- npm or yarn package manager
 
 ### Installation
 
 1. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
 ```
 
 2. Run the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -49,78 +44,93 @@ pnpm dev
 ## Project Structure
 
 ```
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx           # Landing page
-│   ├── services/          # Services page
-│   ├── about/             # About page
-│   ├── contact/           # Contact page
-│   ├── layout.tsx         # Root layout
-│   └── globals.css        # Global styles
-├── components/            # React components
-│   ├── ui/               # Shadcn/UI components
-│   ├── navbar.tsx        # Navigation component
-│   └── footer.tsx        # Footer component
-├── lib/                  # Utility functions
-│   └── utils.ts          # Tailwind class utilities
-└── next.config.js        # Next.js configuration with security headers
+navansh-finserv/
+├── app/
+│   ├── about/
+│   │   └── page.tsx          # About page
+│   ├── contact/
+│   │   └── page.tsx          # Contact page with form
+│   ├── services/
+│   │   └── page.tsx          # Services page
+│   ├── globals.css           # Global styles
+│   ├── layout.tsx            # Root layout
+│   └── page.tsx              # Landing page
+├── components/
+│   ├── ui/
+│   │   ├── button.tsx        # Custom Button component
+│   │   ├── card.tsx          # Custom Card component
+│   │   ├── input.tsx         # Custom Input component
+│   │   └── textarea.tsx      # Custom Textarea component
+│   ├── footer.tsx             # Footer component
+│   ├── navbar.tsx             # Navigation bar
+│   └── theme-provider.tsx     # MUI Theme provider
+├── lib/
+│   └── utils.ts              # Utility functions
+├── next.config.js            # Next.js configuration with security headers
+├── tailwind.config.ts        # Tailwind CSS configuration
+└── tsconfig.json             # TypeScript configuration
 ```
-
-## Security Features
-
-The project includes OWASP-compliant security headers:
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `X-XSS-Protection: 1; mode=block`
-- `Permissions-Policy` restrictions
 
 ## Customization
 
 ### Content Placeholders
 
-Throughout the site, you'll find placeholder text marked with `[INSERT ... HERE]`. Replace these with your actual content:
-- Hero section images and copy
-- Service descriptions
-- Founder bio and images
-- Contact information
-- Trust signal logos
+The site includes placeholder text marked with `[INSERT ... HERE]` that you should replace:
 
-### Calendar Integration
+- **Hero Section:** Update hero image and description
+- **Trust Logos:** Replace placeholder logos with actual partner logos
+- **Services:** Add detailed service descriptions and features
+- **About:** Add founder photo and detailed bio
+- **Contact:** Add Calendly/Cal.com embed URL
+- **Footer:** Customize disclaimer text
 
-On the Contact page, replace the Calendly iframe URL:
-```tsx
-src="https://calendly.com/[INSERT-CALENDLY-USERNAME]/[INSERT-EVENT-TYPE]"
-```
+### Colors
+
+The color palette uses:
+- **Navy Blue:** `#0f172a` (bg-slate-900)
+- **Gold/Amber:** `#f59e0b` (text-amber-500)
+- **White/Gray:** `#ffffff`, `#f8fafc` (backgrounds)
 
 ### Form Submission
 
-The contact form currently uses a placeholder submission handler. To integrate with email forwarding or a third-party service:
-1. Update the `onSubmit` function in `app/contact/page.tsx`
-2. Configure your email service (e.g., Resend, SendGrid, or Tally.so embed)
+The contact form currently logs to console. To enable actual form submission:
+
+1. Set up an API route in `app/api/contact/route.ts`
+2. Update the `onSubmit` handler in `app/contact/page.tsx`
+3. Or integrate with a third-party service like Tally.so
+
+## Security Features
+
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- Referrer-Policy: strict-origin-when-cross-origin
+- X-XSS-Protection: 1; mode=block
+- Form input validation with Zod to prevent injection attacks
 
 ## Deployment
 
-### Vercel (Recommended)
+### Vercel
 
 1. Push your code to GitHub
-2. Import your repository in Vercel
+2. Import the repository in Vercel
 3. Vercel will automatically detect Next.js and deploy
 
-### Other Platforms
+### Environment Variables
 
-The project can be deployed to any platform that supports Next.js:
-- Netlify
-- AWS Amplify
-- Railway
-- Self-hosted with Node.js
+If you add API endpoints or third-party services, create a `.env.local` file:
 
-## Design System
+```env
+NEXT_PUBLIC_API_URL=your_api_url
+CALENDLY_URL=your_calendly_url
+```
 
-- **Primary Color**: Navy Blue (`slate-900`)
-- **Accent Color**: Gold/Amber (`amber-500`)
-- **Background**: Dark slate (`slate-800`, `slate-900`)
-- **Typography**: Inter (sans-serif)
-- **Spacing**: Mobile-first with responsive gaps (`gap-4` mobile, `gap-8`/`gap-12` desktop)
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
 
 ## License
 
