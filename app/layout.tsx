@@ -7,7 +7,7 @@ import Footer from "@/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Navansh Finserv - Protecting Futures with 15 Years of Experience",
+  title: "Navansh Finserv",
   description:
     "Professional insurance services specializing in Life & Health Insurance and Asset Protection. 15 years of experience serving families and businesses.",
 };
