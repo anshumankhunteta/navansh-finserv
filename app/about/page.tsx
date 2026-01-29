@@ -1,133 +1,230 @@
-import { Award, Users, Heart } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import * as React from "react";
+import { Container, Box, Typography, Grid, Stack } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import PersonIcon from "@mui/icons-material/Person";
+import BusinessIcon from "@mui/icons-material/Business";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import Link from "next/link";
 
 export default function About() {
   return (
-    <div className="flex flex-col">
-      {/* Page Header */}
-      <section className="border-b border-slate-700 bg-slate-800 py-12 md:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl md:text-5xl">
-            About Us
-          </h1>
-          <p className="mt-4 text-lg text-slate-400 sm:text-xl">
-            [INSERT ABOUT PAGE INTRO TEXT HERE]
-          </p>
-        </div>
-      </section>
+    <Box sx={{ py: { xs: 6, md: 12 } }}>
+      <Container maxWidth="lg">
+        {/* Founder Bio Section */}
+        <Box sx={{ mb: { xs: 8, md: 12 } }}>
+          <Grid container spacing={{ xs: 4, md: 8 }} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: { xs: "300px", md: "400px", lg: "500px" },
+                  backgroundColor: "#1e293b",
+                  borderRadius: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#64748b",
+                }}
+              >
+                <Typography variant="body1">[INSERT FOUNDER PHOTO HERE]</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography
+                variant="h1"
+                sx={{
+                  fontSize: { xs: "2rem", md: "2.75rem", lg: "3.5rem" },
+                  fontWeight: 700,
+                  mb: 3,
+                  color: "#0f172a",
+                }}
+              >
+                Meet the Founder
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: { xs: "1rem", md: "1.125rem" },
+                  color: "#475569",
+                  mb: 3,
+                  lineHeight: 1.8,
+                }}
+              >
+                With 15 years of experience as a sales manager in the insurance industry, I bring a
+                unique combination of professional expertise and personal understanding to every
+                client relationship.
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: { xs: "1rem", md: "1.125rem" },
+                  color: "#475569",
+                  mb: 4,
+                  lineHeight: 1.8,
+                }}
+              >
+                [INSERT FOUNDER BIO DETAILS HERE] My journey has taught me that financial security
+                isn't just about policies and premiums—it's about peace of mind, family protection,
+                and building a legacy that lasts.
+              </Typography>
+              <Button variant="contained" component={Link} href="/contact">
+                Schedule a Consultation
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
 
-      {/* Founder Bio Section */}
-      <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-24">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Image Placeholder */}
-          <div className="order-2 lg:order-1">
-            <div className="aspect-square w-full overflow-hidden rounded-lg bg-slate-800">
-              <div className="flex h-full w-full items-center justify-center text-slate-500">
-                [INSERT FOUNDER IMAGE HERE]
-              </div>
-            </div>
-          </div>
-
-          {/* Bio Content */}
-          <div className="order-1 flex flex-col justify-center lg:order-2">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-slate-50 sm:text-3xl md:text-4xl">
-                15 Years of Experience
-              </h2>
-              <p className="mt-2 text-lg text-amber-500">
-                Sales Manager & Insurance Professional
-              </p>
-            </div>
-            <div className="space-y-4 text-slate-300">
-              <p className="text-lg leading-relaxed">
-                [INSERT FOUNDER BIO PARAGRAPH 1 HERE] With 15 years of
-                experience as a sales manager in the insurance industry, I've
-                helped countless families and businesses secure their futures.
-              </p>
-              <p className="text-lg leading-relaxed">
-                [INSERT FOUNDER BIO PARAGRAPH 2 HERE] My journey has taught me
-                that insurance isn't just about policies—it's about peace of
-                mind, security, and protecting what you've worked hard to build.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* The "Why" Section */}
-      <section className="border-y border-slate-700 bg-slate-800 py-12 md:py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <Heart className="mx-auto mb-6 h-12 w-12 text-amber-500" />
-            <h2 className="mb-6 text-2xl font-bold text-slate-50 sm:text-3xl md:text-4xl">
-              The "Why"
-            </h2>
-            <div className="space-y-6 text-lg text-slate-300">
-              <p className="leading-relaxed">
-                I understand the weight of responsibility. As a mother and a
-                veteran of the insurance industry, I don't just sell policies; I
-                build safety nets.
-              </p>
-              <p className="leading-relaxed">
-                [INSERT ADDITIONAL "WHY" CONTENT HERE] Every family deserves
-                protection that understands their unique circumstances. Every
-                business deserves coverage that grows with them. This isn't just
-                my profession—it's my commitment to ensuring that the people I
-                serve can face the future with confidence.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl md:text-4xl">
-            Our Values
-          </h2>
-          <p className="mt-4 text-lg text-slate-400">
-            [INSERT VALUES INTRO TEXT HERE]
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
+        {/* The "Why" Section */}
+        <Box sx={{ mb: { xs: 8, md: 12 } }}>
           <Card>
-            <CardHeader>
-              <Award className="mb-4 h-10 w-10 text-amber-500" />
-              <CardTitle>Experience</CardTitle>
-              <CardDescription>
-                [INSERT EXPERIENCE VALUE DESCRIPTION HERE] 15 years of industry
-                expertise ensures you receive knowledgeable guidance and
-                reliable service.
-              </CardDescription>
-            </CardHeader>
+            <Card.Content>
+              <Box sx={{ textAlign: "center", mb: 6 }}>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    fontSize: { xs: "2rem", md: "2.5rem", lg: "3rem" },
+                    fontWeight: 700,
+                    mb: 3,
+                    color: "#0f172a",
+                  }}
+                >
+                  The "Why"
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: "1rem", md: "1.125rem" },
+                    color: "#475569",
+                    maxWidth: "800px",
+                    mx: "auto",
+                    lineHeight: 1.8,
+                    mb: 4,
+                  }}
+                >
+                  I understand the weight of responsibility. As a mother and a veteran of the
+                  insurance industry, I don't just sell policies; I build safety nets.
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: "1rem", md: "1.125rem" },
+                    color: "#475569",
+                    maxWidth: "800px",
+                    mx: "auto",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  [INSERT ADDITIONAL "WHY" CONTENT HERE] This personal understanding of resilience
+                  and professional stewardship drives everything we do. Every recommendation is made
+                  with the same care I would give my own family.
+                </Typography>
+              </Box>
+            </Card.Content>
           </Card>
+        </Box>
 
-          <Card>
-            <CardHeader>
-              <Heart className="mb-4 h-10 w-10 text-amber-500" />
-              <CardTitle>Empathy</CardTitle>
-              <CardDescription>
-                [INSERT EMPATHY VALUE DESCRIPTION HERE] We understand life's
-                challenges because we've lived them. Your needs are our
-                priority.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Users className="mb-4 h-10 w-10 text-amber-500" />
-              <CardTitle>Partnership</CardTitle>
-              <CardDescription>
-                [INSERT PARTNERSHIP VALUE DESCRIPTION HERE] We're not just your
-                insurance provider—we're your long-term partner in protection.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
-      </section>
-    </div>
+        {/* Values Grid */}
+        <Grid container spacing={{ xs: 4, md: 6 }}>
+          <Grid item xs={12} md={4}>
+            <Card>
+              <Card.Content>
+                <Box sx={{ mb: 2 }}>
+                  <PersonIcon sx={{ fontSize: 48, color: "#f59e0b" }} />
+                </Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: { xs: "1.25rem", md: "1.5rem" },
+                    fontWeight: 600,
+                    mb: 2,
+                    color: "#0f172a",
+                  }}
+                >
+                  15 Years Experience
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "#64748b",
+                    fontSize: { xs: "0.9375rem", md: "1rem" },
+                    lineHeight: 1.7,
+                  }}
+                >
+                  [INSERT EXPERIENCE DETAILS HERE] Over a decade and a half of navigating the
+                  insurance landscape, understanding market trends, and helping clients make informed
+                  decisions.
+                </Typography>
+              </Card.Content>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card>
+              <Card.Content>
+                <Box sx={{ mb: 2 }}>
+                  <BusinessIcon sx={{ fontSize: 48, color: "#f59e0b" }} />
+                </Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: { xs: "1.25rem", md: "1.5rem" },
+                    fontWeight: 600,
+                    mb: 2,
+                    color: "#0f172a",
+                  }}
+                >
+                  Sales Manager Background
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "#64748b",
+                    fontSize: { xs: "0.9375rem", md: "1rem" },
+                    lineHeight: 1.7,
+                  }}
+                >
+                  [INSERT SALES EXPERTISE DETAILS HERE] Proven track record in sales management,
+                  team leadership, and client relationship building across the insurance industry.
+                </Typography>
+              </Card.Content>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card>
+              <Card.Content>
+                <Box sx={{ mb: 2 }}>
+                  <FavoriteIcon sx={{ fontSize: 48, color: "#f59e0b" }} />
+                </Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: { xs: "1.25rem", md: "1.5rem" },
+                    fontWeight: 600,
+                    mb: 2,
+                    color: "#0f172a",
+                  }}
+                >
+                  Personal Understanding
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "#64748b",
+                    fontSize: { xs: "0.9375rem", md: "1rem" },
+                    lineHeight: 1.7,
+                  }}
+                >
+                  [INSERT PERSONAL TOUCH DETAILS HERE] A deep understanding of what families need
+                  because I've walked the same path. Every recommendation comes from both
+                  professional expertise and personal experience.
+                </Typography>
+              </Card.Content>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 }

@@ -1,187 +1,158 @@
-import { Shield, Heart, Home, Car, Briefcase } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import * as React from "react";
+import { Container, Box, Typography, Grid, Stack } from "@mui/material";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import LockIcon from "@mui/icons-material/Lock";
 import Link from "next/link";
+
+const services = [
+  {
+    icon: <HealthAndSafetyIcon sx={{ fontSize: 64, color: "#f59e0b" }} />,
+    title: "Life & Health Insurance",
+    description: "Securing your family's foundation",
+    details: "[INSERT LIFE & HEALTH INSURANCE DETAILS HERE] Comprehensive coverage options including term life, whole life, health insurance, and critical illness protection. We help you choose the right plan to protect your loved ones.",
+    features: [
+      "[INSERT FEATURE 1 HERE]",
+      "[INSERT FEATURE 2 HERE]",
+      "[INSERT FEATURE 3 HERE]",
+    ],
+  },
+  {
+    icon: <AccountBalanceIcon sx={{ fontSize: 64, color: "#f59e0b" }} />,
+    title: "Mutual Funds and SIP",
+    description: "Building Actual Wealth",
+    details: "[INSERT MUTUAL FUNDS & SIP DETAILS HERE] Strategic investment solutions through systematic investment plans (SIP) and mutual fund portfolios. Build wealth systematically with expert guidance and proven strategies.",
+    features: [
+      "[INSERT FEATURE 1 HERE]",
+      "[INSERT FEATURE 2 HERE]",
+      "[INSERT FEATURE 3 HERE]",
+    ],
+  },
+  {
+    icon: <LockIcon sx={{ fontSize: 64, color: "#f59e0b" }} />,
+    title: "Asset Protection",
+    description: "Safeguarding what you've built",
+    details: "[INSERT ASSET PROTECTION DETAILS HERE] Comprehensive asset protection strategies to shield your wealth from risks. From estate planning to insurance coverage, we help you protect what matters most.",
+    features: [
+      "[INSERT FEATURE 1 HERE]",
+      "[INSERT FEATURE 2 HERE]",
+      "[INSERT FEATURE 3 HERE]",
+    ],
+  },
+];
 
 export default function Services() {
   return (
-    <div className="flex flex-col">
-      {/* Page Header */}
-      <section className="border-b border-slate-700 bg-slate-800 py-12 md:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl md:text-5xl">
+    <Box sx={{ py: { xs: 6, md: 12 } }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: "center", mb: { xs: 6, md: 10 } }}>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: "2.5rem", md: "3.5rem", lg: "4rem" },
+              fontWeight: 700,
+              mb: 3,
+              color: "#0f172a",
+            }}
+          >
             Our Services
-          </h1>
-          <p className="mt-4 text-lg text-slate-400 sm:text-xl">
-            [INSERT SERVICES PAGE INTRO TEXT HERE] Comprehensive insurance
-            solutions tailored to protect what matters most to you.
-          </p>
-        </div>
-      </section>
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: "1rem", md: "1.125rem" },
+              color: "#64748b",
+              maxWidth: "700px",
+              mx: "auto",
+              lineHeight: 1.7,
+            }}
+          >
+            [INSERT SERVICES INTRODUCTION HERE] We don't just sell policies—we build comprehensive
+            financial safety nets tailored to your unique needs and goals.
+          </Typography>
+        </Box>
 
-      {/* Life & Health Insurance Section */}
-      <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-24">
-        <div className="mb-12">
-          <div className="mb-6 flex items-center gap-4">
-            <Heart className="h-8 w-8 text-amber-500 sm:h-10 sm:w-10" />
-            <h2 className="text-2xl font-bold text-slate-50 sm:text-3xl md:text-4xl">
-              Life & Health Insurance
-            </h2>
-          </div>
-          <p className="text-lg text-slate-300 sm:text-xl">
-            Securing your family's foundation
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <Heart className="mb-4 h-8 w-8 text-amber-500" />
-              <CardTitle>Life Insurance</CardTitle>
-              <CardDescription>
-                [INSERT LIFE INSURANCE DETAILS HERE] Protect your loved ones
-                with comprehensive life insurance coverage that provides
-                financial security when they need it most.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li>• [INSERT BENEFIT 1]</li>
-                <li>• [INSERT BENEFIT 2]</li>
-                <li>• [INSERT BENEFIT 3]</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Shield className="mb-4 h-8 w-8 text-amber-500" />
-              <CardTitle>Health Insurance</CardTitle>
-              <CardDescription>
-                [INSERT HEALTH INSURANCE DETAILS HERE] Comprehensive health
-                coverage options to keep you and your family healthy and
-                protected.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li>• [INSERT BENEFIT 1]</li>
-                <li>• [INSERT BENEFIT 2]</li>
-                <li>• [INSERT BENEFIT 3]</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Briefcase className="mb-4 h-8 w-8 text-amber-500" />
-              <CardTitle>Disability Insurance</CardTitle>
-              <CardDescription>
-                [INSERT DISABILITY INSURANCE DETAILS HERE] Income protection
-                that ensures financial stability if you're unable to work.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li>• [INSERT BENEFIT 1]</li>
-                <li>• [INSERT BENEFIT 2]</li>
-                <li>• [INSERT BENEFIT 3]</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Asset Protection Section */}
-      <section className="border-y border-slate-700 bg-slate-800 py-12 md:py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12">
-            <div className="mb-6 flex items-center gap-4">
-              <Shield className="h-8 w-8 text-amber-500 sm:h-10 sm:w-10" />
-              <h2 className="text-2xl font-bold text-slate-50 sm:text-3xl md:text-4xl">
-                Asset Protection
-              </h2>
-            </div>
-            <p className="text-lg text-slate-300 sm:text-xl">
-              Safeguarding what you've built
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="bg-slate-900">
-              <CardHeader>
-                <Home className="mb-4 h-8 w-8 text-amber-500" />
-                <CardTitle>Home Insurance</CardTitle>
-                <CardDescription>
-                  [INSERT HOME INSURANCE DETAILS HERE] Protect your most
-                  valuable asset with comprehensive home insurance coverage.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-slate-400">
-                  <li>• [INSERT BENEFIT 1]</li>
-                  <li>• [INSERT BENEFIT 2]</li>
-                  <li>• [INSERT BENEFIT 3]</li>
-                </ul>
-              </CardContent>
+        <Stack spacing={{ xs: 6, md: 10 }}>
+          {services.map((service, index) => (
+            <Card key={index}>
+              <Card.Content>
+                <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
+                  <Grid item xs={12} md={4}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: "center", md: "flex-start" },
+                        mb: { xs: 2, md: 0 },
+                      }}
+                    >
+                      {service.icon}
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={8}>
+                    <Typography
+                      variant="h3"
+                      sx={{
+                        fontSize: { xs: "1.75rem", md: "2.25rem" },
+                        fontWeight: 700,
+                        mb: 1,
+                        color: "#0f172a",
+                      }}
+                    >
+                      {service.title}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontSize: { xs: "1rem", md: "1.125rem" },
+                        fontWeight: 500,
+                        mb: 3,
+                        color: "#f59e0b",
+                      }}
+                    >
+                      {service.description}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: { xs: "0.9375rem", md: "1rem" },
+                        color: "#475569",
+                        mb: 3,
+                        lineHeight: 1.8,
+                      }}
+                    >
+                      {service.details}
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 3, mb: 3 }}>
+                      {service.features.map((feature, idx) => (
+                        <Typography
+                          key={idx}
+                          component="li"
+                          variant="body1"
+                          sx={{
+                            fontSize: { xs: "0.9375rem", md: "1rem" },
+                            color: "#64748b",
+                            mb: 1,
+                            lineHeight: 1.7,
+                          }}
+                        >
+                          {feature}
+                        </Typography>
+                      ))}
+                    </Box>
+                    <Button variant="contained" component={Link} href="/contact">
+                      Learn More
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Card.Content>
             </Card>
-
-            <Card className="bg-slate-900">
-              <CardHeader>
-                <Car className="mb-4 h-8 w-8 text-amber-500" />
-                <CardTitle>Auto Insurance</CardTitle>
-                <CardDescription>
-                  [INSERT AUTO INSURANCE DETAILS HERE] Reliable auto insurance
-                  coverage that protects you on the road.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-slate-400">
-                  <li>• [INSERT BENEFIT 1]</li>
-                  <li>• [INSERT BENEFIT 2]</li>
-                  <li>• [INSERT BENEFIT 3]</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-900">
-              <CardHeader>
-                <Briefcase className="mb-4 h-8 w-8 text-amber-500" />
-                <CardTitle>Business Insurance</CardTitle>
-                <CardDescription>
-                  [INSERT BUSINESS INSURANCE DETAILS HERE] Comprehensive
-                  business insurance solutions to protect your enterprise.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-slate-400">
-                  <li>• [INSERT BENEFIT 1]</li>
-                  <li>• [INSERT BENEFIT 2]</li>
-                  <li>• [INSERT BENEFIT 3]</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="rounded-lg border border-slate-700 bg-slate-800 p-8 text-center md:p-12">
-          <h2 className="text-2xl font-bold text-slate-50 sm:text-3xl md:text-4xl">
-            Ready to Protect What Matters?
-          </h2>
-          <p className="mt-4 text-lg text-slate-400">
-            [INSERT CTA TEXT HERE] Let's discuss your insurance needs and find
-            the perfect coverage for you.
-          </p>
-          <div className="mt-8">
-            <Button asChild size="lg">
-              <Link href="/contact">Schedule a Consultation</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-    </div>
+          ))}
+        </Stack>
+      </Container>
+    </Box>
   );
 }

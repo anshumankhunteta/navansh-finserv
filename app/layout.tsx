@@ -3,13 +3,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import MUIThemeProvider from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Navansh Finserv",
-  description:
-    "Professional insurance services specializing in Life & Health Insurance and Asset Protection. 15 years of experience serving families and businesses.",
+  title: "Navansh Financial Services - Protecting Futures with 15 Years of Experience",
+  description: "Expert insurance and financial services for life, health, mutual funds, and asset protection.",
 };
 
 export default function RootLayout({
@@ -20,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <MUIThemeProvider>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </MUIThemeProvider>
       </body>
     </html>
   );

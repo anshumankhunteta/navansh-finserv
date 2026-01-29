@@ -1,88 +1,103 @@
-import Link from "next/link";
+"use client";
 
-const Footer = () => {
-  const footerLinks = {
-    services: [
-      { href: "/services", label: "Life & Health Insurance" },
-      { href: "/services", label: "Asset Protection" },
-    ],
-    company: [
-      { href: "/about", label: "About Us" },
-      { href: "/contact", label: "Contact" },
-    ],
-  };
+import * as React from "react";
+import { Box, Container, Typography, Link, Stack, Divider } from "@mui/material";
+import LinkNext from "next/link";
 
+const footerLinks = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
+export default function Footer() {
   return (
-    <footer className="border-t border-slate-700 bg-slate-900">
-      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-amber-500">
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: "#0f172a",
+        color: "#ffffff",
+        py: { xs: 4, md: 6 },
+        mt: "auto",
+      }}
+    >
+      <Container maxWidth="lg">
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={{ xs: 4, md: 8 }}
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", md: "center" }}
+        >
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 700, mb: 2, fontSize: { xs: "1.125rem", md: "1.25rem" } }}
+            >
               Navansh Finserv
-            </h3>
-            <p className="text-sm text-slate-400">
-              Protecting futures with 15 years of experience.
-            </p>
-          </div>
-
-          {/* Services Links */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-slate-50">
-              Services
-            </h4>
-            <ul className="space-y-2">
-              {footerLinks.services.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 transition-colors hover:text-amber-500"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-slate-50">Company</h4>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 transition-colors hover:text-amber-500"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Disclaimer */}
-        <div className="mt-12 border-t border-slate-700 pt-8">
-          <div className="space-y-2 text-xs text-slate-500">
-            <p className="font-semibold text-slate-400">Disclaimer:</p>
-            <p>
-              [INSERT DISCLAIMER TEXT HERE] This website provides general
-              information about insurance products and services. Individual
-              circumstances may vary, and coverage is subject to policy terms
-              and conditions. Please consult with a licensed insurance
-              professional for personalized advice.
-            </p>
-            <p className="mt-4">
-              © {new Date().getFullYear()} Navansh Finserv. All rights
-              reserved.
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ color: "#94a3b8", fontSize: { xs: "0.875rem", md: "0.9375rem" } }}
+            >
+              Protecting Futures with 15 Years of Experience
+            </Typography>
+          </Box>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={{ xs: 2, md: 4 }}
+            sx={{ minHeight: { xs: "auto", md: "44px" } }}
+          >
+            {footerLinks.map((link) => (
+              <Link
+                key={link.label}
+                component={LinkNext}
+                href={link.href}
+                sx={{
+                  color: "#ffffff",
+                  textDecoration: "none",
+                  fontSize: { xs: "0.875rem", md: "0.9375rem" },
+                  "&:hover": {
+                    color: "#f59e0b",
+                  },
+                  minHeight: "44px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </Stack>
+        </Stack>
+        <Divider sx={{ my: 4, borderColor: "rgba(255, 255, 255, 0.1)" }} />
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#94a3b8",
+              fontSize: { xs: "0.75rem", md: "0.875rem" },
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>Disclaimer:</strong> [INSERT DISCLAIMER TEXT HERE] This website is for
+            informational purposes only. Insurance products and financial services are subject to
+            terms and conditions. Please consult with a licensed financial advisor before making any
+            investment decisions. Past performance is not indicative of future results. All
+            insurance policies are subject to underwriting approval.
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#64748b",
+              mt: 2,
+              fontSize: { xs: "0.75rem", md: "0.875rem" },
+            }}
+          >
+            © {new Date().getFullYear()} Navansh Financial Services. All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
-};
-
-export default Footer;
+}

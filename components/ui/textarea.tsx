@@ -1,23 +1,41 @@
+"use client";
+
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { TextField, TextFieldProps } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    minHeight: "120px",
+    borderRadius: "0.5rem",
+    "& fieldset": {
+      borderColor: "#e5e7eb",
+    },
+    "&:hover fieldset": {
+      borderColor: "#d1d5db",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#f59e0b",
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.9375rem",
+    "&.Mui-focused": {
+      color: "#f59e0b",
+    },
+  },
+  [theme.breakpoints.down("md")]: {
+    "& .MuiOutlinedInput-root": {
+      minHeight: "120px",
+      fontSize: "1rem",
+    },
+  },
+}));
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <textarea
-        className={cn(
-          "flex min-h-[80px] w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-50 ring-offset-background placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Textarea.displayName = "Textarea";
+export interface TextareaProps extends Omit<TextFieldProps, "variant" | "multiline"> {
+  variant?: "outlined" | "filled" | "standard";
+}
 
-export { Textarea };
+export function Textarea({ ...props }: TextareaProps) {
+  return <StyledTextField variant="outlined" multiline rows={4} {...props} />;
+}

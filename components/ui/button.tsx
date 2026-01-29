@@ -1,45 +1,42 @@
+"use client";
+
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { Button as MuiButton, ButtonProps as MuiButtonProps } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default: "bg-amber-500 text-white hover:bg-amber-600",
-        outline:
-          "border border-slate-700 bg-transparent hover:bg-slate-800 hover:text-amber-500",
-        ghost: "hover:bg-slate-800 hover:text-amber-500",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-      },
+const StyledButton = styled(MuiButton)(({ theme }) => ({
+  minHeight: "44px",
+  padding: "0.75rem 1.5rem",
+  fontSize: "1rem",
+  fontWeight: 600,
+  textTransform: "none",
+  borderRadius: "0.5rem",
+  "&.MuiButton-contained": {
+    backgroundColor: "#f59e0b",
+    color: "#ffffff",
+    "&:hover": {
+      backgroundColor: "#d97706",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+  },
+  "&.MuiButton-outlined": {
+    borderColor: "#f59e0b",
+    color: "#f59e0b",
+    "&:hover": {
+      borderColor: "#d97706",
+      backgroundColor: "rgba(245, 158, 11, 0.1)",
     },
-  }
-);
+  },
+  [theme.breakpoints.down("md")]: {
+    minHeight: "44px",
+    padding: "0.625rem 1.25rem",
+    fontSize: "0.9375rem",
+  },
+}));
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+export interface ButtonProps extends Omit<MuiButtonProps, "variant"> {
+  variant?: "contained" | "outlined" | "text";
+}
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <button
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Button.displayName = "Button";
-
-export { Button, buttonVariants };
+export function Button({ children, ...props }: ButtonProps) {
+  return <StyledButton {...props}>{children}</StyledButton>;
+}
