@@ -13,7 +13,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
-import { useTheme } from '@mui/material/styles';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -24,7 +23,6 @@ const navItems = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const theme = useTheme();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -32,8 +30,8 @@ export default function Navbar() {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2, color: theme.palette.primary.main }}>
-        Navansh Finserv
+      <Typography variant="h6" sx={{ my: 2, color: 'primary.main', fontWeight: 'bold' }}>
+        Insurance Firm
       </Typography>
       <List>
         {navItems.map((item) => (
@@ -49,7 +47,7 @@ export default function Navbar() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar component="nav" position="sticky">
+      <AppBar component="nav" position="sticky" sx={{ bgcolor: 'primary.main' }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -63,10 +61,10 @@ export default function Navbar() {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' }, fontWeight: 'bold' }}
           >
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 700 }}>
-              Navansh Finserv
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Insurance Firm
             </Link>
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

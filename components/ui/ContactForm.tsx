@@ -19,7 +19,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function ContactForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  
+
   const {
     register,
     handleSubmit,
@@ -30,14 +30,13 @@ export default function ContactForm() {
 
   const onSubmit = (data: FormValues) => {
     console.log(data);
-    // Here you would typically send the data to your backend or email service
     setIsSubmitted(true);
   };
 
   if (isSubmitted) {
     return (
-      <Box sx={{ textAlign: 'center', py: 4, bgcolor: 'secondary.light', borderRadius: 2 }}>
-        <Typography variant="h6" color="primary">
+      <Box sx={{ textAlign: 'center', py: 4, bgcolor: 'secondary.light', borderRadius: 2, color: 'secondary.contrastText' }}>
+        <Typography variant="h6" fontWeight="bold">
           Thank you for reaching out!
         </Typography>
         <Typography variant="body1">
@@ -87,8 +86,9 @@ export default function ContactForm() {
         type="submit"
         fullWidth
         variant="contained"
+        color="secondary"
         size="large"
-        sx={{ mt: 3, mb: 2, bgcolor: 'secondary.main', color: 'primary.main', fontWeight: 'bold' }}
+        sx={{ mt: 3, mb: 2, fontWeight: 'bold' }}
       >
         Send Message
       </Button>

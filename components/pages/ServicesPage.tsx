@@ -33,14 +33,14 @@ const services = [
 
 export default function ServicesContent() {
   return (
-    <main className="min-h-screen bg-slate-50 py-16">
+    <Box component="main" sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 8 }}>
       <Container maxWidth="lg">
         <Box sx={{ mb: 8, textAlign: 'center' }}>
           <Typography variant="h2" component="h1" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
             Our Services
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '800px', mx: 'auto' }}>
-            Comprehensive financial solutions tailored to your unique journey. 
+            Comprehensive financial solutions tailored to your unique journey.
             From protection to wealth creation, we are with you every step of the way.
           </Typography>
         </Box>
@@ -48,25 +48,26 @@ export default function ServicesContent() {
         <Grid container spacing={4}>
           {services.map((service, index) => (
             <Grid size={{ xs: 12, md: 4 }} key={index}>
-              <Card 
-                sx={{ 
-                  height: '100%', 
-                  display: 'flex', 
+              <Card
+                sx={{
+                  backgroundColor: 'primary.main',
+                  color: 'primary.contrastText',
+                  height: '100%',
+                  display: 'flex',
                   flexDirection: 'column',
                   transition: '0.3s',
                   '&:hover': {
                     transform: 'translateY(-5px)',
                     boxShadow: 6,
                   },
-                  p: { xs: 2, md: 0 } // Extra padding on mobile
                 }}
               >
-                <CardContent sx={{ flexGrow: 1, textAlign: 'center', py: 6 }}>
-                  <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    mb: 3, 
-                    color: 'secondary.main' 
+                <CardContent sx={{ flexGrow: 1, textAlign: 'center', py: 6, px: 3 }}>
+                  <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mb: 3,
+                    color: 'secondary.main'
                   }}>
                     {service.icon}
                   </Box>
@@ -78,12 +79,13 @@ export default function ServicesContent() {
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', pb: 4 }}>
-                  <Button 
-                    size="large" 
-                    variant="outlined" 
-                    component={Link} 
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color='secondary'
+                    component={Link}
                     href="/contact"
-                    className="min-h-[44px]" // Ensure large touch target
+                    sx={{ minHeight: 44 }} // Ensure large touch target
                   >
                     Learn More
                   </Button>
@@ -93,6 +95,6 @@ export default function ServicesContent() {
           ))}
         </Grid>
       </Container>
-    </main>
+    </Box>
   );
 }

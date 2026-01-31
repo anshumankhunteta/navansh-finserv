@@ -6,6 +6,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import ShieldIcon from '@mui/icons-material/Shield';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -13,86 +15,96 @@ import Link from 'next/link';
 
 export default function HomeContent() {
   return (
-    <main className="flex min-h-screen flex-col items-center">
+    <Box component="main" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       {/* Hero Section */}
-      <div className="w-full bg-slate-900 text-white py-20 px-6">
+      <Box sx={{ width: '100%', bgcolor: 'primary.main', color: 'common.white', py: 10, px: 3 }}>
         <Container maxWidth="lg">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1 text-center md:text-left space-y-6">
-              <Typography variant="h2" component="h1" className="font-bold text-4xl md:text-6xl leading-tight">
-                Protecting Futures with <span className="text-amber-500">15 Years</span> of Experience.
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={6} alignItems="center">
+            <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+              <Typography variant="h2" component="h1" sx={{ fontWeight: 800, mb: 3, lineHeight: 1.2 }}>
+                Protecting Futures with <Box component="span" sx={{ color: 'secondary.main' }}>15 Years</Box> of Experience.
               </Typography>
-              <Typography variant="h6" className="text-slate-300 text-lg md:text-xl max-w-2xl">
-                We don&apos;t just sell policies; we build safety nets. Expert guidance for Life, Health, and Wealth creation.
+              <Typography variant="h6" sx={{ color: 'grey.300', mb: 4, maxWidth: 'sm', mx: { xs: 'auto', md: 0 } }}>
+                We don&apos;t just sell policies, we build safety nets. Expert guidance for Life, Health, and Wealth creation.
               </Typography>
-              <div className="flex gap-4 justify-center md:justify-start pt-4">
-                <Button 
-                  variant="contained" 
-                  color="secondary" 
-                  size="large" 
-                  component={Link} 
+              <Stack direction="row" spacing={2} justifyContent={{ xs: 'center', md: 'flex-start' }}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  component={Link}
                   href="/contact"
-                  className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3"
                 >
                   Get a Free Consultation
                 </Button>
-                <Button 
-                  variant="outlined" 
-                  size="large" 
-                  component={Link} 
+                <Button
+                  variant="outlined"
+                  size="large"
+                  component={Link}
                   href="/services"
-                  className="text-white border-white hover:border-amber-500 hover:text-amber-500 px-8 py-3"
+                  sx={{ color: 'white', borderColor: 'white', '&:hover': { borderColor: 'secondary.main', color: 'secondary.main' } }}
                 >
-                  Our Services
+                  What We Do
                 </Button>
-              </div>
-            </div>
+              </Stack>
+            </Box>
             {/* Image Placeholder */}
-            <div className="flex-1 order-first md:order-last w-full max-w-lg">
-               <div className="aspect-square bg-slate-800 rounded-2xl flex items-center justify-center border-2 border-slate-700 relative overflow-hidden">
-                  <Typography variant="body1" className="text-slate-500">
-                    [INSERT HERO IMAGE]
-                  </Typography>
-                  {/* Decorative Elements */}
-                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
-                  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl"></div>
-               </div>
-            </div>
-          </div>
+            <Box sx={{ flex: 1, width: '100%', maxWidth: 'sm', order: { xs: -1, md: 1 } }}>
+              <Box sx={{
+                aspectRatio: '1',
+                bgcolor: 'primary.dark',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: 2,
+                borderColor: 'primary.light',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                  [INSERT HERO IMAGE]
+                </Typography>
+              </Box>
+            </Box>
+          </Stack>
         </Container>
-      </div>
+      </Box>
 
       {/* Trust Signals */}
-      <div className="w-full bg-white py-12 border-b border-slate-100">
+      <Box sx={{ width: '100%', bgcolor: 'background.paper', py: 6, borderBottom: 1, borderColor: 'divider' }}>
         <Container maxWidth="lg">
-          <Typography variant="subtitle1" align="center" className="text-slate-500 mb-8 uppercase tracking-widest text-sm font-semibold">
+          <Typography variant="subtitle2" align="center" sx={{ color: 'text.secondary', mb: 4, textTransform: 'uppercase', letterSpacing: 2, fontWeight: 600 }}>
             Trusted By Leading Providers
           </Typography>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-60">
-             {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 bg-slate-200 rounded animate-pulse flex items-center justify-center">
-                   <span className="text-xs text-slate-400">LOGO {i}</span>
-                </div>
-             ))}
-          </div>
+          <Grid container spacing={4} justifyContent="center" alignItems="center" sx={{ opacity: 0.6 }}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Grid size={{ xs: 6, md: 2.4 }} key={i}>
+                <Box sx={{ height: 48, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Typography variant="caption" color="text.disabled">LOGO {i}</Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </Container>
-      </div>
+      </Box>
 
       {/* Value Props */}
-      <div className="w-full bg-slate-50 py-24 px-6 opacity-0 animate-[fadeIn_1s_ease-out_forwards]" style={{ animationDelay: '0.2s' }}>
+      <Box sx={{ width: '100%', bgcolor: 'background.default', py: 12, px: 3 }}>
         <Container maxWidth="lg">
-           <Typography variant="h3" component="h2" align="center" className="text-slate-900 font-bold mb-16">
-             Why Choose Us?
-           </Typography>
-           
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Card 1 */}
-              <Card className="p-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardContent className="flex flex-col items-center text-center space-y-4 py-8">
-                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+          <Typography variant="h3" component="h2" align="center" sx={{ color: 'text.primary', fontWeight: 700, mb: 8 }}>
+            Why Choose Us?
+          </Typography>
+
+          <Grid container spacing={4}>
+            {/* Card 1 */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+                <CardContent>
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'primary.light', color: 'primary.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
                     <FamilyRestroomIcon fontSize="large" />
-                  </div>
-                  <Typography variant="h5" component="h3" fontWeight="bold">
+                  </Box>
+                  <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
                     Family First
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
@@ -100,14 +112,16 @@ export default function HomeContent() {
                   </Typography>
                 </CardContent>
               </Card>
+            </Grid>
 
-              {/* Card 2 */}
-              <Card className="p-2 shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-amber-500">
-                <CardContent className="flex flex-col items-center text-center space-y-4 py-8">
-                  <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4">
-                     <TrendingUpIcon fontSize="large" />
-                  </div>
-                  <Typography variant="h5" component="h3" fontWeight="bold">
+            {/* Card 2 */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2, borderTop: 4, borderColor: 'secondary.main' }}>
+                <CardContent>
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'secondary.light', color: 'secondary.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                    <TrendingUpIcon fontSize="large" />
+                  </Box>
+                  <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
                     Wealth Building
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
@@ -115,14 +129,16 @@ export default function HomeContent() {
                   </Typography>
                 </CardContent>
               </Card>
+            </Grid>
 
-              {/* Card 3 */}
-              <Card className="p-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardContent className="flex flex-col items-center text-center space-y-4 py-8">
-                  <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
-                     <ShieldIcon fontSize="large" />
-                  </div>
-                  <Typography variant="h5" component="h3" fontWeight="bold">
+            {/* Card 3 */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+                <CardContent>
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'success.light', color: 'success.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                    <ShieldIcon fontSize="large" />
+                  </Box>
+                  <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
                     Asset Protection
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
@@ -130,9 +146,10 @@ export default function HomeContent() {
                   </Typography>
                 </CardContent>
               </Card>
-           </div>
+            </Grid>
+          </Grid>
         </Container>
-      </div>
-    </main>
+      </Box>
+    </Box>
   );
 }
