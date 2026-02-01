@@ -1,16 +1,15 @@
 'use client';
 
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import ShieldIcon from '@mui/icons-material/Shield';
-import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
 export default function HomeContent() {
@@ -101,31 +100,30 @@ export default function HomeContent() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
                 <CardContent>
-                  <Box sx={{ width: 64, height: 64, bgcolor: 'primary.light', color: 'primary.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'primary.light', color: 'background.paper', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
                     <FamilyRestroomIcon fontSize="large" />
                   </Box>
                   <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
                     Family First
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Securing your family&apos;s foundation with comprehensive life and health coverage tailored to your needs.
-                  </Typography>
+                    We don't just push policies. We analyze your life stage and needs to recommend what actually works for you.                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
 
             {/* Card 2 */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2, borderTop: 4, borderColor: 'secondary.main' }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
                 <CardContent>
-                  <Box sx={{ width: 64, height: 64, bgcolor: 'secondary.light', color: 'secondary.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'secondary.light', color: 'background.paper', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
                     <TrendingUpIcon fontSize="large" />
                   </Box>
                   <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
                     Wealth Building
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Expert mutual fund and SIP strategies to help you build actual wealth over time.
+                    Beyond protection, we help you grow. Smart SIPs and Mutual Funds to beat inflation over the long term.
                   </Typography>
                 </CardContent>
               </Card>
@@ -135,14 +133,14 @@ export default function HomeContent() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
                 <CardContent>
-                  <Box sx={{ width: 64, height: 64, bgcolor: 'success.light', color: 'success.contrastText', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
-                    <ShieldIcon fontSize="large" />
+                  <Box sx={{ width: 64, height: 64, bgcolor: 'success.light', color: 'background.paper', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                    <FamilyRestroomIcon fontSize="large" />
                   </Box>
                   <Typography variant="h5" component="h3" fontWeight="bold" gutterBottom>
-                    Asset Protection
+                    Family First
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Safeguarding what you&apos;ve built with robust asset protection solutions.
+                    Founded by a mother who understands that insurance isn't paperwork—it's a promise to your loved ones.
                   </Typography>
                 </CardContent>
               </Card>
