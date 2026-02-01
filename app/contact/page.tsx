@@ -7,6 +7,9 @@ import Grid from '@mui/material/Grid';
 import ContactForm from '@/components/ui/ContactForm';
 import Paper from '@mui/material/Paper';
 import Link from 'next/link';
+import { IconButton, Tooltip } from '@mui/material';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 export default function ContactPage() {
   return (
@@ -16,7 +19,7 @@ export default function ContactPage() {
           Get In Touch
         </Typography>
 
-        <Grid container spacing={8}>
+        <Grid container spacing={6}>
           {/* Calendar Section - Primary */}
           <Grid size={{ xs: 12, md: 7 }}>
             <Paper elevation={3} sx={{ p: 4, height: '100%', minHeight: '600px', display: 'flex', flexDirection: 'column' }}>
@@ -52,23 +55,28 @@ export default function ContactPage() {
           {/* Contact Form Section - Secondary */}
           <Grid size={{ xs: 12, md: 5 }}>
             <Paper elevation={3} sx={{ p: 4 }}>
-              <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
-                Send a Message
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
+                  Send a Message
+                </Typography>
+                <Box>
+                  <Tooltip title="Prefer to email directly?">
+                    <IconButton color='grey' href="mailto:mileekhunteta@gmail.com">
+                      <ForwardToInboxIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Message us on WhatsApp">
+                    <IconButton color='success'>
+                      <WhatsAppIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
               <Typography variant="body1" color="text.secondary" paragraph>
                 Have a quick question? Fill out the form below and we&apos;ll be in touch.
               </Typography>
               <ContactForm />
             </Paper>
-
-            <Box sx={{ mt: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
-                Prefer to email directly? <br />
-                <Link href="mailto:contact@insurancefirm.com" style={{ color: '#d97706', fontWeight: 600, textDecoration: 'none' }}>
-                  contact@insurancefirm.com
-                </Link>
-              </Typography>
-            </Box>
           </Grid>
         </Grid>
       </Container>
