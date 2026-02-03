@@ -44,7 +44,7 @@ export default function Navbar() {
                             </Link>
                         ))}
                         <Button asChild className="ml-4">
-                            <Link href="/contact">Get a Quote</Link>
+                            <Link href="/enquire">Get a Quote</Link>
                         </Button>
                     </div>
 

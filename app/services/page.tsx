@@ -51,10 +51,10 @@ export default function ServicesPage() {
     return (
         <div className="flex flex-col">
             {/* Header */}
-            <section className="bg-gradient-to-br from-background via-background to-primary/5 py-16 md:py-24">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="bg-gradient-to-br from-background via-background to-primary/5 py-8 md:py-12">
+                <div className="container mx-auto px-6 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        <h1 className="text-3xl md:text-5xl font-bold mb-4">
                             Our <span className="text-primary">Services</span>
                         </h1>
                         <p className="text-lg text-muted-foreground">
