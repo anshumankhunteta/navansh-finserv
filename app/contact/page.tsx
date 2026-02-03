@@ -91,8 +91,7 @@ export default function ContactPage() {
                         <div>
                             <h2 className="text-2xl font-bold mb-6">Our Location</h2>
                             <div className="rounded-lg overflow-hidden" style={{ minHeight: '600px' }}>
-                                <iframe className="gmap_iframe" width="500" height="400" scrolling="no" marginheight="0"
-                                    marginwidth="0"
+                                <iframe className="gmap_iframe" width="500" height="400"
                                     src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=41 pally club&amp;t=&amp;z=17&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
                                 </iframe>
                             </div>
