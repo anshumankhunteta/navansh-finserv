@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -16,36 +16,27 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
-
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
-
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
-
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
-
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
-
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
-
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -56,118 +47,96 @@
 }
 
 :root {
+  /* Radius: 0.5rem (rounded-lg) as specified */
   --radius: 0.5rem;
 
-  /* Background: Clean White */
-  --background: #ffffff;
-  /* Foreground: Navy (Slate-900) for high contrast text */
-  --foreground: #0f172a;
+  /* Light Mode Colors - Teal & Charcoal Theme */
+  --background: #EEEEEE;
+  /* Light Gray */
+  --foreground: #232931;
+  /* Deep Charcoal */
+  --card: #FFFFFF;
+  --card-foreground: #232931;
+  --popover: #FFFFFF;
+  --popover-foreground: #232931;
 
-  /* Card: White */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  /* Primary: Vibrant Teal */
+  --primary: #4ECCA3;
+  --primary-foreground: #232931;
+  /* Deep Charcoal text on Teal buttons */
 
-  /* Popover: White */
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  /* Secondary: Soft Charcoal */
+  --secondary: #393E46;
+  --secondary-foreground: #EEEEEE;
 
-  /* Primary: Deep Navy (#0f172a) */
-  --primary: #0f172a;
-  --primary-foreground: #ffffff;
+  --muted: #D1D5DB;
+  --muted-foreground: #6B7280;
+  --accent: #4ECCA3;
+  --accent-foreground: #232931;
+  --destructive: #EF4444;
+  --border: #D1D5DB;
+  --input: #FFFFFF;
+  --ring: #4ECCA3;
 
-  /* Secondary: Gold/Amber (#f59e0b) */
-  --secondary: #f59e0b;
-  --secondary-foreground: #0f172a;
-  /* Navy text on Gold */
+  --chart-1: #4ECCA3;
+  --chart-2: #393E46;
+  --chart-3: #232931;
+  --chart-4: #60A5FA;
+  --chart-5: #34D399;
 
-  /* Muted: Slate-100 */
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  /* Slate-500 */
-
-  /* Accent: Gold Light or Slate-100? Using Slate-100 for subtle, or Gold-50 */
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-
-  /* Destructive: Red-500 */
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-
-  /* Border: Slate-200 */
-  --border: #e2e8f0;
-  /* Input: Slate-200 */
-  --input: #e2e8f0;
-  /* Ring: Navy */
-  --ring: #0f172a;
-
-  /* Charts - Keeping default or updating if needed */
-  --chart-1: #0f172a;
-  --chart-2: #f59e0b;
-  --chart-3: #334155;
-  --chart-4: #fcd34d;
-  --chart-5: #94a3b8;
-
-  /* Sidebar */
-  --sidebar: #f8fafc;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #0f172a;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #0f172a;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #232931;
+  --sidebar-primary: #4ECCA3;
+  --sidebar-primary-foreground: #232931;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #232931;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #4ECCA3;
 }
 
 .dark {
-  /* Dark mode - Optional but good to have consistent fallback just in case */
-  --background: #020617;
-  /* Slate-950 */
-  --foreground: #f8fafc;
-  /* Slate-50 */
+  /* Dark Mode Colors - Deep Charcoal Background with Teal Accents */
+  --background: #232931;
+  /* Deep Charcoal */
+  --foreground: #EEEEEE;
+  /* Light Gray */
+  --card: #393E46;
+  /* Soft Charcoal */
+  --card-foreground: #EEEEEE;
+  --popover: #393E46;
+  --popover-foreground: #EEEEEE;
 
-  --card: #020617;
-  --card-foreground: #f8fafc;
+  /* Primary remains Teal */
+  --primary: #4ECCA3;
+  --primary-foreground: #232931;
 
-  --popover: #020617;
-  --popover-foreground: #f8fafc;
+  /* Secondary: Lighter Charcoal */
+  --secondary: #4A5057;
+  --secondary-foreground: #EEEEEE;
 
-  --primary: #f8fafc;
-  /* Invert primary in dark? Or keep Navy? Usually invert to white/light */
-  --primary-foreground: #0f172a;
+  --muted: #4A5057;
+  --muted-foreground: #9CA3AF;
+  --accent: #4ECCA3;
+  --accent-foreground: #232931;
+  --destructive: #F87171;
+  --border: rgba(238, 238, 238, 0.1);
+  --input: rgba(238, 238, 238, 0.05);
+  --ring: #4ECCA3;
 
-  --secondary: #f59e0b;
-  /* Gold stays Gold */
-  --secondary-foreground: #0f172a;
+  --chart-1: #4ECCA3;
+  --chart-2: #60A5FA;
+  --chart-3: #34D399;
+  --chart-4: #A78BFA;
+  --chart-5: #F472B6;
 
-  --muted: #1e293b;
-  /* Slate-800 */
-  --muted-foreground: #94a3b8;
-  /* Slate-400 */
-
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
-
-  --destructive: #7f1d1d;
-  --destructive-foreground: #f8fafc;
-
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #cbd5e1;
-
-  --chart-1: #3b82f6;
-  --chart-2: #22c55e;
-  --chart-3: #eab308;
-  --chart-4: #a855f7;
-  --chart-5: #ef4444;
-
-  --sidebar: #020617;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1e293b;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #1e293b;
-  --sidebar-ring: #cbd5e1;
+  --sidebar: #232931;
+  --sidebar-foreground: #EEEEEE;
+  --sidebar-primary: #4ECCA3;
+  --sidebar-primary-foreground: #232931;
+  --sidebar-accent: #393E46;
+  --sidebar-accent-foreground: #EEEEEE;
+  --sidebar-border: rgba(238, 238, 238, 0.1);
+  --sidebar-ring: #4ECCA3;
 }
 
 @layer base {

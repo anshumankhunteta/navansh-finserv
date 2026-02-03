@@ -1,37 +1,26 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Navansh Finserv | Trusted Insurance & Wealth Expert in India",
-  description: "Comprehensive Insurance, Wealth, and Loan Solutions tailored for you. 15 Years of Trust.",
+  description: "Comprehensive Insurance, Wealth, and Loan Solutions tailored for you. 15+ years of experience securing families and futures across India.",
+  keywords: ["insurance", "wealth management", "financial services", "India", "mutual funds", "health insurance", "life insurance"],
+  authors: [{ name: "Navansh Finserv" }],
   openGraph: {
     title: "Navansh Finserv | Trusted Insurance & Wealth Expert in India",
-    description: "Comprehensive Insurance, Wealth, and Loan Solutions tailored for you.",
+    description: "Securing Families & Futures with 15 Years of Trust",
     type: "website",
     locale: "en_IN",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FinancialService",
-  "name": "Navansh Finserv",
-  "image": "", // Add logo URL if available
-  "description": "Comprehensive Insurance, Wealth, and Loan Solutions tailored for you.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "IN"
-  },
-  "priceRange": "$$"
 };
 
 export default function RootLayout({
@@ -40,17 +29,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${plusJakartaSans.variable} antialiased font-sans flex flex-col min-h-screen`}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FinancialService",
+              "name": "Navansh Finserv",
+              "description": "Comprehensive Insurance, Wealth, and Loan Solutions",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "IN"
+              },
+              "priceRange": "$$",
+              "telephone": "+91-XXXXXXXXXX",
+              "areaServed": "IN"
+            })
+          }}
+        />
+      </head>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <Navbar />
-        <main className="flex-1">
+        <main className="min-h-screen">
           {children}
         </main>
         <Footer />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </body>
     </html>
   );

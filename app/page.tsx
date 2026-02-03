@@ -1,120 +1,152 @@
 import Link from "next/link";
+import { Shield, Users, HeadphonesIcon, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Award, Clock } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-primary text-primary-foreground py-20 px-4 sm:px-6 lg:px-8 text-center md:text-left">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-              Securing Families & Futures with <span className="text-secondary">15 Years</span> of Trust.
+      <section className="relative bg-gradient-to-br from-background via-background to-primary/5 py-20 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+              Securing Families & Futures with{" "}
+              <span className="text-primary">15 Years of Trust</span>
             </h1>
-            <p className="text-xl text-slate-300 max-w-lg">
-              Comprehensive Insurance, Wealth, and Loan Solutions tailored for you. Expert guidance from a mother who understands protection.
+            <p className="text-lg md:text-xl text-muted-foreground mb-8">
+              Comprehensive Insurance, Wealth, and Loan Solutions tailored for you
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8">
-                <Link href="/contact">Book a Consultation</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-primary hover:text-primary hover:bg-secondary/10 border-slate-500 bg-white">
-                <Link href="/services">Explore Services</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="hidden md:flex justify-center">
-            {/* Placeholder for Hero Image or Abstract Graphic */}
-            <div className="w-full h-96 bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl backdrop-blur-sm">
-              <Shield className="h-48 w-48 text-secondary opacity-50" />
-            </div>
+            <Button asChild size="lg" className="text-lg px-8">
+              <Link href="/contact">
+                Book a Consultation
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Trust Strip */}
-      <section className="py-10 bg-slate-50 border-b border-slate-200">
-        <div className="container mx-auto px-4">
-          <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6">Trusted by partners</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all">
-            {/* Placeholders for partner logos */}
-            <span className="text-xl font-bold font-sans text-slate-400">HDFC Life</span>
-            <span className="text-xl font-bold font-sans text-slate-400">LIC</span>
-            <span className="text-xl font-bold font-sans text-slate-400">Star Health</span>
-            <span className="text-xl font-bold font-sans text-slate-400">Tata AIG</span>
-            <span className="text-xl font-bold font-sans text-slate-400">Bajaj Allianz</span>
+      {/* Trust Strip - Partner Logos */}
+      <section className="py-12 border-y bg-card">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-semibold text-muted-foreground mb-8">
+            TRUSTED PARTNERS
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-70">
+            {["HDFC", "LIC", "Star Health", "ICICI"].map((partner) => (
+              <div
+                key={partner}
+                className="text-xl font-bold text-foreground/60 hover:text-foreground transition-colors"
+              >
+                {partner}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Why Us Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Why Choose Navansh Finserv?</h2>
-            <p className="text-muted-foreground text-lg">
-              We bring a mother&apos;s care and a professional&apos;s expertise to your financial planning.
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Why Choose <span className="text-primary">Navansh Finserv</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Experience personalized financial solutions backed by expertise and compassion
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-t-4 border-secondary shadow-sm hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <Award className="h-6 w-6 text-primary" />
+            {/* Card 1 */}
+            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                  <Users className="h-7 w-7" />
                 </div>
-                <CardTitle className="text-xl text-primary">Women-Led Leadership</CardTitle>
-              </CardHeader>
-              <CardContent>
+                <h3 className="text-xl font-semibold mb-3">Women-Led Leadership</h3>
                 <p className="text-muted-foreground">
-                  Founded by a veteran single mom with 15 years of sales experience, prioritizing trust above all.
+                  Founded by a veteran single mom with 15 years of sales experience, bringing genuine care and understanding to every client relationship.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+              <ul className="space-y-2">
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>Empathetic approach to financial planning</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>15+ years industry expertise</span>
+                </li>
+              </ul>
+            </div>
 
-            <Card className="border-t-4 border-secondary shadow-sm hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-primary" />
+            {/* Card 2 */}
+            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                  <Shield className="h-7 w-7" />
                 </div>
-                <CardTitle className="text-xl text-primary">Personalized Audits</CardTitle>
-              </CardHeader>
-              <CardContent>
+                <h3 className="text-xl font-semibold mb-3">Personalized Audits</h3>
                 <p className="text-muted-foreground">
-                  We don&apos;t just sell products; we audit your needs to find the perfect financial fit for your family.
+                  Comprehensive financial health assessments tailored to your unique needs and life stage.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+              <ul className="space-y-2">
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>Free portfolio reviews</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>Risk assessment & gap analysis</span>
+                </li>
+              </ul>
+            </div>
 
-            <Card className="border-t-4 border-secondary shadow-sm hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-primary" />
+            {/* Card 3 */}
+            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                  <HeadphonesIcon className="h-7 w-7" />
                 </div>
-                <CardTitle className="text-xl text-primary">24/7 Claim Support</CardTitle>
-              </CardHeader>
-              <CardContent>
+                <h3 className="text-xl font-semibold mb-3">24/7 Claim Support</h3>
                 <p className="text-muted-foreground">
-                  We stand by you when it matters most. Dedicated support for claims and emergencies.
+                  Round-the-clock assistance when you need it most. We stand by you during claims and emergencies.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+              <ul className="space-y-2">
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>Dedicated claims assistance</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span>Fast-track claim processing</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-slate-900 text-white text-center">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to secure your future?</h2>
-          <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-            Get a comprehensive financial audit and find the best insurance plans for your family today.
+      <section className="py-20 bg-gradient-to-br from-primary/10 to-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Secure Your Future?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Get expert financial guidance tailored to your family's needs
           </p>
-          <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8">
-            <Link href="/contact">Get a Quote Now</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg">
+              <Link href="/contact">Get Started Today</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/services">Explore Services</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>
