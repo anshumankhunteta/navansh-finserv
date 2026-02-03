@@ -10,10 +10,10 @@ export default function ContactPage() {
     return (
         <div className="flex flex-col">
             {/* Header */}
-            <section className="bg-gradient-to-br from-background via-background to-primary/5 py-16 md:py-24">
+            <section className="bg-gradient-to-br from-background via-background to-primary/5 py-8 md:py-12">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        <h1 className="text-3xl md:text-5xl font-bold mb-4">
                             Get in <span className="text-primary">Touch</span>
                         </h1>
                         <p className="text-lg text-muted-foreground">
@@ -89,19 +89,12 @@ export default function ContactPage() {
 
                         {/* Tally.so Form Embed */}
                         <div>
-                            <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
+                            <h2 className="text-2xl font-bold mb-6">Our Location</h2>
                             <div className="rounded-lg overflow-hidden" style={{ minHeight: '600px' }}>
-                                <iframe
-                                    src="https://tally.so/embed/zxYKoa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                                    width="100%"
-                                    height="600"
-                                    frameBorder="0"
-                                    marginHeight={0}
-                                    marginWidth={0}
-                                    title="Contact Form"
-                                    loading="lazy"
-                                    style={{ border: 0 }}
-                                ></iframe>
+                                <iframe className="gmap_iframe" width="500" height="400" scrolling="no" marginheight="0"
+                                    marginwidth="0"
+                                    src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=41 pally club&amp;t=&amp;z=17&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+                                </iframe>
                             </div>
                         </div>
                     </div>
