@@ -77,7 +77,7 @@ export default function Navbar() {
                                         </Link>
                                     ))}
                                     <Button asChild className="mt-4">
-                                        <Link href="/contact" onClick={() => setIsOpen(false)}>
+                                        <Link href="/enquire" onClick={() => setIsOpen(false)}>
                                             Get a Quote
                                         </Link>
                                     </Button>
