@@ -28,7 +28,7 @@ A high-performance, SEO-optimized landing page for a premier financial services 
     │   ├── layout/         
     │   └── ui/             
     └── lib/                
-
+```
 ## 🚀 Getting Started
 ​Install: npm install
 ​Dev: npm run dev
