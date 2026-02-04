@@ -1,48 +1,39 @@
-# 🚀 Navansh Finserv
+# Navansh Finserv
 
-**Modern. Trustworthy. Resilient.** A high-performance financial services landing page built for a veteran insurance sales professional. This project uses the latest web technologies to provide a seamless, mobile-first experience for clients seeking insurance and wealth management solutions.
-
----
+A high-performance, SEO-optimized landing page for a premier financial services firm. Built with a focus on trust, speed, and modern FinTech aesthetics.
 
 ## 🛠️ Tech Stack
+* **Framework:** Next.js 14+ (App Router)
+* **Styling:** Tailwind CSS
+* **Components:** Shadcn UI
+* **Icons:** Lucide React
+* **Lead Gen:** Tally.so
 
-* **Framework:** [Next.js 14 (App Router)](https://nextjs.org/)
-* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-* **Components:** [Shadcn/UI](https://ui.shadcn.com/) 
-* **Icons:** [Lucide React](https://lucide.dev/)
-* **Lead Gen Form:** [Tally.so](https://tally.so/) - Secure, no-code form iframe integration.
+## 🎨 Color Palette
+* **Primary:** `#4ECCA3` (Teal)
+* **Background:** `#232931` (Deep Charcoal)
+* **Surface:** `#393E46` (Soft Charcoal)
+* **Text:** `#EEEEEE` (Off-White)
 
----
-
-## 🎨 Design System
-
-| Role | Color | Hex |
-| :--- | :--- | :--- |
-| **Primary (Action)** | Teal | `#4ECCA3` |
-| **Background (Dark)** | Deep Charcoal | `#232931` |
-| **Surface** | Soft Charcoal | `#393E46` |
-| **Text/Light** | Off-White | `#EEEEEE` |
-
----
-
-## 🛡️ Key Features
-
--   **Island Architecture:** Server components by default for maximum SEO and instant loading.
--   **Local SEO:** Integrated JSON-LD Schema for `FinancialService` to boost Google Search rankings.
--   **Mobile First:** Fully responsive navigation using Shadcn's Sheet (Hamburger) menu.
--   **Secure Lead Flow:** Tally form responses automatically sync to Google Sheets, triggering real-time WhatsApp alerts.
-
----
-
-## 📁 Project Structure
-
+## 📁 Directory Structure
 ```text
 └── anshumankhunteta-navansh-finserv/
-    ├── app/               # Next.js App Router (Pages & Layout)
-    │   ├── about/         # Founder story and credentials
-    │   ├── services/      # Detailed product offerings (Insurance, Mutual Funds, Loans)
-    │   └── contact/       # Lead capture via Tally.so
+    ├── app/                
+    │   ├── about/          
+    │   ├── contact/        
+    │   ├── enquire/        
+    │   ├── services/       
+    │   └── privacy/        
     ├── components/
-    │   ├── layout/        # Navbar and Footer (Shared UI)
-    │   └── ui/            # Shadcn Primitives (Button, Sheet, etc.)
-    └── lib/               # Utility functions (Tailwind Merge, etc.)
+    │   ├── layout/         
+    │   └── ui/             
+    └── lib/                
+
+## 🚀 Getting Started
+​Install: npm install
+​Dev: npm run dev
+​Build: npm run build
+
+## ​⚖️ Disclaimer
+* **Insurance is the subject matter of solicitation. Navansh Finserv IRDAI Registration: In Progress.
+​Developed by Anshuman Khunteta** *
