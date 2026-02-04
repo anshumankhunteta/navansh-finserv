@@ -30,11 +30,12 @@ A high-performance, SEO-optimized landing page for a premier financial services 
     └── lib/                
 ```
 ## 🚀 Getting Started
-* **Clone:** git clone 'https://github.com/anshumankhunteta/navansh-finserv' *
+* **Clone:** ```text git clone https://github.com/anshumankhunteta/navansh-finserv ```*
 *​ **Install:** npm install*
 * **​Dev View:** npm run dev*
 * **​Build:** npm run build*
 
 ## ​⚖️ Disclaimer
-* **Insurance is the subject matter of solicitation. Navansh Finserv IRDAI Registration: In Progress.
+* **Insurance is the subject matter of solicitation.** *
+* **Navansh Finserv IRDAI Registration:** In Progress.
 ​Developed by Anshuman Khunteta** *
