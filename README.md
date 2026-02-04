@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Navansh Finserv
 
-## Getting Started
+**Modern. Trustworthy. Resilient.** A high-performance financial services landing page built for a veteran insurance sales professional. This project uses the latest web technologies to provide a seamless, mobile-first experience for clients seeking insurance and wealth management solutions.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Framework:** [Next.js 14 (App Router)](https://nextjs.org/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Components:** [Shadcn/UI](https://ui.shadcn.com/) 
+* **Icons:** [Lucide React](https://lucide.dev/)
+* **Lead Gen Form:** [Tally.so](https://tally.so/) - Secure, no-code form iframe integration.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎨 Design System
 
-## Learn More
+| Role | Color | Hex |
+| :--- | :--- | :--- |
+| **Primary (Action)** | Teal | `#4ECCA3` |
+| **Background (Dark)** | Deep Charcoal | `#232931` |
+| **Surface** | Soft Charcoal | `#393E46` |
+| **Text/Light** | Off-White | `#EEEEEE` |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛡️ Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+-   **Island Architecture:** Server components by default for maximum SEO and instant loading.
+-   **Local SEO:** Integrated JSON-LD Schema for `FinancialService` to boost Google Search rankings.
+-   **Mobile First:** Fully responsive navigation using Shadcn's Sheet (Hamburger) menu.
+-   **Secure Lead Flow:** Tally form responses automatically sync to Google Sheets, triggering real-time WhatsApp alerts.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+└── anshumankhunteta-navansh-finserv/
+    ├── app/               # Next.js App Router (Pages & Layout)
+    │   ├── about/         # Founder story and credentials
+    │   ├── services/      # Detailed product offerings (Insurance, Mutual Funds, Loans)
+    │   └── contact/       # Lead capture via Tally.so
+    ├── components/
+    │   ├── layout/        # Navbar and Footer (Shared UI)
+    │   └── ui/            # Shadcn Primitives (Button, Sheet, etc.)
+    └── lib/               # Utility functions (Tailwind Merge, etc.)
