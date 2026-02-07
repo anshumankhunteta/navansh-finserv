@@ -1,12 +1,22 @@
-import Link from "next/link";
-import { Shield, Users, HeadphonesIcon, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Building2, Car, CheckCircle2, HeadphonesIcon, Heart, Shield, TrendingUp, Users, Wallet } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
+  // All services for homepage (headings only)
+  const allServices = [
+    { title: "Mutual Funds & SIPs", icon: TrendingUp },
+    { title: "Health & Mediclaim", icon: Heart },
+    { title: "General Insurance", icon: Car },
+    { title: "Life & Term Insurance", icon: Shield },
+    { title: "Fixed Deposits & Bonds", icon: Wallet },
+    { title: "Corporate Loans", icon: Building2 },
+  ];
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-background via-background to-primary/5 py-20 md:py-32">
+      <section className="relative bg-gradient-to-r from-primary/10 via-background to-primary/10 py-20 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -27,7 +37,7 @@ export default function HomePage() {
       </section>
 
       {/* Trust Strip - Partner Logos */}
-      <section className="py-12 border-y bg-card">
+      {/* <section className="py-12 border-y bg-card">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm font-semibold text-muted-foreground mb-8">
             TRUSTED PARTNERS
@@ -43,7 +53,33 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
+
+      {/* Our Offerings */}
+      <div className="mt-20 text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          Our <span className="text-primary">Offerings</span>
+        </h2>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          We offer a range of services to help you achieve your financial goals
+        </p>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-3 md:gap-6 lg:gap-8 mx-auto mb-16 mx-3">
+        {allServices.map((service) => {
+          const Icon = service.icon;
+          return (
+            <div
+              key={service.title}
+              className="flex flex-col items-center text-center p-4 md:p-6 rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg transition-all"
+            >
+              <div className="p-3 rounded-lg bg-primary/10 text-primary mb-3">
+                <Icon className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-sm">{service.title}</h3>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Why Us Section */}
       <section className="py-20 bg-background">
@@ -131,7 +167,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-primary/5">
+      <section className="py-20 bg-gradient-to-r from-primary/20 via-primary/2 to-primary/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Secure Your Future?

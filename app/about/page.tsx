@@ -1,7 +1,7 @@
-import { Award, Target, Users2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Award, Target, Users2 } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "About Us - Our Story | Navansh Finserv",
@@ -30,7 +30,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-4xl mx-auto">
                         <div className="prose prose-lg max-w-none">
-                            <h2 className="text-2xl font-bold mb-6 text-foreground whitespace-nowrap">
+                            <h2 className="text-2xl font-bold mb-6 text-foreground md:whitespace-nowrap">
                                 From Sales Manager to <span className="text-primary">Firm Owner</span>
                             </h2>
                             <div className="space-y-6 text-muted-foreground">

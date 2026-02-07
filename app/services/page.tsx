@@ -1,7 +1,7 @@
-import { Car, Heart, Shield, TrendingUp, Building2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Building2, Car, Heart, Shield, TrendingUp, Wallet } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Our Services - Insurance, Wealth & Loans | Navansh Finserv",
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 const services = [
     {
-        icon: Car,
-        title: "General Insurance",
-        description: "Comprehensive coverage for your Car & Bike. Zero-depreciation and fast claims.",
-        features: ["Zero Depreciation Cover", "24/7 Roadside Assistance", "Cashless Garage Network"],
+        icon: TrendingUp,
+        title: "Mutual Funds & SIPs",
+        description: "Expert portfolio management for long-term wealth creation.",
+        features: ["SIP & Lumpsum Options", "Diversified Portfolio", "Regular Performance Reviews"],
     },
     {
         icon: Heart,
@@ -22,28 +22,28 @@ const services = [
         features: ["Cashless Hospitalization", "Pre & Post Hospitalization", "Lifetime Renewability"],
     },
     {
+        icon: Car,
+        title: "General Insurance",
+        description: "Comprehensive coverage for your Car & Bike. Zero-depreciation and fast claims.",
+        features: ["Zero Depreciation Cover", "24/7 Roadside Assistance", "Cashless Garage Network"],
+    },
+    {
         icon: Shield,
         title: "Life & Term Insurance",
         description: "Secure your legacy with affordable term plans.",
         features: ["High Coverage at Low Premium", "Tax Benefits under 80C", "Flexible Payout Options"],
     },
     {
-        icon: TrendingUp,
-        title: "Mutual Funds & Bonds",
-        description: "Expert portfolio management for long-term wealth creation.",
-        features: ["SIP & Lumpsum Options", "Diversified Portfolio", "Regular Performance Reviews"],
+        icon: Wallet,
+        title: "Fixed Deposits & Bonds",
+        description: "Holistic financial advisory for retirement and wealth management.",
+        features: ["Retirement Planning", "Tax Optimization", "Estate Planning"],
     },
     {
         icon: Building2,
         title: "Corporate Loans",
         description: "Capital solutions for business growth and expansion.",
         features: ["Competitive Interest Rates", "Quick Approval Process", "Flexible Repayment Terms"],
-    },
-    {
-        icon: FileText,
-        title: "Financial Planning",
-        description: "Holistic financial advisory for retirement and wealth management.",
-        features: ["Retirement Planning", "Tax Optimization", "Estate Planning"],
     },
 ];
 
