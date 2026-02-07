@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { Shield, Users, HeadphonesIcon, ArrowRight, CheckCircle2, Car, HeartPulse, TrendingUp, Wallet, Building2 } from "lucide-react";
+import { Shield, Users, HeadphonesIcon, ArrowRight, CheckCircle2, Car, HeartPulse, TrendingUp, Wallet, Building2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   // All services for homepage (headings only)
   const allServices = [
-    { title: "General Insurance", icon: Car },
-    { title: "Health & Mediclaim", icon: HeartPulse },
-    { title: "Life & Term Insurance", icon: Shield },
     { title: "Mutual Funds & SIPs", icon: TrendingUp },
+    { title: "Health & Mediclaim", icon: Heart },
+    { title: "General Insurance", icon: Car },
+    { title: "Life & Term Insurance", icon: Shield },
     { title: "Fixed Deposits & Bonds", icon: Wallet },
     { title: "Corporate Loans", icon: Building2 },
   ];
@@ -167,7 +167,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary/60 via-primary/10 to-primary/60">
+      <section className="py-20 bg-gradient-to-r from-primary/20 via-primary/2 to-primary/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Secure Your Future?

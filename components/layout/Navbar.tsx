@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Menu, Home, Briefcase, Users, Mail, Phone, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ThemeToggle } from "@/components/custom/ThemeToggle";
 import {
     Sheet,
     SheetContent,

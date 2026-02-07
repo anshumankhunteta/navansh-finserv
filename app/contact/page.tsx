@@ -1,3 +1,4 @@
+import { SIPCalculator } from "@/components/custom/SIPCalculator";
 import { Mail, Phone, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
