@@ -25,11 +25,11 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-secondary/15">
             <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-primary-foreground font-bold text-sm">Nf</div>
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-primary-foreground font-bold text-sm">NF</div>
                     <span className="text-xl font-bold tracking-tight">
                         Navansh <span className="text-primary">Finserv</span>
                     </span>
@@ -52,7 +52,7 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-3">
                     <ThemeToggle />
                     <Button asChild className="font-semibold">
-                        <Link href="/quote">Enquire Now</Link>
+                        <Link href="/enquire">Enquire Now</Link>
                     </Button>
                 </div>
 
@@ -112,7 +112,7 @@ export default function Navbar() {
                             <div className="p-4 border-t border-border/50 bg-muted/30">
                                 <SheetClose asChild>
                                     <Button asChild className="w-full h-12 font-semibold text-base shadow-lg shadow-primary/25 group">
-                                        <Link href="/quote" className="flex items-center justify-center gap-2">
+                                        <Link href="/enquire" className="flex items-center justify-center gap-2">
                                             <Sparkles className="h-4 w-4" />
                                             Enquire Now
                                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />

@@ -6,12 +6,12 @@ export default function Footer() {
     return (
         <footer className="border-t bg-secondary text-secondary-foreground">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="flex justify-between mx-auto md:flex-row flex-col gap-10">
                     {/* Brand */}
                     <div>
                         <Link href="/" className="flex items-center space-x-2 mb-4">
-                            <span className="text-xl font-bold text-primary">Navansh</span>
-                            <span className="text-lg font-medium">Finserv</span>
+                            <span className="text-2xl font-bold text-primary">Navansh</span>
+                            <span className="text-2xl font-bold text-secondary">Finserv</span>
                         </Link>
                         <p className="text-sm text-secondary-foreground/80">
                             Securing Families & Futures with 15 Years of Trust
@@ -21,7 +21,7 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h3 className="font-semibold mb-4">Quick Links</h3>
-                        <ul className="space-y-2">
+                        <ul className="grid grid-cols-5 gap-2 md:grid-cols-1">
                             <li>
                                 <Link href="/" className="text-sm text-secondary-foreground/80 hover:text-primary transition-colors">
                                     Home
@@ -42,13 +42,6 @@ export default function Footer() {
                                     Contact
                                 </Link>
                             </li>
-                        </ul>
-                    </div>
-
-                    {/* Legal */}
-                    <div>
-                        <h3 className="font-semibold mb-4">Legal</h3>
-                        <ul className="space-y-2">
                             <li>
                                 <Link href="/privacy" className="text-sm text-secondary-foreground/80 hover:text-primary transition-colors">
                                     Privacy Policy
