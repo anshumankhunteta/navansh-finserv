@@ -98,7 +98,7 @@ export default function ContactPage() {
                         Schedule a Free Consultation
                     </h2>
                     <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-                        Our financial experts are ready to help you navigate your insurance and wealth management needs
+                        We are ready to help you with your financial planning needs.
                     </p>
                     <Button asChild variant={'default'} className="text-lg px-8 py-6">
                         <Link href="/enquire">Get a Quote</Link>
