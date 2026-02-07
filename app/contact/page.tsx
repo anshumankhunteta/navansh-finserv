@@ -50,7 +50,7 @@ export default function ContactPage() {
             </section>
 
             {/* Contact Section */}
-            <section className="py-20 mx-auto">
+            <section className="py-20 mx-4 md:mx-auto">
                 {/* Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Contact Info */}

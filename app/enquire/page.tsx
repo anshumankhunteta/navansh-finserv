@@ -1,7 +1,6 @@
 import { SIPCalculator } from "@/components/custom/SIPCalculator";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Contact Us - Get a Quote | Navansh Finserv",

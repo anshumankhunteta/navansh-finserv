@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { Calculator } from "lucide-react";
+import { useMemo, useState } from "react";
 
 function formatIndianCurrency(num: number): string {
     const formatted = num.toLocaleString("en-IN", {

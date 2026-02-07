@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Shield, Users, HeadphonesIcon, ArrowRight, CheckCircle2, Car, HeartPulse, TrendingUp, Wallet, Building2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Building2, Car, CheckCircle2, HeadphonesIcon, Heart, Shield, TrendingUp, Users, Wallet } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
   // All services for homepage (headings only)

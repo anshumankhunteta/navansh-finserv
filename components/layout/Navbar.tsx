@@ -1,18 +1,18 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { Menu, Home, Briefcase, Users, Mail, Phone, ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/custom/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import {
     Sheet,
-    SheetContent,
-    SheetTrigger,
     SheetClose,
-    SheetTitle,
+    SheetContent,
     SheetDescription,
+    SheetTitle,
+    SheetTrigger,
 } from "@/components/ui/sheet";
+import { ArrowRight, Briefcase, Home, Mail, Menu, Phone, Sparkles, Users } from "lucide-react";
+import Link from "next/link";
+import * as React from "react";
 
 const navLinks = [
     { href: "/", label: "Home", icon: Home, description: "Back to homepage" },

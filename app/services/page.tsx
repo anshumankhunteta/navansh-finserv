@@ -1,7 +1,7 @@
-import { Car, Heart, Shield, TrendingUp, Building2, FileText, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Building2, Car, Heart, Shield, TrendingUp, Wallet } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Our Services - Insurance, Wealth & Loans | Navansh Finserv",
