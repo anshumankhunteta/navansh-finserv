@@ -59,12 +59,13 @@ export function SIPCalculator() {
                     </span>
                     <input
                         type="number"
+                        step={500}
                         value={monthlyAmount}
                         onChange={(e) =>
-                            setMonthlyAmount(Math.max(500, Number(e.target.value)))
+                            setMonthlyAmount(Math.max(0, Number(e.target.value)))
                         }
                         className="w-full pl-8 pr-4 py-3 rounded-lg border border-border bg-background text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        min="500"
+                        min="0"
                         max="1000000"
                     />
                 </div>
