@@ -177,7 +177,7 @@ export default function PrivacyPage() {
                 </Link>
                 <p className="text-muted-foreground leading-relaxed">
                   If you have any questions about this Privacy Policy or our
-                  data practices, please contact us at:
+                  data practices, please contact us.
                 </p>
               </div>
             </div>
