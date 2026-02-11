@@ -51,7 +51,7 @@
   --radius: 0.5rem;
 
   /* Light Mode Colors - Teal & Charcoal Theme */
-  --background: #EEEEEE;
+  --background: #409e5433;
   /* Light Gray */
   --foreground: #232931;
   /* Deep Charcoal */
@@ -61,82 +61,81 @@
   --popover-foreground: #232931;
 
   /* Primary: Vibrant Teal */
-  --primary: #4ECCA3;
+  --primary: #409e54;
   --primary-foreground: #232931;
   /* Deep Charcoal text on Teal buttons */
 
   /* Secondary: Soft Charcoal */
-  --secondary: #393E46;
+  --secondary: #002b0e;
   --secondary-foreground: #EEEEEE;
 
   --muted: #D1D5DB;
   --muted-foreground: #6B7280;
-  --accent: #4ECCA3;
+  --accent: #;
   --accent-foreground: #232931;
   --destructive: #EF4444;
   --border: #D1D5DB;
   --input: #FFFFFF;
-  --ring: #4ECCA3;
+  --ring: #409e54;
 
-  --chart-1: #4ECCA3;
-  --chart-2: #393E46;
+  --chart-1: #409e54;
+  --chart-2: #002b0e;
   --chart-3: #232931;
   --chart-4: #60A5FA;
   --chart-5: #34D399;
 
   --sidebar: #FFFFFF;
   --sidebar-foreground: #232931;
-  --sidebar-primary: #4ECCA3;
+  --sidebar-primary: #409e54;
   --sidebar-primary-foreground: #232931;
   --sidebar-accent: #F3F4F6;
   --sidebar-accent-foreground: #232931;
   --sidebar-border: #E5E7EB;
-  --sidebar-ring: #4ECCA3;
+  --sidebar-ring: #409e54;
 }
 
 .dark {
-  /* Dark Mode Colors - Deep Charcoal Background with Teal Accents */
-  --background: #232931;
-  /* Deep Charcoal */
-  --foreground: #EEEEEE;
-  /* Light Gray */
-  --card: #393E46;
-  /* Soft Charcoal */
-  --card-foreground: #EEEEEE;
-  --popover: #393E46;
-  --popover-foreground: #EEEEEE;
+  /* Dark Mode Colors - Deep Dark Green Background with Bright Teal Accents */
+  --background: #001407;
+  /* Very Dark Green */
+  --foreground: #F5F5F5;
+  /* Brighter Light Gray for better readability */
+  --card: #0A2D1A;
+  /* Dark Green-tinted card background */
+  --card-foreground: #F5F5F5;
+  --popover: #0D3621;
+  --popover-foreground: #F5F5F5;
 
-  /* Primary remains Teal */
-  --primary: #4ECCA3;
-  --primary-foreground: #232931;
+  /* Primary: Brighter Teal for visibility */
+  --primary: #52C77D;
+  --primary-foreground: #001407;
 
-  /* Secondary: Lighter Charcoal */
-  --secondary: #4A5057;
-  --secondary-foreground: #EEEEEE;
+  /* Secondary: Subtle dark green with bright foreground */
+  --secondary: #0D3621;
+  --secondary-foreground: #E0E0E0;
+  --muted: #1A4D32;
+  --muted-foreground: #B8C5BC;
+  --accent: #52C77D;
+  --accent-foreground: #001407;
+  --destructive: #FF6B6B;
+  --border: rgba(82, 199, 125, 0.2);
+  --input: rgba(82, 199, 125, 0.08);
+  --ring: #52C77D;
 
-  --muted: #4A5057;
-  --muted-foreground: #9CA3AF;
-  --accent: #4ECCA3;
-  --accent-foreground: #232931;
-  --destructive: #F87171;
-  --border: rgba(238, 238, 238, 0.1);
-  --input: rgba(238, 238, 238, 0.05);
-  --ring: #4ECCA3;
-
-  --chart-1: #4ECCA3;
+  --chart-1: #52C77D;
   --chart-2: #60A5FA;
   --chart-3: #34D399;
   --chart-4: #A78BFA;
   --chart-5: #F472B6;
 
-  --sidebar: #232931;
-  --sidebar-foreground: #EEEEEE;
-  --sidebar-primary: #4ECCA3;
-  --sidebar-primary-foreground: #232931;
-  --sidebar-accent: #393E46;
-  --sidebar-accent-foreground: #EEEEEE;
-  --sidebar-border: rgba(238, 238, 238, 0.1);
-  --sidebar-ring: #4ECCA3;
+  --sidebar: #0A2D1A;
+  --sidebar-foreground: #F5F5F5;
+  --sidebar-primary: #52C77D;
+  --sidebar-primary-foreground: #001407;
+  --sidebar-accent: #0D3621;
+  --sidebar-accent-foreground: #E0E0E0;
+  --sidebar-border: rgba(82, 199, 125, 0.15);
+  --sidebar-ring: #52C77D;
 }
 
 @layer base {
