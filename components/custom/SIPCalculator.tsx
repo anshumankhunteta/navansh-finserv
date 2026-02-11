@@ -1,189 +1,300 @@
-"use client";
+'use client'
 
-import { Calculator } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Calculator, ChevronDown } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+type InvestmentFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
 
 function formatIndianCurrency(num: number): string {
-    const formatted = num.toLocaleString("en-IN", {
-        maximumFractionDigits: 0,
-    });
-    return `₹ ${formatted}`;
+  const formatted = num.toLocaleString('en-IN', {
+    maximumFractionDigits: 0,
+  })
+  return `₹ ${formatted}`
 }
 
 export function SIPCalculator() {
-    const [monthlyAmount, setMonthlyAmount] = useState(10000);
-    const [returnRate, setReturnRate] = useState(12);
-    const [timePeriod, setTimePeriod] = useState(10);
+  const [investmentAmount, setInvestmentAmount] = useState(10000)
+  const [returnRate, setReturnRate] = useState(12)
+  const [timePeriod, setTimePeriod] = useState(10)
+  const [frequency, setFrequency] = useState<InvestmentFrequency>('monthly')
+  const [customDays, setCustomDays] = useState(30)
 
-    const calculations = useMemo(() => {
-        const monthlyRate = returnRate / 12 / 100;
-        const months = timePeriod * 12;
-        const investedAmount = monthlyAmount * months;
+  const calculations = useMemo(() => {
+    // Calculate periods per year based on frequency
+    let periodsPerYear: number
 
-        // SIP Future Value formula: P × ({[1 + r]^n – 1} / r) × (1 + r)
-        const futureValue =
-            monthlyAmount *
-            ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) *
-            (1 + monthlyRate);
+    switch (frequency) {
+      case 'daily':
+        periodsPerYear = 365
+        break
+      case 'weekly':
+        periodsPerYear = 52
+        break
+      case 'monthly':
+        periodsPerYear = 12
+        break
+      case 'yearly':
+        periodsPerYear = 1
+        break
+      case 'custom':
+        periodsPerYear = 365 / customDays
+        break
+      default:
+        periodsPerYear = 12
+    }
 
-        const estimatedReturns = futureValue - investedAmount;
+    const ratePerPeriod = returnRate / periodsPerYear / 100
+    const totalPeriods = timePeriod * periodsPerYear
+    const investedAmount = investmentAmount * totalPeriods
 
-        return {
-            investedAmount: Math.round(investedAmount),
-            estimatedReturns: Math.round(estimatedReturns),
-            totalValue: Math.round(futureValue),
-        };
-    }, [monthlyAmount, returnRate, timePeriod]);
+    // SIP Future Value formula: P × ({[1 + r]^n – 1} / r) × (1 + r)
+    const futureValue =
+      investmentAmount *
+      ((Math.pow(1 + ratePerPeriod, totalPeriods) - 1) / ratePerPeriod) *
+      (1 + ratePerPeriod)
 
-    // Calculate percentages for the donut chart
-    const investedPercentage =
-        (calculations.investedAmount / calculations.totalValue) * 100;
+    const estimatedReturns = futureValue - investedAmount
 
-    return (
-        <div className="bg-card rounded-2xl border border-border/50 p-6 md:p-8 sticky top-24">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                    <Calculator className="h-6 w-6" />
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold">SIP Calculator</h2>
-            </div>
+    return {
+      investedAmount: Math.round(investedAmount),
+      estimatedReturns: Math.round(estimatedReturns),
+      totalValue: Math.round(futureValue),
+    }
+  }, [investmentAmount, returnRate, timePeriod, frequency, customDays])
 
-            {/* Enter Amount */}
-            <div className="mb-6">
-                <label className="block text-sm text-muted-foreground mb-2">
-                    Enter Amount
-                </label>
-                <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        ₹
-                    </span>
-                    <input
-                        type="number"
-                        step={500}
-                        value={monthlyAmount}
-                        onChange={(e) =>
-                            setMonthlyAmount(Math.max(0, Number(e.target.value)))
-                        }
-                        className="w-full pl-8 pr-4 py-3 rounded-lg border border-border bg-background text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        min="0"
-                        max="1000000"
-                    />
-                </div>
-            </div>
+  // Calculate percentages for the donut chart
+  const investedPercentage =
+    (calculations.investedAmount / calculations.totalValue) * 100
 
-            {/* Expected Return Rate Slider */}
-            <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                    <label className="text-sm text-muted-foreground">
-                        Expected Return Rate (p.a)
-                    </label>
-                    <div className="px-3 py-1 rounded border border-border bg-muted/50 text-sm font-semibold">
-                        {returnRate}%
-                    </div>
-                </div>
-                <input
-                    type="range"
-                    min="1"
-                    max="30"
-                    value={returnRate}
-                    onChange={(e) => setReturnRate(Number(e.target.value))}
-                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>1%</span>
-                    <span>30%</span>
-                </div>
-            </div>
+  // Get appropriate label based on frequency
+  const getFrequencyLabel = () => {
+    switch (frequency) {
+      case 'daily':
+        return 'Daily Investment'
+      case 'weekly':
+        return 'Weekly Investment'
+      case 'monthly':
+        return 'Monthly Investment'
+      case 'yearly':
+        return 'Yearly Investment'
+      case 'custom':
+        return `Investment (Every ${customDays} days)`
+      default:
+        return 'Investment Amount'
+    }
+  }
 
-            {/* SIP Time Period Slider */}
-            <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                    <label className="text-sm text-muted-foreground">
-                        SIP time period
-                    </label>
-                    <div className="px-3 py-1 rounded border border-border bg-muted/50 text-sm font-semibold">
-                        {timePeriod} Years
-                    </div>
-                </div>
-                <input
-                    type="range"
-                    min="1"
-                    max="40"
-                    value={timePeriod}
-                    onChange={(e) => setTimePeriod(Number(e.target.value))}
-                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>1 year</span>
-                    <span>40 years</span>
-                </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-border/50 my-6" />
-
-            {/* Results Section */}
-            <div className="text-center mb-6">
-                <p className="text-sm text-muted-foreground mb-1">
-                    The total value of your investment after {timePeriod} Years will be
-                </p>
-                <p className="text-2xl md:text-3xl font-bold text-primary">
-                    {formatIndianCurrency(calculations.totalValue)}
-                </p>
-            </div>
-
-            {/* Donut Chart and Legend */}
-            <div className="flex items-center gap-6">
-                {/* Donut Chart */}
-                <div className="relative w-24 h-24 shrink-0">
-                    <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                        {/* Background circle */}
-                        <circle
-                            cx="18"
-                            cy="18"
-                            r="14"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            className="text-orange-500"
-                        />
-                        {/* Invested amount (teal) */}
-                        <circle
-                            cx="18"
-                            cy="18"
-                            r="14"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            strokeDasharray={`${investedPercentage} ${100 - investedPercentage}`}
-                            strokeDashoffset="0"
-                            className="text-primary"
-                        />
-                    </svg>
-                </div>
-
-                {/* Legend */}
-                <div className="flex-1 space-y-3">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-sm bg-primary shrink-0" />
-                        <div className="flex-1">
-                            <p className="text-xs text-muted-foreground">Invested amount</p>
-                            <p className="font-semibold text-sm">
-                                {formatIndianCurrency(calculations.investedAmount)}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-sm bg-orange-500 shrink-0" />
-                        <div className="flex-1">
-                            <p className="text-xs text-muted-foreground">Est. returns</p>
-                            <p className="font-semibold text-sm">
-                                {formatIndianCurrency(calculations.estimatedReturns)}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="bg-card border-border/50 sticky top-24 rounded-2xl border p-6 md:p-8">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="bg-primary/10 text-primary rounded-lg p-2">
+          <Calculator className="h-6 w-6" />
         </div>
-    );
+        <h2 className="text-xl font-bold md:text-2xl">SIP Calculator</h2>
+      </div>
+
+      {/* Investment Frequency Dropdown */}
+      <div className="mb-6">
+        <label className="text-muted-foreground mb-2 block text-sm">
+          Investment Frequency
+        </label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="border-border bg-background focus:ring-primary/50 hover:bg-muted/50 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-base font-medium transition-colors focus:ring-2 focus:outline-none">
+              <span className="capitalize">{frequency}</span>
+              <ChevronDown className="text-muted-foreground h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="w-[var(--radix-dropdown-menu-trigger-width)]"
+          >
+            <DropdownMenuItem onClick={() => setFrequency('daily')}>
+              Daily
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setFrequency('weekly')}>
+              Weekly
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setFrequency('monthly')}>
+              Monthly
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setFrequency('yearly')}>
+              Yearly
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setFrequency('custom')}>
+              Custom
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Custom Days Input (only shown when custom is selected) */}
+      {frequency === 'custom' && (
+        <div className="mb-6">
+          <label className="text-muted-foreground mb-2 block text-sm">
+            Investment Every (days)
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="365"
+            value={customDays}
+            onChange={(e) =>
+              setCustomDays(Math.max(1, Math.min(365, Number(e.target.value))))
+            }
+            className="border-border bg-background focus:ring-primary/50 w-full rounded-lg border px-4 py-3 text-lg font-semibold focus:ring-2 focus:outline-none"
+          />
+        </div>
+      )}
+
+      {/* Enter Amount */}
+      <div className="mb-6">
+        <label className="text-muted-foreground mb-2 block text-sm">
+          {getFrequencyLabel()}
+        </label>
+        <div className="relative">
+          <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
+            ₹
+          </span>
+          <input
+            type="number"
+            step={100}
+            value={investmentAmount}
+            onChange={(e) =>
+              setInvestmentAmount(Math.max(0, Number(e.target.value)))
+            }
+            className="border-border bg-background focus:ring-primary/50 w-full rounded-lg border py-3 pr-4 pl-8 text-lg font-semibold focus:ring-2 focus:outline-none"
+            min="0"
+            max={
+              frequency === 'yearly'
+                ? 10000000
+                : frequency === 'monthly'
+                  ? 1000000
+                  : 100000
+            }
+          />
+        </div>
+      </div>
+
+      {/* Expected Return Rate Slider */}
+      <div className="mb-6">
+        <div className="mb-2 flex items-center justify-between">
+          <label className="text-muted-foreground text-sm">
+            Expected Return Rate (p.a)
+          </label>
+          <div className="border-border bg-muted/50 rounded border px-3 py-1 text-sm font-semibold">
+            {returnRate}%
+          </div>
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="30"
+          value={returnRate}
+          onChange={(e) => setReturnRate(Number(e.target.value))}
+          className="bg-muted accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+        />
+        <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+          <span>1%</span>
+          <span>30%</span>
+        </div>
+      </div>
+
+      {/* SIP Time Period Slider */}
+      <div className="mb-6">
+        <div className="mb-2 flex items-center justify-between">
+          <label className="text-muted-foreground text-sm">
+            SIP time period
+          </label>
+          <div className="border-border bg-muted/50 rounded border px-3 py-1 text-sm font-semibold">
+            {timePeriod} Years
+          </div>
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="40"
+          value={timePeriod}
+          onChange={(e) => setTimePeriod(Number(e.target.value))}
+          className="bg-muted accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+        />
+        <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+          <span>1 year</span>
+          <span>40 years</span>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-border/50 my-6 border-t" />
+
+      {/* Results Section */}
+      <div className="mb-6 text-center">
+        <p className="text-muted-foreground mb-1 text-sm">
+          The total value of your investment after {timePeriod} Years will be
+        </p>
+        <p className="text-primary text-2xl font-bold md:text-3xl">
+          {formatIndianCurrency(calculations.totalValue)}
+        </p>
+      </div>
+
+      {/* Donut Chart and Legend */}
+      <div className="flex items-center gap-6">
+        {/* Donut Chart */}
+        <div className="relative h-24 w-24 shrink-0">
+          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+            {/* Background circle */}
+            <circle
+              cx="18"
+              cy="18"
+              r="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="4"
+              className="text-orange-500"
+            />
+            {/* Invested amount (teal) */}
+            <circle
+              cx="18"
+              cy="18"
+              r="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeDasharray={`${investedPercentage} ${100 - investedPercentage}`}
+              strokeDashoffset="0"
+              className="text-primary"
+            />
+          </svg>
+        </div>
+
+        {/* Legend */}
+        <div className="flex-1 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
+            <div className="flex-1">
+              <p className="text-muted-foreground text-xs">Invested amount</p>
+              <p className="text-sm font-semibold">
+                {formatIndianCurrency(calculations.investedAmount)}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 shrink-0 rounded-sm bg-orange-500" />
+            <div className="flex-1">
+              <p className="text-muted-foreground text-xs">Est. returns</p>
+              <p className="text-sm font-semibold">
+                {formatIndianCurrency(calculations.estimatedReturns)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }

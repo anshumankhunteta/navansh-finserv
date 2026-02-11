@@ -25,9 +25,9 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col backdrop-blur-[3px]">
       {/* Hero Section */}
-      <section className="relative py-20 backdrop-blur-xs md:py-32">
+      <section className="relative py-20 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
@@ -190,7 +190,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 backdrop-blur-xs">
+      <section className="py-20">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Ready to Secure Your Future?
