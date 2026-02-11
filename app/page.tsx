@@ -1,32 +1,44 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Building2, Car, CheckCircle2, HeadphonesIcon, Heart, Shield, TrendingUp, Users, Wallet } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button'
+import {
+  ArrowRight,
+  Building2,
+  Car,
+  CheckCircle2,
+  HeadphonesIcon,
+  Heart,
+  Shield,
+  TrendingUp,
+  Users,
+  Wallet,
+} from 'lucide-react'
+import Link from 'next/link'
 
 export default function HomePage() {
   // All services for homepage (headings only)
   const allServices = [
-    { title: "Mutual Funds & SIPs", icon: TrendingUp },
-    { title: "Health & Mediclaim", icon: Heart },
-    { title: "General Insurance", icon: Car },
-    { title: "Life & Term Insurance", icon: Shield },
-    { title: "Fixed Deposits & Bonds", icon: Wallet },
-    { title: "Corporate Loans", icon: Building2 },
-  ];
+    { title: 'Mutual Funds & SIPs', icon: TrendingUp },
+    { title: 'Health & Mediclaim', icon: Heart },
+    { title: 'General Insurance', icon: Car },
+    { title: 'Life & Term Insurance', icon: Shield },
+    { title: 'Fixed Deposits & Bonds', icon: Wallet },
+    { title: 'Corporate Loans', icon: Building2 },
+  ]
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col backdrop-blur-[3px]">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary/10 via-background to-primary/10 py-20 md:py-32">
+      <section className="relative py-20 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Securing Families & Futures with{" "}
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              Securing Families & Futures with{' '}
               <span className="text-primary">15 Years of Trust</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8">
-              Comprehensive Insurance, Wealth, and Loan Solutions tailored for you
+            <p className="text-muted-foreground mb-8 text-lg md:text-xl">
+              Comprehensive Insurance, Wealth, and Loan Solutions tailored for
+              you
             </p>
-            <Button asChild size="lg" className="text-lg px-8">
+            <Button asChild size="lg" className="px-8 text-lg">
               <Link href="/contact">
                 Book a Consultation
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -56,108 +68,119 @@ export default function HomePage() {
       </section> */}
 
       {/* Our Offerings */}
-      <div className="mt-20 text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <div className="mt-20 mb-16 text-center">
+        <h2 className="mb-4 text-3xl font-bold md:text-4xl">
           Our <span className="text-primary">Offerings</span>
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
           We offer a range of services to help you achieve your financial goals
         </p>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-3 md:gap-6 lg:gap-8 mx-auto mb-16 mx-3">
+      <div className="mx-3 mx-auto mb-16 grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 lg:gap-8 2xl:grid-cols-6">
         {allServices.map((service) => {
-          const Icon = service.icon;
+          const Icon = service.icon
           return (
             <div
               key={service.title}
-              className="flex flex-col items-center text-center p-4 md:p-6 rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg transition-all"
+              className="bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
             >
-              <div className="p-3 rounded-lg bg-primary/10 text-primary mb-3">
+              <div className="bg-primary/10 text-primary mb-3 rounded-lg p-3">
                 <Icon className="h-6 w-6" />
               </div>
-              <h3 className="font-semibold text-sm">{service.title}</h3>
+              <h3 className="text-sm font-semibold">{service.title}</h3>
             </div>
-          );
+          )
         })}
       </div>
 
       {/* Why Us Section */}
-      <section className="py-20 bg-background">
+      <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
               Why Choose <span className="text-primary">Navansh Finserv</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Experience personalized financial solutions backed by expertise and compassion
+            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+              Experience personalized financial solutions backed by expertise
+              and compassion
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Card 1 */}
-            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
                   <Users className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Women-Led Leadership</h3>
+                <h3 className="mb-3 text-xl font-semibold">
+                  Women-Led Leadership
+                </h3>
                 <p className="text-muted-foreground">
-                  Founded by a veteran single mom with 15 years of sales experience, bringing genuine care and understanding to every client relationship.
+                  Founded by a veteran single mom with 15 years of sales
+                  experience, bringing genuine care and understanding to every
+                  client relationship.
                 </p>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Empathetic approach to financial planning</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>15+ years industry expertise</span>
                 </li>
               </ul>
             </div>
 
             {/* Card 2 */}
-            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
                   <Shield className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Personalized Audits</h3>
+                <h3 className="mb-3 text-xl font-semibold">
+                  Personalized Audits
+                </h3>
                 <p className="text-muted-foreground">
-                  Comprehensive financial health assessments tailored to your unique needs and life stage.
+                  Comprehensive financial health assessments tailored to your
+                  unique needs and life stage.
                 </p>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Free portfolio reviews</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Risk assessment & gap analysis</span>
                 </li>
               </ul>
             </div>
 
             {/* Card 3 */}
-            <div className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:shadow-lg">
+            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary mb-4">
+                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
                   <HeadphonesIcon className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">24/7 Claim Support</h3>
+                <h3 className="mb-3 text-xl font-semibold">
+                  24/7 Claim Support
+                </h3>
                 <p className="text-muted-foreground">
-                  Round-the-clock assistance when you need it most. We stand by you during claims and emergencies.
+                  Round-the-clock assistance when you need it most. We stand by
+                  you during claims and emergencies.
                 </p>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Dedicated claims assistance</span>
                 </li>
                 <li className="flex items-start text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Fast-track claim processing</span>
                 </li>
               </ul>
@@ -167,15 +190,15 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary/20 via-primary/2 to-primary/20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Ready to Secure Your Future?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Get expert financial guidance tailored to your family's needs
+          <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
+            Get expert financial guidance tailored to your family&apos;s needs
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild size="lg">
               <Link href="/contact">Get Started Today</Link>
             </Button>
@@ -186,5 +209,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

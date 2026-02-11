@@ -82,6 +82,14 @@ export default function RootLayout({
         >
           <Navbar />
           <main className="min-h-screen">
+            <div
+              className="fixed inset-0 -z-10"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 1px 1px, var(--secondary) 1px, transparent 0)',
+                backgroundSize: '20px 20px',
+              }}
+            />
             {children}
             <SpeedInsights />
             <Analytics />
