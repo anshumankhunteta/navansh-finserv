@@ -3,7 +3,7 @@ import React from 'react'
 export default function Whatsapp(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      fill="var(--primary)"
+      fill="currentColor"
       role="img"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"

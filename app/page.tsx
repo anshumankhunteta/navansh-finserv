@@ -131,7 +131,7 @@ export default function HomePage() {
               <ul className="space-y-2">
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>We belive in total transparency</span>
+                  <span>We believe in total transparency</span>
                 </li>
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
@@ -189,7 +189,7 @@ export default function HomePage() {
                   <HeadphonesIcon className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">
-                  Long Term Support Gurantee
+                  Long Term Support Guarantee
                 </h3>
                 <p className="text-muted-foreground">
                   Insurance, or any financial product is not a one-time

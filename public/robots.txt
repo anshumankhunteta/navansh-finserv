@@ -1,0 +1,9 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow sensitive paths (if any)
+# Disallow: /admin
+
+# Sitemap location
+Sitemap: https://navansh-finserv.vercel.app/sitemap.xml
