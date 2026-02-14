@@ -48,8 +48,6 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
 
-  const phoneNumber = process.env.NEXT_PUBLIC_PHONE_NUMBER
-
   return (
     <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
@@ -168,7 +166,7 @@ export default function Navbar() {
                 {/* Contact Info */}
                 <div className="border-border/50 mt-4 border-t pt-4 active:scale-102">
                   <a
-                    href={`https://wa.me/${phoneNumber?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`}
+                    href={`https://wa.me/${process.env.PHONE_NUMBER?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`}
                     className="text-muted-foreground hover:text-primary flex items-center gap-3 text-sm transition-colors"
                   >
                     <Whatsapp className="h-5 w-5" />

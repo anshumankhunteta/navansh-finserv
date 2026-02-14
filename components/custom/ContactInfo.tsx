@@ -10,9 +10,8 @@ interface ContactInfoItem {
 }
 
 export function ContactInfo() {
-  const contactEmail =
-    process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'navanshfinserv@gmail.com'
-  const contactPhone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+91 79806 59845'
+  const contactEmail = process.env.CONTACT_EMAIL || ''
+  const contactPhone = process.env.PHONE_NUMBER || ''
 
   const contactInfo: ContactInfoItem[] = [
     {
