@@ -108,8 +108,9 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Why Choose <span className="text-primary">Navansh Finserv</span>
+            <h2 className="text-primary mb-4 text-3xl font-bold md:text-4xl">
+              Why Choose{' '}
+              <span className="text-primary-foreground">Navansh</span> Finserv
             </h2>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
               Experience personalized financial solutions backed by expertise

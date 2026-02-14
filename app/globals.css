@@ -108,8 +108,7 @@
 
   /* Primary: Brighter Teal for visibility */
   --primary: #52c77d;
-  --primary-foreground: #001407;
-
+  --primary-foreground: #ececec;
   /* Secondary: Subtle dark green with bright foreground */
   --secondary: #0d3621;
   --secondary-foreground: #e0e0e0;
