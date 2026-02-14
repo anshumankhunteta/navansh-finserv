@@ -170,8 +170,6 @@ export default function Navbar() {
                   <a
                     href={`https://wa.me/${phoneNumber?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`}
                     className="text-muted-foreground hover:text-primary flex items-center gap-3 text-sm transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
                     <Whatsapp className="h-5 w-5" />
                     <span>Text us on WhatsApp</span>
