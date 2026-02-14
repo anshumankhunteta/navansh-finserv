@@ -72,12 +72,12 @@ export default function Footer() {
         <div className="border-secondary-foreground/10 mt-12 border-t pt-8">
           <p className="text-secondary-foreground/60 mb-4 text-xs">
             Insurance is the subject matter of solicitation. IRDAI Registration:
-            Application in Progress. For more details on risk factors, terms and
-            conditions, please read the sales brochure carefully before
-            concluding a sale.
+            <span className="italic"> Application in Progress.</span> For more
+            details on risk factors, terms and conditions, please read the sales
+            brochure carefully before concluding a sale.
           </p>
           <p className="text-secondary-foreground/80 text-sm">
-            © {currentYear} Navansh Finserv. All rights reserved.
+            {currentYear} Navansh Finserv.
           </p>
         </div>
       </div>

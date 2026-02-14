@@ -27,7 +27,15 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32">
+      <section
+        style={{
+          backgroundImage: `
+        radial-gradient(140% 140% at 50% 35%, var(--card) 10%, transparent 40%)
+      `,
+          backgroundSize: '100% 100%',
+        }}
+        className="relative py-20 md:py-32"
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
@@ -154,8 +162,8 @@ export default function HomePage() {
                 </h3>
                 <p className="text-muted-foreground">
                   Comprehensive financial health assessments tailored to your
-                  unique needs and life stage. We will help build a secure
-                  future for your Family.
+                  unique needs and life stage with proper goal setting. We will
+                  help build a secure future for your Family.
                 </p>
               </div>
               <ul className="space-y-2">

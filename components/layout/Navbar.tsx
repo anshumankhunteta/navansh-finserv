@@ -16,12 +16,12 @@ import {
   Home,
   Mail,
   Menu,
-  Phone,
-  Sparkles,
   Users,
+  UserSearch,
 } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
+import Whatsapp from '../icons/Whatsapp'
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
@@ -47,6 +47,8 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
+
+  const phoneNumber = process.env.NEXT_PUBLIC_PHONE_NUMBER
 
   return (
     <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur">
@@ -129,15 +131,15 @@ export default function Navbar() {
                       <SheetClose asChild key={link.href}>
                         <Link
                           href={link.href}
-                          className="text-foreground/80 hover:text-foreground hover:bg-muted/80 group flex items-center gap-4 rounded-xl px-4 py-3 transition-all"
+                          className="shadow-background hover:text-primary group flex items-center gap-4 rounded-xl px-4 py-3 shadow-md transition-all active:scale-105"
                         >
-                          <div className="bg-muted group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
-                            <Icon className="text-muted-foreground group-hover:text-primary h-5 w-5 transition-colors" />
+                          <div className="bg-background group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
+                            <Icon className="text-primary group-hover:text-primary h-5 w-5 transition-colors" />
                           </div>
                           <span className="text-base font-semibold">
                             {link.label}
                           </span>
-                          <ArrowRight className="text-muted-foreground ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                          <ArrowRight className="text-primary ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                         </Link>
                       </SheetClose>
                     )
@@ -146,7 +148,7 @@ export default function Navbar() {
               </nav>
 
               {/* CTA Section */}
-              <div className="border-border/50 bg-muted/30 border-t p-4">
+              <div className="p-4">
                 <SheetClose asChild>
                   <Button
                     asChild
@@ -154,9 +156,9 @@ export default function Navbar() {
                   >
                     <Link
                       href="/enquire"
-                      className="flex items-center justify-center gap-2"
+                      className="flex items-center justify-center gap-2 active:scale-105"
                     >
-                      <Sparkles className="h-4 w-4" />
+                      <UserSearch className="h-4 w-4" />
                       Enquire Now
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
@@ -164,13 +166,15 @@ export default function Navbar() {
                 </SheetClose>
 
                 {/* Contact Info */}
-                <div className="border-border/50 mt-4 border-t pt-4">
+                <div className="border-border/50 mt-4 border-t pt-4 active:scale-102">
                   <a
-                    href="tel:+919876543210"
+                    href={`https://wa.me/${phoneNumber?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`}
                     className="text-muted-foreground hover:text-primary flex items-center gap-3 text-sm transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Phone className="h-4 w-4" />
-                    <span>+91 98765 43210</span>
+                    <Whatsapp className="h-5 w-5" />
+                    <span>Text us on WhatsApp</span>
                   </a>
                 </div>
               </div>
