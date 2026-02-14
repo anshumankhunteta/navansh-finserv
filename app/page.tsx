@@ -37,10 +37,10 @@ export default function HomePage() {
         className="relative py-20 md:py-32"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
               Securing Families & Futures with{' '}
-              <span className="text-primary">15 Years of Trust</span>
+              <span className="text-primary">Two Decades of Experience</span>
             </h1>
             <p className="text-muted-foreground mb-8 text-lg md:text-xl">
               Comprehensive Insurance, Wealth, and Loan Solutions tailored for
@@ -81,7 +81,10 @@ export default function HomePage() {
           Our <span className="text-primary">Offerings</span>
         </h2>
         <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-          We offer a range of services to help you achieve your financial goals
+          We offer a range of services to help you achieve your financial goals.{' '}
+          <Link href="/services" className="text-primary hover:underline">
+            Learn More
+          </Link>
         </p>
       </div>
       <div className="mx-3 mb-16 grid grid-cols-2 gap-3 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8 2xl:grid-cols-6">
@@ -90,9 +93,9 @@ export default function HomePage() {
           return (
             <div
               key={service.title}
-              className="bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
+              className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
             >
-              <div className="bg-primary/10 text-primary mb-3 rounded-lg p-3">
+              <div className="bg-primary/10 group-hover:bg-primary text-primary mb-3 rounded-lg p-3 transition-colors group-hover:text-white">
                 <Icon className="h-6 w-6" />
               </div>
               <h3 className="text-sm font-semibold">{service.title}</h3>
@@ -118,7 +121,7 @@ export default function HomePage() {
             {/* Card 1 */}
             <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
                   <Users className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">Women Leadership</h3>
@@ -154,7 +157,7 @@ export default function HomePage() {
             {/* Card 2 */}
             <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
                   <Shield className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">
@@ -185,7 +188,7 @@ export default function HomePage() {
             {/* Card 3 */}
             <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
-                <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
                   <HeadphonesIcon className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">

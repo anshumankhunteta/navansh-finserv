@@ -3,7 +3,7 @@ import { SIPCalculator } from '@/components/custom/SIPCalculator'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Enquire - Get a Quote | Navansh Finserv',
+  title: 'Enquire | Navansh Finserv',
   description:
     'Schedule a free consultation with our financial experts. Get personalized insurance and wealth management solutions.',
 }

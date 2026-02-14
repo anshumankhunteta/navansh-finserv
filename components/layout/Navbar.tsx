@@ -161,6 +161,16 @@ export default function Navbar() {
                     </Link>
                   </Button>
                 </SheetClose>
+                <div className="mt-2 text-center">
+                  <SheetClose asChild>
+                    <Link
+                      href="/privacy"
+                      className="text-muted-foreground hover:text-primary text-xs transition-colors"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </SheetClose>
+                </div>
               </div>
             </SheetContent>
           </Sheet>

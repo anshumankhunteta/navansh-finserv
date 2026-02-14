@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Contact Us - Get a Quote | Navansh Finserv',
+  title: 'Contact Us | Navansh Finserv',
   description:
     'Schedule a free consultation with our financial experts. Get personalized insurance and wealth management solutions.',
 }
