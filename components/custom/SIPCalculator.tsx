@@ -155,10 +155,8 @@ export function SIPCalculator() {
 
       {/* Enter Amount */}
       <div className="mb-6">
-        <label className="text-muted-foreground mb-2 block text-sm">
-          {getFrequencyLabel()}
-        </label>
-        <div className="relative text-right">
+        <label className="mb-2 flex items-center justify-between text-sm">
+          {getFrequencyLabel()} (₹)
           <input
             type="number"
             step={100}
@@ -176,13 +174,13 @@ export function SIPCalculator() {
                   : 100000
             }
           />
-        </div>
+        </label>
         <input
           type="range"
           min="0"
           max={
             frequency === 'yearly'
-              ? 10000000
+              ? 1000000
               : frequency === 'monthly'
                 ? 100000
                 : 10000
@@ -193,6 +191,16 @@ export function SIPCalculator() {
           }
           className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
         />
+        <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+          <span>₹0</span>
+          {frequency === 'yearly' ? (
+            <span>₹1000000</span>
+          ) : frequency === 'monthly' ? (
+            <span>₹100000</span>
+          ) : (
+            <span>₹1000</span>
+          )}
+        </div>
       </div>
 
       {/* Expected Return Rate Slider */}
