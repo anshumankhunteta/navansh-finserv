@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
-import Whatsapp from '../icons/Whatsapp'
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
@@ -162,17 +161,6 @@ export default function Navbar() {
                     </Link>
                   </Button>
                 </SheetClose>
-
-                {/* Contact Info */}
-                <div className="border-border/50 mt-4 border-t pt-4 active:scale-102">
-                  <a
-                    href={`https://wa.me/${process.env.PHONE_NUMBER?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`}
-                    className="text-muted-foreground hover:text-primary flex items-center gap-3 text-sm transition-colors"
-                  >
-                    <Whatsapp className="h-5 w-5" />
-                    <span>Text us on WhatsApp</span>
-                  </a>
-                </div>
               </div>
             </SheetContent>
           </Sheet>

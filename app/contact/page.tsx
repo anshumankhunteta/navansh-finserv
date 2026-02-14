@@ -20,8 +20,7 @@ export default function ContactPage() {
               Get in <span className="text-primary">Touch</span>
             </h1>
             <p className="text-muted-foreground text-lg">
-              Ready to secure your future? Reach out to us and we&apos;ll get
-              back to you within 24 hours.
+              Learn More about us and find out Where to reach out.
             </p>
           </div>
         </div>
