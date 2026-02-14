@@ -158,10 +158,7 @@ export function SIPCalculator() {
         <label className="text-muted-foreground mb-2 block text-sm">
           {getFrequencyLabel()}
         </label>
-        <div className="relative">
-          <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
-            ₹
-          </span>
+        <div className="relative text-right">
           <input
             type="number"
             step={100}
@@ -169,7 +166,7 @@ export function SIPCalculator() {
             onChange={(e) =>
               setInvestmentAmount(Math.max(0, Number(e.target.value)))
             }
-            className="border-border bg-background focus:ring-primary/50 w-full rounded-lg border py-3 pr-4 pl-8 text-lg font-semibold focus:ring-2 focus:outline-none"
+            className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             min="0"
             max={
               frequency === 'yearly'
@@ -180,6 +177,22 @@ export function SIPCalculator() {
             }
           />
         </div>
+        <input
+          type="range"
+          min="0"
+          max={
+            frequency === 'yearly'
+              ? 10000000
+              : frequency === 'monthly'
+                ? 100000
+                : 10000
+          }
+          value={investmentAmount}
+          onChange={(e) =>
+            setInvestmentAmount(Math.max(0, Number(e.target.value)))
+          }
+          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+        />
       </div>
 
       {/* Expected Return Rate Slider */}
@@ -198,7 +211,7 @@ export function SIPCalculator() {
           max="30"
           value={returnRate}
           onChange={(e) => setReturnRate(Number(e.target.value))}
-          className="bg-muted accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1%</span>
@@ -222,7 +235,7 @@ export function SIPCalculator() {
           max="40"
           value={timePeriod}
           onChange={(e) => setTimePeriod(Number(e.target.value))}
-          className="bg-muted accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1 year</span>
