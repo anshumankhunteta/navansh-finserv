@@ -75,7 +75,7 @@ export default function ServicesPage() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="py-8 backdrop-blur-xs md:py-12">
+      <section className="py-8 md:py-12">
         <div className="container mx-auto px-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-4 text-3xl font-bold md:text-5xl">
@@ -132,7 +132,7 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 backdrop-blur-xs">
+      <section className="py-16">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold">
             Need Help Choosing the Right Service?

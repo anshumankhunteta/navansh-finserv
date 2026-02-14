@@ -25,7 +25,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="flex flex-col backdrop-blur-[3px]">
+    <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative py-20 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,7 +102,7 @@ export default function HomePage() {
             </h2>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
               Experience personalized financial solutions backed by expertise
-              and compassion
+              and compassion.
             </p>
           </div>
 
@@ -113,23 +113,32 @@ export default function HomePage() {
                 <div className="bg-primary/10 text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg">
                   <Users className="h-7 w-7" />
                 </div>
-                <h3 className="mb-3 text-xl font-semibold">
-                  Women-Led Leadership
-                </h3>
+                <h3 className="mb-3 text-xl font-semibold">Women Leadership</h3>
                 <p className="text-muted-foreground">
-                  Founded by a veteran single mom with 15 years of sales
-                  experience, bringing genuine care and understanding to every
-                  client relationship.
+                  Founded by a single mom with 20 years of expertise in
+                  financial services, we bring genuine care and understanding to
+                  every client relationship, even in the long term.
                 </p>
               </div>
               <ul className="space-y-2">
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
+                  <span>We belive in total transparency</span>
+                </li>
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Empathetic approach to financial planning</span>
                 </li>
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>15+ years industry expertise</span>
+                  <span>
+                    Gen-Z, Alpha or Boomers, we understand them all because of
+                    our diverse team and experience
+                  </span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
+                  <span>Worked 10+ Years with HNI and Super-HNI Clients</span>
                 </li>
               </ul>
             </div>
@@ -141,21 +150,26 @@ export default function HomePage() {
                   <Shield className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">
-                  Personalized Audits
+                  Personalized Advisory
                 </h3>
                 <p className="text-muted-foreground">
                   Comprehensive financial health assessments tailored to your
-                  unique needs and life stage.
+                  unique needs and life stage. We will help build a secure
+                  future for your Family.
                 </p>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Free portfolio reviews</span>
+                  <span>Retirement Planning</span>
                 </li>
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Risk assessment & gap analysis</span>
+                  <span>Family First Approach</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
+                  <span>Portfolio Reviews</span>
                 </li>
               </ul>
             </div>
@@ -167,11 +181,12 @@ export default function HomePage() {
                   <HeadphonesIcon className="h-7 w-7" />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold">
-                  24/7 Claim Support
+                  Long Term Support Gurantee
                 </h3>
                 <p className="text-muted-foreground">
-                  Round-the-clock assistance when you need it most. We stand by
-                  you during claims and emergencies.
+                  Insurance, or any financial product is not a one-time
+                  purchase, it is a long-term commitment. We believe in keeping
+                  the client relationship healthy and strong in the long term.
                 </p>
               </div>
               <ul className="space-y-2">
@@ -181,7 +196,11 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Fast-track claim processing</span>
+                  <span>Pro-active reminders and helpful tips</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
+                  <span>Regular reviews and updates</span>
                 </li>
               </ul>
             </div>
@@ -196,7 +215,8 @@ export default function HomePage() {
             Ready to Secure Your Future?
           </h2>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-            Get expert financial guidance tailored to your family&apos;s needs
+            Reach out to us if you have any questions or need assistance.
+            {/* Get expert financial guidance tailored to your family&apos;s needs */}
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild size="lg">

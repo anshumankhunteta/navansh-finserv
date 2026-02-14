@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col backdrop-blur-[3px]">
+    <div className="flex flex-col">
       {/* Header */}
       <section className="py-8 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

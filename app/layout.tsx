@@ -85,9 +85,11 @@ export default function RootLayout({
             <div
               className="fixed inset-0 -z-10"
               style={{
-                backgroundImage:
-                  'radial-gradient(circle at 1px 1px, var(--secondary) 1px, transparent 0)',
-                backgroundSize: '20px 20px',
+                backgroundImage: `
+          repeating-linear-gradient(45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px),
+        repeating-linear-gradient(-45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px)
+        `,
+                backgroundSize: '40px 40px',
               }}
             />
             {children}
