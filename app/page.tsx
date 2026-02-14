@@ -84,7 +84,7 @@ export default function HomePage() {
           We offer a range of services to help you achieve your financial goals
         </p>
       </div>
-      <div className="mx-3 mx-auto mb-16 grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 lg:gap-8 2xl:grid-cols-6">
+      <div className="mx-3 mb-16 grid grid-cols-2 gap-3 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8 2xl:grid-cols-6">
         {allServices.map((service) => {
           const Icon = service.icon
           return (
