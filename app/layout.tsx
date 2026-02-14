@@ -15,9 +15,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://navansh-finserv.vercel.app'),
-  title: 'Navansh Finserv | Trusted Insurance & Wealth Expert in India',
+  title: 'Navansh Finserv',
   description:
-    'Comprehensive Insurance, Wealth, and Loan Solutions tailored for you. 15+ years of experience securing families and futures across India.',
+    'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
   keywords: [
     'insurance',
     'wealth management',
@@ -26,6 +26,25 @@ export const metadata: Metadata = {
     'mutual funds',
     'health insurance',
     'life insurance',
+    'fixed deposit',
+    'car insurance',
+    'home insurance',
+    'travel insurance',
+    'business insurance',
+    'loan',
+    'wealth management',
+    'financial planning',
+    'term insurance',
+    'bonds',
+    'corporate loans',
+    'corporate insurance',
+    'corporate wealth management',
+    'corporate financial planning',
+    'corporate term insurance',
+    'corporate bonds',
+    'retirement planning',
+    'financial security',
+    'finance solutions',
   ],
   authors: [{ name: 'Anshuman Khunteta' }],
   openGraph: {
@@ -34,12 +53,13 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Navansh Finserv - Trusted Financial Partner',
+        alt: 'Navansh Finserv',
       },
     ],
     siteName: 'Navansh Finserv',
-    title: 'Navansh Finserv | Trusted Insurance & Wealth Expert in India',
-    description: 'Securing Families & Futures with 15 Years of Trust',
+    title: 'Navansh Finserv',
+    description:
+      'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
     type: 'website',
     locale: 'en_IN',
   },
@@ -61,14 +81,37 @@ export default function RootLayout({
               '@type': 'FinancialService',
               name: 'Navansh Finserv',
               description:
-                'Comprehensive Insurance, Wealth, and Loan Solutions',
+                'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
+              url: 'https://navansh-finserv.vercel.app',
+              image: 'https://navansh-finserv.vercel.app/og-image.png',
               address: {
                 '@type': 'PostalAddress',
-                addressCountry: 'IN',
+                addressCountry: 'India',
+                addressLocality: 'Kolkata',
+                addressRegion: 'West Bengal',
+                postalCode: '700082',
+                streetAddress:
+                  '39, Mahatma Gandhi Road, Haridevpur, Tollygunge',
               },
+              telephone: `+91-7980659845`,
               priceRange: '$$',
-              telephone: '+91-XXXXXXXXXX',
-              areaServed: 'IN',
+              areaServed: {
+                '@type': 'Country',
+                name: 'India',
+              },
+              openingHoursSpecification: {
+                '@type': 'OpeningHoursSpecification',
+                dayOfWeek: [
+                  'Monday',
+                  'Tuesday',
+                  'Wednesday',
+                  'Thursday',
+                  'Friday',
+                  'Saturday',
+                ],
+                opens: '08:00',
+                closes: '20:00',
+              },
             }),
           }}
         />
@@ -78,16 +121,18 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="light"
           enableSystem
-          // disableTransitionOnChange
+          disableTransitionOnChange
         >
           <Navbar />
           <main className="min-h-screen">
-            <div
+            <div //bg pattern
               className="fixed inset-0 -z-10"
               style={{
-                backgroundImage:
-                  'radial-gradient(circle at 1px 1px, var(--secondary) 1px, transparent 0)',
-                backgroundSize: '20px 20px',
+                backgroundImage: `
+                repeating-linear-gradient(45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(-45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px)
+                `,
+                backgroundSize: '40px 40px',
               }}
             />
             {children}

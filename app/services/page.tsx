@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Our Services - Insurance, Wealth & Loans | Navansh Finserv',
+  title: 'Our Services | Navansh Finserv',
   description:
     'Explore our comprehensive financial services including general insurance, health & mediclaim, life insurance, mutual funds, bonds, and corporate loans.',
 }
@@ -16,7 +16,7 @@ const services = [
     description: 'Expert portfolio management for long-term wealth creation.',
     features: [
       'SIP & Lumpsum Options',
-      'Diversified Portfolio',
+      'Professional Advice and Switch Funds anytime',
       'Regular Performance Reviews',
     ],
   },
@@ -26,7 +26,7 @@ const services = [
     description:
       "Protect your family's health with cashless hospitalization plans.",
     features: [
-      'Cashless Hospitalization',
+      'Floater & Individual Plans',
       'Pre & Post Hospitalization',
       'Lifetime Renewability',
     ],
@@ -35,10 +35,10 @@ const services = [
     icon: Car,
     title: 'General Insurance',
     description:
-      'Comprehensive coverage for your Car & Bike. Zero-depreciation and fast claims.',
+      'Comprehensive coverage for your Car & Bike. Good knowledge with respect to add ons from personal and client experience.',
     features: [
-      'Zero Depreciation Cover',
-      '24/7 Roadside Assistance',
+      'Many options for Insurance providers',
+      'All necessary Add-ons',
       'Cashless Garage Network',
     ],
   },
@@ -75,7 +75,7 @@ export default function ServicesPage() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="py-8 backdrop-blur-xs md:py-12">
+      <section className="py-8 md:py-12">
         <div className="container mx-auto px-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-4 text-3xl font-bold md:text-5xl">
@@ -98,29 +98,31 @@ export default function ServicesPage() {
               return (
                 <div
                   key={index}
-                  className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:-translate-y-1 hover:shadow-xl"
+                  className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:scale-103 hover:shadow-md"
                 >
-                  <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground mb-6 inline-flex h-16 w-16 items-center justify-center rounded-lg transition-colors">
-                    <Icon className="h-8 w-8" />
+                  <div className="h-[90%]">
+                    <div className="bg-primary/10 text-primary group-hover:bg-primary mb-6 inline-flex h-16 w-16 items-center justify-center rounded-lg transition-colors group-hover:text-white">
+                      <Icon className="h-8 w-8" />
+                    </div>
+                    <h3 className="mb-3 text-xl font-semibold">
+                      {service.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      {service.description}
+                    </p>
+                    <ul className="mb-6 space-y-2">
+                      {service.features.map((feature, fIndex) => (
+                        <li key={fIndex} className="flex items-start text-sm">
+                          <span className="bg-primary mt-1.5 mr-2 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <h3 className="mb-3 text-xl font-semibold">
-                    {service.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
-                    {service.description}
-                  </p>
-                  <ul className="mb-6 space-y-2">
-                    {service.features.map((feature, fIndex) => (
-                      <li key={fIndex} className="flex items-start text-sm">
-                        <span className="bg-primary mt-1.5 mr-2 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
                   <Button
                     asChild
                     variant="outline"
-                    className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary w-full"
+                    className="group-hover:bg-primary group-hover:border-primary w-full group-hover:text-white"
                   >
                     <Link href="/contact">Learn More</Link>
                   </Button>
@@ -132,7 +134,7 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 backdrop-blur-xs">
+      <section className="py-16">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold">
             Need Help Choosing the Right Service?

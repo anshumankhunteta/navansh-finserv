@@ -1,5 +1,6 @@
+import { Clock, Mail, MapPin } from 'lucide-react'
 import Link from 'next/link'
-import { Clock, Mail, MapPin, Phone } from 'lucide-react'
+import Whatsapp from '../icons/Whatsapp'
 
 interface ContactInfoItem {
   icon: React.ComponentType<{ className?: string }>
@@ -9,9 +10,8 @@ interface ContactInfoItem {
 }
 
 export function ContactInfo() {
-  const contactEmail =
-    process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'navanshfinserv@gmail.com'
-  const contactPhone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+91 79806 59845'
+  const contactEmail = process.env.CONTACT_EMAIL || ''
+  const contactPhone = process.env.PHONE_NUMBER || ''
 
   const contactInfo: ContactInfoItem[] = [
     {
@@ -28,10 +28,10 @@ export function ContactInfo() {
       link: `mailto:${contactEmail}`,
     },
     {
-      icon: Phone,
-      title: 'Phone',
+      icon: Whatsapp,
+      title: 'Whatsapp',
       details: contactPhone,
-      link: `tel:${contactPhone}`,
+      link: `https://wa.me/${contactPhone?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`,
     },
     {
       icon: Clock,

@@ -16,9 +16,8 @@ import {
   Home,
   Mail,
   Menu,
-  Phone,
-  Sparkles,
   Users,
+  UserSearch,
 } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
@@ -129,15 +128,15 @@ export default function Navbar() {
                       <SheetClose asChild key={link.href}>
                         <Link
                           href={link.href}
-                          className="text-foreground/80 hover:text-foreground hover:bg-muted/80 group flex items-center gap-4 rounded-xl px-4 py-3 transition-all"
+                          className="shadow-background hover:text-primary group flex items-center gap-4 rounded-xl px-4 py-3 shadow-md transition-all active:scale-105"
                         >
-                          <div className="bg-muted group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
-                            <Icon className="text-muted-foreground group-hover:text-primary h-5 w-5 transition-colors" />
+                          <div className="bg-background group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
+                            <Icon className="text-primary group-hover:text-primary h-5 w-5 transition-colors" />
                           </div>
                           <span className="text-base font-semibold">
                             {link.label}
                           </span>
-                          <ArrowRight className="text-muted-foreground ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                          <ArrowRight className="text-primary ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                         </Link>
                       </SheetClose>
                     )
@@ -146,7 +145,7 @@ export default function Navbar() {
               </nav>
 
               {/* CTA Section */}
-              <div className="border-border/50 bg-muted/30 border-t p-4">
+              <div className="p-4">
                 <SheetClose asChild>
                   <Button
                     asChild
@@ -154,24 +153,23 @@ export default function Navbar() {
                   >
                     <Link
                       href="/enquire"
-                      className="flex items-center justify-center gap-2"
+                      className="flex items-center justify-center gap-2 active:scale-105"
                     >
-                      <Sparkles className="h-4 w-4" />
+                      <UserSearch className="h-4 w-4" />
                       Enquire Now
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
                 </SheetClose>
-
-                {/* Contact Info */}
-                <div className="border-border/50 mt-4 border-t pt-4">
-                  <a
-                    href="tel:+919876543210"
-                    className="text-muted-foreground hover:text-primary flex items-center gap-3 text-sm transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span>+91 98765 43210</span>
-                  </a>
+                <div className="mt-2 text-center">
+                  <SheetClose asChild>
+                    <Link
+                      href="/privacy"
+                      className="text-muted-foreground hover:text-primary text-xs transition-colors"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </SheetClose>
                 </div>
               </div>
             </SheetContent>

@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Contact Us - Get a Quote | Navansh Finserv',
+  title: 'Contact Us | Navansh Finserv',
   description:
     'Schedule a free consultation with our financial experts. Get personalized insurance and wealth management solutions.',
 }
@@ -13,15 +13,14 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="py-8 backdrop-blur-xs md:py-12">
+      <section className="py-8 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-4 text-3xl font-bold md:text-5xl">
               Get in <span className="text-primary">Touch</span>
             </h1>
             <p className="text-muted-foreground text-lg">
-              Ready to secure your future? Reach out to us and we&apos;ll get
-              back to you within 24 hours.
+              Learn More about us and find out Where to reach out.
             </p>
           </div>
         </div>
@@ -55,7 +54,7 @@ export default function ContactPage() {
       </section>
 
       {/* Schedule Consultation Section */}
-      <section className="py-16 backdrop-blur-xs">
+      <section className="py-16">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-primary mb-4 text-3xl font-bold">
             Schedule a Free Consultation
