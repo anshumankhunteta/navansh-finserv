@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@/components/custom/ThemeProvider'
 import Footer from '@/components/layout/Footer'
 import Navbar from '@/components/layout/Navbar'
+import { FloatingWhatsAppButton } from '@/components/custom/FloatingWhatsAppButton'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
@@ -14,7 +15,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://navansh-finserv.vercel.app'),
+  metadataBase: new URL('https://navansh.in'),
   title: 'Navansh Finserv',
   description:
     'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
@@ -45,6 +46,11 @@ export const metadata: Metadata = {
     'retirement planning',
     'financial security',
     'finance solutions',
+    'finance firm in kolkata',
+    'finance advisor in kolkata',
+    'best finance in kolkata',
+    'best finance firm in kolkata',
+    'best financial services in kolkata',
   ],
   authors: [{ name: 'Anshuman Khunteta' }],
   openGraph: {
@@ -82,8 +88,8 @@ export default function RootLayout({
               name: 'Navansh Finserv',
               description:
                 'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
-              url: 'https://navansh-finserv.vercel.app',
-              image: 'https://navansh-finserv.vercel.app/og-image.png',
+              url: 'https://navansh.in',
+              image: 'https://navansh.in/og-image.png',
               address: {
                 '@type': 'PostalAddress',
                 addressCountry: 'India',
@@ -124,6 +130,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
+          <FloatingWhatsAppButton />
           <main className="min-h-screen">
             <div //bg pattern
               className="fixed inset-0 -z-10"

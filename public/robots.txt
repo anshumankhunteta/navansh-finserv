@@ -2,8 +2,15 @@
 User-agent: *
 Allow: /
 
-# Disallow sensitive paths (if any)
-# Disallow: /admin
+# Disallow Next.js build files and internal paths
+Disallow: /_next/
+Disallow: /api/
+
+# Allow specific important files
+Allow: /favicon.ico
+Allow: /robots.txt
+Allow: /sitemap.xml
+Allow: /og-image.png
 
 # Sitemap location
-Sitemap: https://navansh-finserv.vercel.app/sitemap.xml
+Sitemap: https://navansh.in/sitemap.xml

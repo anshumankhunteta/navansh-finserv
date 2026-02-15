@@ -10,8 +10,8 @@ interface ContactInfoItem {
 }
 
 export function ContactInfo() {
-  const contactEmail = process.env.CONTACT_EMAIL || ''
-  const contactPhone = process.env.PHONE_NUMBER || ''
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ''
+  const contactPhone = process.env.NEXT_PUBLIC_PHONE_NUMBER || ''
 
   const contactInfo: ContactInfoItem[] = [
     {
@@ -48,12 +48,12 @@ export function ContactInfo() {
           <div key={info.title} className="flex items-start gap-4">
             {info?.link ? (
               <Link href={info.link}>
-                <div className="bg-primary/10 text-primary shrink-0 rounded-lg p-2">
+                <div className="bg-primary/10 text-primary shrink-0 rounded-lg p-3">
                   <info.icon className="h-5 w-5" />
                 </div>
               </Link>
             ) : (
-              <div className="bg-primary/10 text-primary shrink-0 rounded-lg p-2">
+              <div className="bg-primary/10 text-primary shrink-0 rounded-lg p-3">
                 <info.icon className="h-5 w-5" />
               </div>
             )}
