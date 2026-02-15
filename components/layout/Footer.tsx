@@ -16,7 +16,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-secondary-foreground/80 text-sm">
-              Securing Families & Futures with 15 Years of Trust
+              Securing Families & Futures with Two Decades of Experience
             </p>
           </div>
 
