@@ -1,4 +1,5 @@
 import { ContactInfo } from '@/components/custom/ContactInfo'
+import { ContactForm } from '@/components/custom/contact-form'
 import { SIPCalculator } from '@/components/custom/SIPCalculator'
 import type { Metadata } from 'next'
 
@@ -18,13 +19,7 @@ export default function GetQuotePage() {
         <p className="text-muted-foreground mb-10 text-center text-lg">
           Reach out to us and we&apos;ll get back to you within 24 hours.
         </p>
-        <iframe
-          src="https://tally.so/embed/zxYKoa?alignCenter=1&hideTitle=1&transparentBackground=1"
-          width="100%"
-          height="600px"
-          title="Enquiry Form"
-          style={{ border: 0, marginBottom: '2rem' }}
-        ></iframe>
+        <ContactForm />
 
         {/* Contact Info */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
