@@ -27,7 +27,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Section */}
-      <section className="mx-4 py-20 md:mx-auto">
+      <section className="mx-4 py-12 md:mx-auto">
         {/* Layout */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Contact Info */}
