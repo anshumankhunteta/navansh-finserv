@@ -73,11 +73,11 @@ export function ContactForm() {
 
   return (
     <div className="mx-auto mb-16 w-full max-w-3xl">
-      <h2 className="text-center text-3xl">
-        Fill out the Form below to send us your query.
-      </h2>
-      <p className="text-muted-foreground mb-6 text-center">
-        We will manually review it and get back to you as soon as possible.
+      <h1 className="text-primary mb-4 text-center text-3xl font-bold md:text-4xl">
+        Send us your Query
+      </h1>
+      <p className="text-muted-foreground mb-6 text-center text-lg">
+        We&apos;ll personally review it and get back to you.
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: First Name & Last Name */}
