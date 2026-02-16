@@ -28,10 +28,6 @@ const enquirySchema = z
       .refine(
         (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
         'Last name looks invalid'
-      )
-      .refine(
-        (val) => val.split(' ').every((word) => word.length >= 2),
-        'Each name part must be at least 2 characters'
       ),
 
     // Phone validation: exactly 10 digits
