@@ -90,6 +90,11 @@ export function ContactForm() {
                 {errors.firstName.message}
               </p>
             )}
+            {formState?.errors?.firstName && (
+              <p className="text-destructive mt-1 text-sm">
+                {formState.errors.firstName[0]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -109,6 +114,11 @@ export function ContactForm() {
             {errors.lastName && (
               <p className="text-destructive mt-1 text-sm">
                 {errors.lastName.message}
+              </p>
+            )}
+            {formState?.errors?.lastName && (
+              <p className="text-destructive mt-1 text-sm">
+                {formState.errors.lastName[0]}
               </p>
             )}
           </div>

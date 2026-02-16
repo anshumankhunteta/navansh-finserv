@@ -6,14 +6,47 @@ import { z } from 'zod'
 // Zod schema with conditional validation
 const enquirySchema = z
   .object({
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
+    // Name validation: 2-50 chars, letters only, no numbers/special chars
+    firstName: z
+      .string()
+      .min(2, 'First name must be at least 2 characters')
+      .max(50, 'First name is too long')
+      .regex(/^[a-zA-Z\s]+$/, 'First name can only contain letters')
+      .refine(
+        (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
+        'First name looks invalid'
+      )
+      .refine(
+        (val) => val.split(' ').every((word) => word.length >= 2),
+        'Each name part must be at least 2 characters'
+      ),
+
+    lastName: z
+      .string()
+      .min(2, 'Last name must be at least 2 characters')
+      .max(50, 'Last name is too long')
+      .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters')
+      .refine(
+        (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
+        'Last name looks invalid'
+      )
+      .refine(
+        (val) => val.split(' ').every((word) => word.length >= 2),
+        'Each name part must be at least 2 characters'
+      ),
+
+    // Phone validation: exactly 10 digits
+    phone: z
+      .string()
+      .regex(/^\d{10}$/, 'Phone number must be exactly 10 digits')
+      .optional()
+      .or(z.literal('')),
+
     email: z
       .string()
       .email('Invalid email address')
       .optional()
       .or(z.literal('')),
-    phone: z.string().optional().or(z.literal('')),
     message: z.string().optional().or(z.literal('')),
     contactMethod: z
       .array(z.enum(['whatsapp', 'call', 'mail']))
@@ -72,8 +105,49 @@ export async function submitEnquiry(
     // 1. Validate the form data
     const validatedData = enquirySchema.parse(formData)
 
-    // 2. Insert into Supabase using service role (bypasses RLS)
+    // 2. Check for duplicate/spam submission
     const supabase = createServiceClient()
+
+    // Check for exact name match (case-insensitive)
+    const { data: existingLeads } = await supabase
+      .from('leads')
+      .select('id, first_name, last_name, created_at')
+      .ilike('first_name', validatedData.firstName)
+      .ilike('last_name', validatedData.lastName)
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+    if (existingLeads && existingLeads.length > 0) {
+      const existingLead = existingLeads[0]
+      const submittedDate = new Date(
+        existingLead.created_at
+      ).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+      return {
+        success: false,
+        message: `You have already submitted an enquiry on ${submittedDate}. Our team will contact you soon!`,
+      }
+    }
+
+    // Additional spam prevention: Check for any submission in the last 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 60 * 1000).toISOString()
+    const { data: recentSubmissions } = await supabase
+      .from('leads')
+      .select('id, created_at')
+      .gte('created_at', fiveMinutesAgo)
+      .limit(1)
+
+    if (recentSubmissions && recentSubmissions.length > 0) {
+      return {
+        success: false,
+        message: 'Please wait a few minutes before submitting another enquiry.',
+      }
+    }
+
+    // 3. Insert into Supabase
     const { data, error } = await supabase
       .from('leads')
       .insert([
@@ -96,11 +170,10 @@ export async function submitEnquiry(
       }
     }
 
-    // 3. Send Discord notification
+    // 4. Send Discord notification
     const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL
     if (discordWebhookUrl) {
       // Helper: Sanitize phone number for links (remove spaces/dashes)
-      // Assuming India (+91) context based on your location
       const rawPhone = validatedData.phone || ''
       const cleanPhone = rawPhone.replace(/\D/g, '')
       const waLink = `https://wa.me/91${cleanPhone}?text=Hello%20${validatedData.firstName},%20we%20received%20your%20inquiry%20at%20Navansh%20Finserv.`
@@ -115,7 +188,7 @@ export async function submitEnquiry(
       }
       if (methods.includes('call') && cleanPhone) {
         // Note: 'tel:' links support varies by device, but is standard
-        actionLinks.push(`[**📞 Call Now**](tel:+91${cleanPhone})`)
+        actionLinks.push(`[**📞 Call Now**](tel:${cleanPhone})`)
       }
       if (methods.includes('mail') && validatedData.email) {
         actionLinks.push(`[**✉️ Send Email**](${mailLink})`)
@@ -129,7 +202,7 @@ export async function submitEnquiry(
 
       const payload = {
         // 🔔 IMPORTANT: This is the only place @everyone works
-        content: '@everyone 🚨 **New Lead Received!**',
+        content: '@everyone',
         embeds: [
           {
             title: 'New Lead Enquiry',
@@ -141,15 +214,9 @@ export async function submitEnquiry(
                 inline: true,
               },
               {
-                // Empty spacer to force new line if needed, or just keep inline
-                name: '\u200b',
-                value: '\u200b',
-                inline: false,
-              },
-              {
                 name: '📞 Phone',
                 value: validatedData.phone
-                  ? `[${validatedData.phone}](tel:+91${cleanPhone})`
+                  ? `[${validatedData.phone}](tel:${cleanPhone})`
                   : 'N/A',
                 inline: true,
               },
@@ -233,7 +300,7 @@ export async function submitEnquiry(
 
       return {
         success: false,
-        message: 'Please fix the errors below',
+        message: 'Please fix the errors in the above fields',
         errors: fieldErrors as FormState['errors'],
       }
     }
