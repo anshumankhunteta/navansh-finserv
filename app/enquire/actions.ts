@@ -48,6 +48,20 @@ const enquirySchema = z
       .optional()
       .or(z.literal('')),
     message: z.string().optional().or(z.literal('')),
+
+    // Optional demographic fields
+    age: z
+      .number()
+      .int('Age must be a whole number')
+      .max(100, 'Please enter a valid age')
+      .optional()
+      .or(z.nan()),
+
+    gender: z
+      .enum(['male', 'female', 'other', 'prefer-not-to-say'])
+      .optional()
+      .or(z.literal('')),
+
     contactMethod: z
       .array(z.enum(['whatsapp', 'call', 'mail']))
       .min(1, 'Please select at least one contact method'),
@@ -94,6 +108,8 @@ export type FormState = {
     email?: string[]
     phone?: string[]
     message?: string[]
+    age?: string[]
+    gender?: string[]
     contactMethod?: string[]
   }
 }
@@ -157,6 +173,8 @@ export async function submitEnquiry(
           email: validatedData.email || null,
           phone: validatedData.phone || null,
           message: validatedData.message || null,
+          age: validatedData.age || null,
+          gender: validatedData.gender || null,
           contact_method: validatedData.contactMethod,
         },
       ])
@@ -206,11 +224,26 @@ export async function submitEnquiry(
         embeds: [
           {
             title: 'New Lead Enquiry',
-            color: 0x409e54, // Teal color
+            color: Math.floor(Math.random() * 16777215), // Random color (0x000000 to 0xFFFFFF)
             fields: [
               {
                 name: '👤 Name',
                 value: `**${validatedData.firstName} ${validatedData.lastName}**`,
+                inline: true,
+              },
+              {
+                name: '🎂 Age',
+                value: validatedData.age ? `${validatedData.age} years` : 'N/A',
+                inline: true,
+              },
+              {
+                name: '⚧ Gender',
+                value: validatedData.gender
+                  ? validatedData.gender
+                      .split('-')
+                      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                      .join(' ')
+                  : 'N/A',
                 inline: true,
               },
               {

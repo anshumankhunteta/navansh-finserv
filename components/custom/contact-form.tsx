@@ -1,4 +1,5 @@
 'use client'
+'use no memo'
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -11,6 +12,8 @@ type FormData = {
   phone: string
   email: string
   message: string
+  age?: number
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say' | ''
   contactMethod: ('whatsapp' | 'call' | 'mail')[]
 }
 
@@ -31,6 +34,8 @@ export function ContactForm() {
       phone: '',
       email: '',
       message: '',
+      age: undefined,
+      gender: '',
       contactMethod: [],
     },
   })
@@ -68,6 +73,12 @@ export function ContactForm() {
 
   return (
     <div className="mx-auto mb-16 w-full max-w-3xl">
+      <h2 className="text-center text-3xl">
+        Fill out the Form below to send us your query.
+      </h2>
+      <p className="text-muted-foreground mb-6 text-center">
+        We will manually review it and get back to you as soon as possible.
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: First Name & Last Name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -81,6 +92,7 @@ export function ContactForm() {
             <input
               id="firstName"
               type="text"
+              autoComplete="given-name"
               {...register('firstName', { required: 'First name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
               placeholder="First name"
@@ -107,6 +119,7 @@ export function ContactForm() {
             <input
               id="lastName"
               type="text"
+              autoComplete="family-name"
               {...register('lastName', { required: 'Last name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
               placeholder="Last name"
@@ -136,13 +149,16 @@ export function ContactForm() {
               <input
                 id="phone"
                 type="tel"
+                autoComplete="tel"
                 {...register('phone', {
                   required: isPhoneRequired
                     ? 'Phone number is required'
                     : false,
                 })}
+                maxLength={10}
+                pattern="[0-9]{10}"
                 className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border py-3 pr-4 pl-11 transition-colors focus:ring-2 focus:outline-none"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+91 9087654321"
               />
             </div>
             {errors.phone && (
@@ -167,6 +183,7 @@ export function ContactForm() {
               <input
                 id="email"
                 type="email"
+                autoComplete="email"
                 {...register('email', {
                   required: isEmailRequired ? 'Email is required' : false,
                   pattern: {
@@ -186,6 +203,53 @@ export function ContactForm() {
             {formState?.errors?.email && (
               <p className="text-destructive mt-1 text-sm">
                 {formState.errors.email[0]}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Row 3.5: Age & Gender (Optional) */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="age" className="mb-2 block text-sm font-medium">
+              Age{' '}
+              <span className="text-muted-foreground text-xs">(Optional)</span>
+            </label>
+            <input
+              id="age"
+              type="number"
+              min="1"
+              max="100"
+              {...register('age', { valueAsNumber: true })}
+              className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+              placeholder="e.g. 25"
+            />
+            {formState?.errors?.age && (
+              <p className="text-destructive mt-1 text-sm">
+                {formState.errors.age[0]}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="gender" className="mb-2 block text-sm font-medium">
+              Gender{' '}
+              <span className="text-muted-foreground text-xs">(Optional)</span>
+            </label>
+            <select
+              id="gender"
+              {...register('gender')}
+              className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer-not-to-say">Prefer not to say</option>
+            </select>
+            {formState?.errors?.gender && (
+              <p className="text-destructive mt-1 text-sm">
+                {formState.errors.gender[0]}
               </p>
             )}
           </div>
@@ -212,7 +276,7 @@ export function ContactForm() {
             <span className="text-destructive">*</span>
           </label>
           <div className="flex flex-wrap gap-3">
-            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
+            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
                 value="whatsapp"
@@ -224,7 +288,7 @@ export function ContactForm() {
               <span className="text-sm font-medium">Text me on Whatsapp</span>
             </label>
 
-            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
+            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
                 value="call"
@@ -234,7 +298,7 @@ export function ContactForm() {
               <span className="text-sm font-medium">Call me</span>
             </label>
 
-            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
+            <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
                 value="mail"

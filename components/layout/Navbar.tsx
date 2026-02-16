@@ -105,7 +105,7 @@ export default function Navbar() {
                 <SheetClose asChild>
                   <Link href="/" className="group flex items-center gap-3">
                     <div className="bg-primary text-primary-foreground shadow-primary/25 flex h-10 w-10 items-center justify-center rounded-xl text-base font-bold shadow-lg transition-transform group-hover:scale-105">
-                      Nf
+                      NF
                     </div>
                     <div>
                       <span className="block text-lg font-bold">
