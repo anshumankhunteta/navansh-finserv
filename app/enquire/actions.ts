@@ -23,7 +23,6 @@ const enquirySchema = z
 
     lastName: z
       .string()
-      .min(2, 'Last name must be at least 2 characters')
       .max(50, 'Last name is too long')
       .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters')
       .refine(
@@ -164,7 +163,7 @@ export async function submitEnquiry(
     }
 
     // 3. Insert into Supabase
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('leads')
       .insert([
         {
