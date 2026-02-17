@@ -46,12 +46,19 @@ export default function HomePage() {
               Comprehensive Insurance, Wealth, and Loan Solutions tailored for
               you
             </p>
-            <Button asChild size="lg" className="px-8 text-lg">
-              <Link href="/contact">
-                Book a Consultation
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+            <span className="mx-auto grid w-[75%] grid-cols-1 gap-4 text-center md:grid-cols-2">
+              <Button asChild size="lg" className="px-8 text-lg shadow-md">
+                <Link href="/contact">Book a Consultation</Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-primary/50 text-primary border-1 px-8 text-lg shadow-md"
+              >
+                <Link href="/enquire">Send an Enquiry</Link>
+              </Button>
+            </span>
           </div>
         </div>
       </section>

@@ -23,7 +23,7 @@ export default function GetQuotePage() {
             Build your Wealth or Secure Your Family, We will help you.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-8 py-20 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 py-12 md:grid-cols-2 md:py-20">
           <ContactForm />
           <SIPCalculator />
         </div>

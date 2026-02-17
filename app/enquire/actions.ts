@@ -1,7 +1,95 @@
 'use server'
 
 import { createServiceClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
 import { z } from 'zod'
+
+// Helper: Get country from IP using Vercel headers or fallback API
+async function getCountryFromIP(): Promise<string | null> {
+  try {
+    // Method 1: Vercel's built-in headers (production)
+    const headersList = await headers()
+    const country = headersList.get('x-vercel-ip-country')
+
+    if (country) return country
+
+    // Method 2: Fallback for local dev - use free API (rate limited to 45 req/min)
+    const ip =
+      headersList.get('x-forwarded-for')?.split(',')[0].trim() ||
+      headersList.get('x-real-ip')
+
+    if (ip && ip !== '::1' && ip !== '127.0.0.1') {
+      const response = await fetch(`https://ipapi.co/${ip}/country/`, {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      })
+      if (response.ok) {
+        const countryText = await response.text()
+        return countryText.trim()
+      }
+    }
+
+    return null // Return null if all methods fail
+  } catch (error) {
+    console.error('Geolocation error:', error)
+    return null // Don't fail submission if geolocation fails
+  }
+}
+
+// Helper: Get client IP address
+async function getClientIP(): Promise<string> {
+  const headersList = await headers()
+  const forwardedFor = headersList.get('x-forwarded-for')
+  const realIp = headersList.get('x-real-ip')
+
+  // x-forwarded-for can be a comma-separated list, take the first IP
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim()
+  }
+
+  if (realIp) {
+    return realIp
+  }
+
+  // Fallback for local development
+  return '127.0.0.1'
+}
+
+// Helper: Convert country code to flag emoji
+function getCountryFlag(countryCode: string): string {
+  return countryCode
+    .toUpperCase()
+    .split('')
+    .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+    .join('')
+}
+
+// Helper: Sanitize text input to prevent XSS and injection
+function sanitizeText(text: string): string {
+  // Strip HTML tags using regex
+  let cleaned = text.replace(/<[^>]*>/g, '')
+
+  // Remove any remaining HTML entities
+  cleaned = cleaned.replace(/&[a-zA-Z0-9#]+;/g, '')
+
+  // Normalize multiple spaces to single space
+  cleaned = cleaned.replace(/\s+/g, ' ')
+
+  // Trim leading/trailing whitespace
+  return cleaned.trim()
+}
+
+// Helper: Create a simple hash for fingerprinting
+function createFingerprint(firstName: string, lastName: string): string {
+  const combined = `${firstName.toLowerCase()}-${lastName.toLowerCase()}`
+  // Simple hash function (for fingerprinting, not security)
+  let hash = 0
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return hash.toString(36)
+}
 
 // Zod schema with conditional validation
 const enquirySchema = z
@@ -11,23 +99,33 @@ const enquirySchema = z
       .string()
       .min(2, 'First name must be at least 2 characters')
       .max(50, 'First name is too long')
-      .regex(/^[a-zA-Z\s]+$/, 'First name can only contain letters')
-      .refine(
-        (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
-        'First name looks invalid'
-      )
-      .refine(
-        (val) => val.split(' ').every((word) => word.length >= 2),
-        'Each name part must be at least 2 characters'
+      .transform(sanitizeText) // Sanitize before validation
+      .pipe(
+        z
+          .string()
+          .regex(/^[a-zA-Z\s]+$/, 'First name can only contain letters')
+          .refine(
+            (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
+            'First name looks invalid'
+          )
+          .refine(
+            (val) => val.split(' ').every((word) => word.length >= 2),
+            'Each name part must be at least 2 characters'
+          )
       ),
 
     lastName: z
       .string()
       .max(50, 'Last name is too long')
-      .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters')
-      .refine(
-        (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
-        'Last name looks invalid'
+      .transform(sanitizeText) // Sanitize before validation
+      .pipe(
+        z
+          .string()
+          .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters')
+          .refine(
+            (val) => !val.match(/(.)\1{3,}/), // Reject "aaaa" or "bbbb"
+            'Last name looks invalid'
+          )
       ),
 
     // Phone validation: exactly 10 digits
@@ -42,7 +140,12 @@ const enquirySchema = z
       .email('Invalid email address')
       .optional()
       .or(z.literal('')),
-    message: z.string().optional().or(z.literal('')),
+    message: z
+      .string()
+      .max(500, 'Message is too long (max 500 characters)')
+      .transform(sanitizeText) // Sanitize HTML and normalize whitespace
+      .optional()
+      .or(z.literal('')),
 
     // Optional demographic fields
     age: z
@@ -113,10 +216,18 @@ export async function submitEnquiry(
   formData: EnquiryFormData
 ): Promise<FormState> {
   try {
-    // 1. Validate the form data
+    // 1. Validate the form data (with sanitization via transforms)
     const validatedData = enquirySchema.parse(formData)
 
-    // 2. Check for duplicate/spam submission
+    // 2. Get client IP and country for rate limiting and analytics
+    const clientIP = await getClientIP()
+    const country = await getCountryFromIP()
+    const fingerprint = createFingerprint(
+      validatedData.firstName,
+      validatedData.lastName
+    )
+
+    // 3. Multi-tier rate limiting using Supabase
     const supabase = createServiceClient()
 
     // Check for exact name match (case-insensitive)
@@ -143,22 +254,55 @@ export async function submitEnquiry(
       }
     }
 
-    // Additional spam prevention: Check for any submission in the last 5 minutes
-    const fiveMinutesAgo = new Date(Date.now() - 60 * 1000).toISOString()
-    const { data: recentSubmissions } = await supabase
-      .from('leads')
+    // Tier 1: Check for submissions from same IP in last 1 minute
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString()
+    const { data: recentIP } = await supabase
+      .from('rate_limit_log')
       .select('id, created_at')
-      .gte('created_at', fiveMinutesAgo)
+      .eq('client_ip', clientIP)
+      .gte('created_at', oneMinuteAgo)
       .limit(1)
 
-    if (recentSubmissions && recentSubmissions.length > 0) {
+    if (recentIP && recentIP.length > 0) {
       return {
         success: false,
-        message: 'Please wait a few minutes before submitting another enquiry.',
+        message: 'Please wait a moment before submitting another enquiry.',
       }
     }
 
-    // 3. Insert into Supabase
+    // Tier 2: Check for more than 3 submissions from same IP in last hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { data: hourlySubmissions, count: hourlyCount } = await supabase
+      .from('rate_limit_log')
+      .select('id', { count: 'exact' })
+      .eq('client_ip', clientIP)
+      .gte('created_at', oneHourAgo)
+
+    if (hourlyCount && hourlyCount >= 8) {
+      return {
+        success: false,
+        message: 'Too many submissions. Please try again later.',
+      }
+    }
+
+    // Tier 3: Check for more than 10 submissions from same IP in last 24 hours
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    const { data: dailySubmissions, count: dailyCount } = await supabase
+      .from('rate_limit_log')
+      .select('id', { count: 'exact' })
+      .eq('client_ip', clientIP)
+      .gte('created_at', oneDayAgo)
+
+    if (dailyCount && dailyCount >= 15) {
+      return {
+        success: false,
+        message: 'Daily submission limit reached. Please try again tomorrow.',
+      }
+    }
+
+    // 4. Check for duplicate name (keep existing logic as additional protection)
+
+    // 5. Insert into Supabase leads table
     const { error } = await supabase
       .from('leads')
       .insert([
@@ -171,9 +315,27 @@ export async function submitEnquiry(
           age: validatedData.age || null,
           gender: validatedData.gender || null,
           contact_method: validatedData.contactMethod,
+          country: country, // Add country from geolocation
         },
       ])
       .select()
+
+    if (error) {
+      console.error('Supabase error:', error)
+      return {
+        success: false,
+        message: 'Failed to submit enquiry. Please try again.',
+      }
+    }
+
+    // 6. Log successful submission to rate_limit_log
+    await supabase.from('rate_limit_log').insert([
+      {
+        client_ip: clientIP,
+        country: country,
+        fingerprint: fingerprint,
+      },
+    ])
 
     if (error) {
       console.error('Supabase error:', error)
@@ -253,6 +415,13 @@ export async function submitEnquiry(
                 value: validatedData.email
                   ? `[${validatedData.email}](${mailLink})`
                   : 'N/A',
+                inline: true,
+              },
+              {
+                name: '🌍 Location',
+                value: country
+                  ? `${getCountryFlag(country)} ${country}`
+                  : 'Unknown',
                 inline: true,
               },
               {

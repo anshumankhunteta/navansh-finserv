@@ -143,7 +143,9 @@ export default function ServicesPage() {
             Our experts are here to guide you through every step
           </p>
           <Button asChild size="lg">
-            <Link href="/contact">Schedule a Free Consultation</Link>
+            <Link href="/contact" className="text-lg">
+              Get a Free Consultation
+            </Link>
           </Button>
         </div>
       </section>
