@@ -1,15 +1,22 @@
 'use client'
 
-import { Calculator, ChevronDown } from 'lucide-react'
-import { useMemo, useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Slider } from '@/components/ui/slider'
+import { Calculator, ChevronDown } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
-type InvestmentFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
+type InvestmentFrequency =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'yearly'
+  | 'custom'
+  | 'lumpsum'
 
 function formatIndianCurrency(num: number): string {
   const formatted = num.toLocaleString('en-IN', {
@@ -26,38 +33,50 @@ export function SIPCalculator() {
   const [customDays, setCustomDays] = useState(30)
 
   const calculations = useMemo(() => {
-    // Calculate periods per year based on frequency
-    let periodsPerYear: number
+    let investedAmount: number
+    let futureValue: number
 
-    switch (frequency) {
-      case 'daily':
-        periodsPerYear = 365
-        break
-      case 'weekly':
-        periodsPerYear = 52
-        break
-      case 'monthly':
-        periodsPerYear = 12
-        break
-      case 'yearly':
-        periodsPerYear = 1
-        break
-      case 'custom':
-        periodsPerYear = 365 / customDays
-        break
-      default:
-        periodsPerYear = 12
+    if (frequency === 'lumpsum') {
+      // Lumpsum: One-time investment
+      // Compound Interest Formula: FV = P × (1 + r)^t
+      investedAmount = investmentAmount
+      const annualRate = returnRate / 100
+      futureValue = investmentAmount * Math.pow(1 + annualRate, timePeriod)
+    } else {
+      // SIP: Periodic investments
+      // Calculate periods per year based on frequency
+      let periodsPerYear: number
+
+      switch (frequency) {
+        case 'daily':
+          periodsPerYear = 365
+          break
+        case 'weekly':
+          periodsPerYear = 52
+          break
+        case 'monthly':
+          periodsPerYear = 12
+          break
+        case 'yearly':
+          periodsPerYear = 1
+          break
+        case 'custom':
+          periodsPerYear = 365 / customDays
+          break
+        default:
+          periodsPerYear = 12
+      }
+
+      const ratePerPeriod = returnRate / periodsPerYear / 100
+      const totalPeriods = timePeriod * periodsPerYear
+      investedAmount = investmentAmount * totalPeriods
+
+      // SIP Future Value formula: P × ({[1 + r]^n – 1} / r) × (1 + r)
+      futureValue =
+        investmentAmount *
+        ((Math.pow(1 + ratePerPeriod, totalPeriods) - 1) / ratePerPeriod) *
+        (1 + ratePerPeriod)
     }
-
-    const ratePerPeriod = returnRate / periodsPerYear / 100
-    const totalPeriods = timePeriod * periodsPerYear
-    const investedAmount = investmentAmount * totalPeriods
-
-    // SIP Future Value formula: P × ({[1 + r]^n – 1} / r) × (1 + r)
-    const futureValue =
-      investmentAmount *
-      ((Math.pow(1 + ratePerPeriod, totalPeriods) - 1) / ratePerPeriod) *
-      (1 + ratePerPeriod)
 
     const estimatedReturns = futureValue - investedAmount
 
@@ -101,12 +120,25 @@ export function SIPCalculator() {
 
       {/* Investment Frequency Dropdown */}
       <div className="mb-6">
-        <label className="text-muted-foreground mb-2 block text-sm">
+        <label className="text-muted-foreground mb-2 block flex justify-between text-sm">
           Investment Frequency
+          <span>
+            <input
+              type="checkbox"
+              checked={frequency === 'lumpsum'}
+              onChange={() =>
+                setFrequency(frequency === 'lumpsum' ? 'monthly' : 'lumpsum')
+              }
+            />{' '}
+            Lumpsum
+          </span>
         </label>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="border-border bg-background focus:ring-primary/50 hover:bg-muted/50 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-base font-medium transition-colors focus:ring-2 focus:outline-none">
+            <button
+              disabled={frequency === 'lumpsum'}
+              className="border-border bg-background focus:ring-primary/50 hover:bg-muted/50 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-base font-medium transition-colors focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <span className="capitalize">{frequency}</span>
               <ChevronDown className="text-muted-foreground h-4 w-4" />
             </button>
@@ -167,7 +199,7 @@ export function SIPCalculator() {
             className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             min="0"
             max={
-              frequency === 'yearly'
+              frequency === 'yearly' || frequency === 'lumpsum'
                 ? 10000000
                 : frequency === 'monthly'
                   ? 1000000
@@ -175,21 +207,19 @@ export function SIPCalculator() {
             }
           />
         </label>
-        <input
-          type="range"
-          min="0"
+        <Slider
+          min={0}
           max={
-            frequency === 'yearly'
+            frequency === 'yearly' || frequency === 'lumpsum'
               ? 1000000
               : frequency === 'monthly'
                 ? 100000
                 : 10000
           }
-          value={investmentAmount}
-          onChange={(e) =>
-            setInvestmentAmount(Math.max(0, Number(e.target.value)))
-          }
-          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+          step={100}
+          value={[investmentAmount]}
+          onValueChange={(value) => setInvestmentAmount(value[0])}
+          className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹0</span>
@@ -213,13 +243,13 @@ export function SIPCalculator() {
             {returnRate}%
           </div>
         </div>
-        <input
-          type="range"
-          min="1"
-          max="30"
-          value={returnRate}
-          onChange={(e) => setReturnRate(Number(e.target.value))}
-          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+        <Slider
+          min={1}
+          max={30}
+          step={0.1}
+          value={[returnRate]}
+          onValueChange={(value) => setReturnRate(value[0])}
+          className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1%</span>
@@ -237,13 +267,13 @@ export function SIPCalculator() {
             {timePeriod} Years
           </div>
         </div>
-        <input
-          type="range"
-          min="1"
-          max="40"
-          value={timePeriod}
-          onChange={(e) => setTimePeriod(Number(e.target.value))}
-          className="bg-primary/50 accent-primary h-2 w-full cursor-pointer appearance-none rounded-lg"
+        <Slider
+          min={1}
+          max={40}
+          step={1}
+          value={[timePeriod]}
+          onValueChange={(value) => setTimePeriod(value[0])}
+          className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1 year</span>

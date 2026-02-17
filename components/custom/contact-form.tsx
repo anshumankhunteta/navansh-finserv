@@ -1,10 +1,19 @@
 'use client'
 'use no memo'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Mail, Phone, Loader2, CheckCircle2 } from 'lucide-react'
+import {
+  Mail,
+  Phone,
+  Loader2,
+  CheckCircle2,
+  Sparkles,
+  ArrowRight,
+} from 'lucide-react'
 import { submitEnquiry, type FormState } from '@/app/enquire/actions'
+import confetti from 'canvas-confetti'
+import { Button } from '../ui/button'
 
 type FormData = {
   firstName: string
@@ -20,6 +29,59 @@ type FormData = {
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formState, setFormState] = useState<FormState | null>(null)
+  const [showSuccessCard, setShowSuccessCard] = useState(false)
+  const [countdown, setCountdown] = useState(60) // 60 seconds = 1 minute rate limit
+  const [confettiCount, setConfettiCount] = useState(0)
+
+  // Load persisted state from localStorage on mount
+  useEffect(() => {
+    const savedEndTime = localStorage.getItem('successCardEndTime')
+    const savedConfettiCount = localStorage.getItem('confettiCount')
+
+    if (savedConfettiCount) {
+      setConfettiCount(parseInt(savedConfettiCount, 10))
+    }
+
+    if (savedEndTime) {
+      const endTime = parseInt(savedEndTime, 10)
+      const now = Date.now()
+      const remaining = Math.ceil((endTime - now) / 1000)
+
+      if (remaining > 0) {
+        setShowSuccessCard(true)
+        setCountdown(remaining)
+      } else {
+        // Clear expired state
+        localStorage.removeItem('successCardEndTime')
+        localStorage.removeItem('confettiCount')
+      }
+    }
+  }, [])
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!showSuccessCard) return
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          localStorage.removeItem('successCardEndTime')
+          return 0 // Stop at 0 instead of resetting
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [showSuccessCard])
+
+  // Reset form and clear success card
+  const resetForm = () => {
+    setShowSuccessCard(false)
+    localStorage.removeItem('successCardEndTime')
+    setCountdown(60)
+  }
 
   const {
     register,
@@ -67,8 +129,92 @@ export function ContactForm() {
     setIsSubmitting(false)
 
     if (result.success) {
+      // Trigger confetti animation
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#0d9488', '#14b8a6', '#2dd4bf'], // Teal theme colors
+      })
       reset()
+
+      // Show success card and persist end time in localStorage
+      const endTime = Date.now() + 60 * 1000 // 60 seconds from now
+      localStorage.setItem('successCardEndTime', endTime.toString())
+      setShowSuccessCard(true)
+      setCountdown(60)
     }
+  }
+
+  // Handle confetti button click
+  const triggerConfetti = () => {
+    if (confettiCount >= 10) return // Max 10 uses
+
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#0d9488', '#14b8a6', '#2dd4bf'],
+    })
+
+    const newCount = confettiCount + 1
+    setConfettiCount(newCount)
+    localStorage.setItem('confettiCount', newCount.toString())
+  }
+
+  // If success card is showing, render that instead of the form
+  if (showSuccessCard) {
+    return (
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="bg-secondary/10 border-primary/40 h-full rounded-2xl border p-12 text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="bg-primary/10 rounded-full p-6">
+              <CheckCircle2 className="text-primary h-16 w-16" />
+            </div>
+          </div>
+          <h2 className="text-primary mb-3 text-2xl font-bold">
+            Enquiry Submitted Successfully!
+          </h2>
+          <p className="text-muted-foreground mb-6 text-lg">
+            Thank you for reaching out. Our team will review your enquiry and
+            get back to you soon.
+          </p>
+
+          {/* Fun confetti button */}
+          <div className="mb-6">
+            <button
+              onClick={triggerConfetti}
+              disabled={confettiCount >= 10}
+              className={`inline-flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-all ${
+                confettiCount >= 10
+                  ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95'
+              }`}
+              title={
+                confettiCount >= 10
+                  ? 'Max confetti reached!'
+                  : 'Trigger confetti celebration'
+              }
+            >
+              <Sparkles className="h-5 w-5" />
+              {confettiCount >= 10
+                ? 'Confetti Depleted'
+                : `Celebrate Again (${10 - confettiCount} left)`}
+            </button>
+          </div>
+
+          <div className="bg-background dark:bg-background/50 rounded-xl p-4">
+            <p className="text-muted-foreground text-sm">
+              You can submit another enquiry in{' '}
+              <span className="text-primary font-semibold">{countdown}s</span>
+            </p>
+            <Button onClick={resetForm} variant="link" disabled={countdown > 0}>
+              Submit Another Query
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -336,21 +482,10 @@ export function ContactForm() {
           )}
         </button>
 
-        {/* Success/Error Messages */}
-        {formState && (
-          <div
-            className={`rounded-lg border p-4 ${
-              formState.success
-                ? 'border-primary/20 bg-primary/5 text-primary'
-                : 'border-destructive/20 bg-destructive/5 text-destructive'
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              {formState.success && (
-                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0" />
-              )}
-              <p className="text-sm font-medium">{formState.message}</p>
-            </div>
+        {/* Error Messages Only (Success is handled by success card) */}
+        {formState && !formState.success && (
+          <div className="border-destructive/20 bg-destructive/5 text-destructive rounded-lg border p-4">
+            <p className="text-sm font-medium">{formState.message}</p>
           </div>
         )}
       </form>
