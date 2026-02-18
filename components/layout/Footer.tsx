@@ -5,8 +5,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
-      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto flex flex-col justify-between gap-10 md:flex-row">
+      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-24">
+        <div className="mx-auto flex flex-col justify-between gap-10 px-2 md:flex-row">
           {/* Brand */}
           <div>
             <Link href="/" className="mb-4 flex items-center space-x-2">
@@ -23,11 +23,11 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="mb-4 font-semibold">Quick Links</h3>
-            <ul className="grid grid-cols-5 gap-2 md:grid-cols-1">
+            <ul className="grid w-[70%] grid-cols-3 gap-1 text-left sm:w-full sm:text-right md:grid-cols-1">
               <li>
                 <Link
                   href="/"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Home
                 </Link>
@@ -35,7 +35,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/services"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Services
                 </Link>
@@ -43,7 +43,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   About
                 </Link>
@@ -51,15 +51,23 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Contact
                 </Link>
               </li>
               <li>
                 <Link
+                  href="/enquire"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
+                >
+                  Enquire
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/privacy"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -76,7 +84,7 @@ export default function Footer() {
             details on risk factors, terms and conditions, please read the sales
             brochure carefully before concluding a sale.
           </p>
-          <p className="text-secondary-foreground/80 text-sm">
+          <p className="text-secondary-foreground/80 text-xs">
             {currentYear} Navansh Finserv.
           </p>
         </div>

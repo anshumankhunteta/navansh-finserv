@@ -110,7 +110,7 @@ export function SIPCalculator() {
   }
 
   return (
-    <div className="bg-card border-border/50 sticky top-24 rounded-2xl border p-6 md:p-8">
+    <div>
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-primary/10 text-primary rounded-lg p-2">
           <Calculator className="h-6 w-6" />

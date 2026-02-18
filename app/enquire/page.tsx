@@ -1,5 +1,5 @@
 import { ContactForm } from '@/components/custom/contact-form'
-import { SIPCalculator } from '@/components/custom/SIPCalculator'
+import { CalculatorTabs } from '@/components/custom/CalculatorTabs'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -25,7 +25,7 @@ export default function GetQuotePage() {
         </div>
         <div className="grid grid-cols-1 gap-8 py-12 md:grid-cols-2 md:py-20">
           <ContactForm />
-          <SIPCalculator />
+          <CalculatorTabs />
         </div>
         {/* <div className="py-20">
           <ContactInfo />
