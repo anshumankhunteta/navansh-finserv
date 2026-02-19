@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Navansh from '../icons/Navansh'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -10,6 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="mb-4 flex items-center space-x-2">
+              <Navansh height={24} alt />
               <span className="text-primary text-2xl font-bold">Navansh</span>
               <span className="text-secondary-foreground text-2xl font-bold">
                 Finserv

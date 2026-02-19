@@ -21,6 +21,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
+import Navansh from '../icons/Navansh'
+import { useTheme } from 'next-themes'
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
@@ -46,16 +48,15 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
+  const { theme } = useTheme()
 
   return (
     <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold">
-            NF
-          </div>
-          <span className="text-xl font-bold tracking-tight">
+        <Link href="/" className="flex items-baseline gap-2">
+          <Navansh height={24} alt={theme === 'dark'} />
+          <span className="text-2xl font-bold tracking-tight">
             Navansh <span className="text-primary">Finserv</span>
           </span>
         </Link>
