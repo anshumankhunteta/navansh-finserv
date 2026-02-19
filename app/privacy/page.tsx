@@ -10,26 +10,28 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col backdrop-blur-[3px]">
+    <div className="flex flex-col">
       {/* Header */}
-      <section className="py-16">
+      <section className="py-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+            <h1 className="mb-4 text-3xl font-bold md:text-4xl">
               Privacy Policy
             </h1>
-            <p className="text-muted-foreground">Last updated: February 2026</p>
+            <p className="text-muted-foreground">
+              Last updated: 20 February 2026
+            </p>
           </div>
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-16">
+      <section className="py-10">
         <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none">
             <div className="space-y-8">
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   1. Introduction
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -42,7 +44,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   2. Information We Collect
                 </h2>
                 <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -60,7 +62,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   3. How We Use Your Information
                 </h2>
                 <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -80,7 +82,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   4. Information Sharing and Disclosure
                 </h2>
                 <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -103,7 +105,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   5. Data Security
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -116,7 +118,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   6. Your Rights
                 </h2>
                 <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -134,7 +136,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   7. Cookies and Tracking
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -146,7 +148,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   8. Compliance with Indian Laws
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -158,7 +160,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-foreground mb-4 text-2xl font-bold">
+                <h2 className="text-foreground mb-4 text-xl font-bold">
                   9. Changes to This Policy
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -170,7 +172,7 @@ export default function PrivacyPage() {
 
               <div>
                 <Link href="/contact">
-                  <h2 className="text-foreground mb-4 text-2xl font-bold">
+                  <h2 className="text-foreground mb-4 text-xl font-bold">
                     10. Contact Us{' '}
                     <Link2 className="text-muted-foreground inline-block" />
                   </h2>

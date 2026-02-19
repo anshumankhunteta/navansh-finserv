@@ -25,7 +25,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="mb-4 font-semibold">Quick Links</h3>
-            <ul className="grid grid-cols-5 gap-2 md:grid-cols-1">
+            <ul className="grid grid-cols-5 gap-2 lg:grid-cols-1">
               <li>
                 <Link
                   href="/"
