@@ -94,7 +94,7 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="flex w-[300px] flex-col p-0 sm:w-[350px]"
+              className="flex w-[300px] flex-col p-0 sm:w-[350px] gap-0"
             >
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <SheetDescription className="sr-only">
@@ -102,12 +102,10 @@ export default function Navbar() {
               </SheetDescription>
 
               {/* Header Section */}
-              <div className="border-border/50 border-b p-6 pb-4">
+              <div className="p-6 pb-4">
                 <SheetClose asChild>
                   <Link href="/" className="group flex items-center gap-3">
-                    <div className="bg-primary text-primary-foreground shadow-primary/25 flex h-10 w-10 items-center justify-center rounded-xl text-base font-bold shadow-lg transition-transform group-hover:scale-105">
-                      NF
-                    </div>
+                    <Navansh height={52} alt={theme === 'dark'} />
                     <div>
                       <span className="block text-lg font-bold">
                         Navansh <span className="text-primary">Finserv</span>
@@ -121,15 +119,15 @@ export default function Navbar() {
               </div>
 
               {/* Navigation Links */}
-              <nav className="flex-1 overflow-auto p-4">
-                <div className="space-y-1">
+              <nav className="flex-1 overflow-auto py-4">
+                <div className="border-t border-primary/50">
                   {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
                       <SheetClose asChild key={link.href}>
                         <Link
                           href={link.href}
-                          className="shadow-background hover:text-primary group flex items-center gap-4 rounded-xl px-4 py-3 shadow-md transition-all active:scale-105"
+                          className="hover:text-primary group flex items-center gap-4 border-b border-primary/50 px-4 py-3 transition-all active:bg-primary/30"
                         >
                           <div className="bg-background group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
                             <Icon className="text-primary group-hover:text-primary h-5 w-5 transition-colors" />
@@ -150,7 +148,7 @@ export default function Navbar() {
                 <SheetClose asChild>
                   <Button
                     asChild
-                    className="shadow-primary/25 group h-12 w-full text-base font-semibold shadow-lg"
+                    className="shadow-primary/25 group h-12 w-full text-base font-semibold shadow-md"
                   >
                     <Link
                       href="/enquire"

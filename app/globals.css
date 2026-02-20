@@ -47,25 +47,17 @@
 }
 
 :root {
-  /* Radius: 0.5rem (rounded-lg) as specified */
   --radius: 0.5rem;
 
-  /* Light Mode Colors - Teal & Charcoal Theme */
   --background: #409e5433;
-  /* Light Gray */
   --foreground: #232931;
-  /* Deep Charcoal */
   --card: #ffffff;
   --card-foreground: #232931;
   --popover: #ffffff;
   --popover-foreground: #232931;
 
-  /* Primary: Vibrant Teal */
   --primary: #409e54;
   --primary-foreground: #232931;
-  /* Deep Charcoal text on Teal buttons */
-
-  /* Secondary: Soft Charcoal */
   --secondary: #002b0e;
   --secondary-foreground: #eeeeee;
 
@@ -95,21 +87,15 @@
 }
 
 .dark {
-  /* Dark Mode Colors - Deep Dark Green Background with Bright Teal Accents */
   --background: #001407;
-  /* Very Dark Green */
   --foreground: #f5f5f5;
-  /* Brighter Light Gray for better readability */
   --card: #0a2d1a;
-  /* Dark Green-tinted card background */
   --card-foreground: #f5f5f5;
   --popover: #0d3621;
   --popover-foreground: #f5f5f5;
 
-  /* Primary: Brighter Teal for visibility */
   --primary: #52c77d;
   --primary-foreground: #ececec;
-  /* Secondary: Subtle dark green with bright foreground */
   --secondary: #0d3621;
   --secondary-foreground: #e0e0e0;
   --muted: #102e1e;

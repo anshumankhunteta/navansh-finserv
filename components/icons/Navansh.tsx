@@ -1,3 +1,6 @@
+"use client"
+import { useEffect, useState } from "react"
+
 interface NavanshLogoProps {
   /** Multiplier applied to the base 260×180 dimensions. Default: 1 */
   height?: number
@@ -8,12 +11,15 @@ interface NavanshLogoProps {
 }
 
 /**
- * Navansh Finserv logo as an inline SVG component.
+ * Navansh Finserv Logo custom React component.
  *
- * Usage:
- *   <Navansh />               // 260 × 180 px
- *   <Navansh height={90} />   // 130 × 90 px
- *   <Navansh height={360} />     // 520 × 360 px
+ * Usage: 
+ * 
+ * Use height prop to scale the logo. Default height is 36px.
+ * 
+ * Use alt prop to invert colors for dark mode.
+ * 
+ * Use title prop to set the accessible label for screen-readers.
  */
 export default function Navansh({
   height = 36,
@@ -23,7 +29,11 @@ export default function Navansh({
 }: NavanshLogoProps) {
   const BASE_WIDTH = (height * 260) / 185
   const BASE_HEIGHT = height
-  const darkVectorFill = alt ? '#eeeeee' : '#232931'
+  const [darkVectorFill, setDarkVectorFill] = useState('#232931')
+
+  useEffect(() => {
+    setDarkVectorFill(alt ? '#eeeeee' : '#232931')
+  }, [alt])
 
   return (
     <svg
