@@ -43,22 +43,20 @@ export default function HomePage() {
               <span className="text-primary">Two Decades of Experience</span>
             </h1>
             <p className="text-muted-foreground mb-8 text-lg md:text-xl">
-              Comprehensive Insurance, Wealth, and Loan Solutions tailored for
-              you
+              Financial Planning made Easy
             </p>
-            <span className="mx-auto grid w-[75%] grid-cols-1 gap-4 text-center md:grid-cols-2">
-              <Button asChild size="lg" className="px-8 text-lg shadow-md">
-                <Link href="/contact">Book a Consultation</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-primary/50 text-primary border-1 px-8 text-lg shadow-md"
+            <Button
+              asChild
+              size="lg"
+              className="hover:bg-primary/20 active:bg-primary/50 w-auto px-10 text-xl font-bold shadow-md transition-all duration-500 hover:scale-103"
+            >
+              <Link
+                className="hover:text-primary active:text-primary transition-colors"
+                href="/enquire"
               >
-                <Link href="/enquire">Send an Enquiry</Link>
-              </Button>
-            </span>
+                Get a Free Consultation!
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -125,7 +123,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Card 1 */}
             <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
               <div className="mb-6">
