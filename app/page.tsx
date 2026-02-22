@@ -43,8 +43,7 @@ export default function HomePage() {
               <span className="text-primary">Two Decades of Experience</span>
             </h1>
             <p className="text-muted-foreground mb-8 text-lg md:text-xl">
-              Comprehensive Insurance, Wealth, and Loan Solutions tailored for
-              you
+              Financial Planning made Easy
             </p>
             <Button
               asChild

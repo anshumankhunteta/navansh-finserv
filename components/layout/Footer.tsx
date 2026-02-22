@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
       <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto flex flex-col justify-between gap-10 md:flex-row">
+        <div className="mx-auto flex flex-col justify-between gap-10 md:flex-row md:pr-24">
           {/* Brand */}
           <div>
             <Link href="/" className="mb-4 flex items-center space-x-2">
@@ -25,7 +25,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="mb-4 font-semibold">Quick Links</h3>
-            <ul className="grid grid-cols-5 gap-2 lg:grid-cols-1">
+            <ul className="grid grid-cols-5 gap-2 md:grid-cols-1">
               <li>
                 <Link
                   href="/"
