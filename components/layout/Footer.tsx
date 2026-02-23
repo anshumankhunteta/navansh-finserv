@@ -13,7 +13,9 @@ export default function Footer() {
             <Link href="/" className="mb-4 flex items-center space-x-2">
               <Navansh
                 height={24}
-                style={{ '--primary-foreground': '#eeeeee' }}
+                style={
+                  { '--primary-foreground': '#eeeeee' } as React.CSSProperties
+                }
               />
               <span className="text-primary text-2xl font-bold">Navansh</span>
               <span className="text-secondary-foreground text-2xl font-bold">
