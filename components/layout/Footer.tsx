@@ -11,7 +11,10 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="mb-4 flex items-center space-x-2">
-              <Navansh height={24} alt />
+              <Navansh
+                height={24}
+                style={{ '--primary-foreground': '#eeeeee' }}
+              />
               <span className="text-primary text-2xl font-bold">Navansh</span>
               <span className="text-secondary-foreground text-2xl font-bold">
                 Finserv

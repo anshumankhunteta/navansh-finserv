@@ -22,7 +22,6 @@ import {
 import Link from 'next/link'
 import * as React from 'react'
 import Navansh from '../icons/Navansh'
-import { useTheme } from 'next-themes'
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
@@ -48,14 +47,13 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
-  const { theme } = useTheme()
 
   return (
     <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="max-w-10xl container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-baseline gap-2">
-          <Navansh height={24} alt={theme === 'dark'} />
+          <Navansh height={24} />
           <span className="text-2xl font-bold tracking-tight">
             Navansh <span className="text-primary">Finserv</span>
           </span>
@@ -94,7 +92,7 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="flex w-[300px] flex-col p-0 sm:w-[350px] gap-0"
+              className="flex w-[300px] flex-col gap-0 p-0 sm:w-[350px]"
             >
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <SheetDescription className="sr-only">
@@ -105,7 +103,7 @@ export default function Navbar() {
               <div className="p-6 pb-4">
                 <SheetClose asChild>
                   <Link href="/" className="group flex items-center gap-3">
-                    <Navansh height={52} alt={theme === 'dark'} />
+                    <Navansh height={52} />
                     <div>
                       <span className="block text-lg font-bold">
                         Navansh <span className="text-primary">Finserv</span>
@@ -120,14 +118,14 @@ export default function Navbar() {
 
               {/* Navigation Links */}
               <nav className="flex-1 overflow-auto py-4">
-                <div className="border-t border-primary/50">
+                <div className="border-primary/50 border-t">
                   {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
                       <SheetClose asChild key={link.href}>
                         <Link
                           href={link.href}
-                          className="hover:text-primary group flex items-center gap-4 border-b border-primary/50 px-4 py-3 transition-all active:bg-primary/30"
+                          className="hover:text-primary group border-primary/50 active:bg-primary/30 flex items-center gap-4 border-b px-4 py-3 transition-all"
                         >
                           <div className="bg-background group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
                             <Icon className="text-primary group-hover:text-primary h-5 w-5 transition-colors" />

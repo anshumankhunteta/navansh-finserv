@@ -35,7 +35,7 @@ export default function BusinessCard({
       {/* Logo */}
       <div className="flex flex-row items-center gap-1">
         <div>
-          <Navansh height={48} alt />
+          <Navansh height={48} />
         </div>
 
         <span>

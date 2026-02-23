@@ -1,8 +1,6 @@
+import Navansh from '@/components/icons/Navansh'
 import { Button } from '@/components/ui/button'
 import {
-  ArrowRight,
-  Building2,
-  Car,
   CheckCircle2,
   HeadphonesIcon,
   Heart,
@@ -14,14 +12,25 @@ import {
 import Link from 'next/link'
 
 export default function HomePage() {
-  // All services for homepage (headings only)
   const allServices = [
-    { title: 'Mutual Funds & SIPs', icon: TrendingUp },
-    { title: 'Health & Mediclaim', icon: Heart },
-    { title: 'General Insurance', icon: Car },
-    { title: 'Life & Term Insurance', icon: Shield },
-    { title: 'Fixed Deposits & Bonds', icon: Wallet },
-    { title: 'Corporate Loans', icon: Building2 },
+    {
+      title: 'Build a Foundation',
+      description:
+        'Started a new Job? Got some savings? Start Investing early to build a strong financial foundation to avoid headaches later.',
+      icon: TrendingUp,
+    },
+    {
+      title: 'Grow Your Wealth',
+      description:
+        'Starting a New Family? Just got Married? Do you have a good Foundation? Money attracts Money!',
+      icon: Heart,
+    },
+    {
+      title: 'Retirement Planning',
+      description:
+        'Wondering when you can stop working with what you have? We can help you allocate and grow funds according to your goals.',
+      icon: Wallet,
+    },
   ]
 
   return (
@@ -83,16 +92,16 @@ export default function HomePage() {
       {/* Our Offerings */}
       <div className="mt-20 mb-16 text-center">
         <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-          Our <span className="text-primary">Offerings</span>
+          How Our Services Can Help <span className="text-primary">You</span>?
         </h2>
         <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-          We offer a range of services to help you achieve your financial goals.{' '}
+          We can offer you personalized services based on your Life Stage.{' '}
           <Link href="/services" className="text-primary hover:underline">
             Learn More
           </Link>
         </p>
       </div>
-      <div className="mx-3 mb-16 grid grid-cols-2 gap-3 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8 2xl:grid-cols-6">
+      <div className="mb-16 grid grid-cols-1 gap-3 px-10 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8">
         {allServices.map((service) => {
           const Icon = service.icon
           return (
@@ -100,10 +109,15 @@ export default function HomePage() {
               key={service.title}
               className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
             >
-              <div className="bg-primary/10 group-hover:bg-primary text-primary mb-3 rounded-lg p-3 transition-colors group-hover:text-white">
-                <Icon className="h-6 w-6" />
+              <div className="mb-4 flex flex-row items-center gap-2">
+                <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-semibold">{service.title}</h3>
               </div>
-              <h3 className="text-sm font-semibold">{service.title}</h3>
+              <p className="text-muted-foreground text-sm">
+                {service.description}
+              </p>
             </div>
           )
         })}
@@ -113,9 +127,9 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="text-primary mb-4 text-3xl font-bold md:text-4xl">
-              Why Choose{' '}
-              <span className="text-primary-foreground">Navansh</span> Finserv
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+              Why Choose <Navansh className="inline-flex pb-2" />
+              Navansh <span className="text-primary">Finserv</span>?
             </h2>
             <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
               Experience personalized financial solutions backed by expertise
@@ -149,13 +163,9 @@ export default function HomePage() {
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>
-                    Gen-Z, Alpha or Boomers, we understand them all because of
-                    our diverse team and experience
+                    Gen-Z, Alpha or Boomers, we can understand everyone because
+                    of our diverse team and experience
                   </span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Worked 10+ Years with HNI and Super-HNI Clients</span>
                 </li>
               </ul>
             </div>
@@ -187,6 +197,10 @@ export default function HomePage() {
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>Portfolio Reviews</span>
+                </li>
+                <li className="flex items-start text-sm">
+                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
+                  <span>Worked 10+ Years with HNI and Super-HNI Clients</span>
                 </li>
               </ul>
             </div>
