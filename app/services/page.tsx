@@ -35,7 +35,7 @@ const services = [
     icon: Car,
     title: 'General Insurance',
     description:
-      'Comprehensive coverage for your Car & Bike. Good knowledge with respect to add ons from personal and client experience.',
+      'Comprehensive coverage for your Car & Bike. We have good knowledge regarding add-ons and claims from personal and client experience!',
     features: [
       'Many options for Insurance providers',
       'All necessary Add-ons',
@@ -58,16 +58,6 @@ const services = [
     description:
       'Holistic financial advisory for retirement and wealth management.',
     features: ['Retirement Planning', 'Tax Optimization', 'Estate Planning'],
-  },
-  {
-    icon: Building2,
-    title: 'Corporate Loans',
-    description: 'Capital solutions for business growth and expansion.',
-    features: [
-      'Competitive Interest Rates',
-      'Quick Approval Process',
-      'Flexible Repayment Terms',
-    ],
   },
 ]
 

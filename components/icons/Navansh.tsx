@@ -1,39 +1,29 @@
-"use client"
-import { useEffect, useState } from "react"
-
 interface NavanshLogoProps {
   /** Multiplier applied to the base 260×180 dimensions. Default: 1 */
   height?: number
   className?: string
-  alt?: boolean
   /** Accessible label for screen-readers */
   title?: string
+  style?: React.CSSProperties
 }
 
 /**
  * Navansh Finserv Logo custom React component.
  *
- * Usage: 
- * 
+ * Usage:
+ *
  * Use height prop to scale the logo. Default height is 36px.
- * 
- * Use alt prop to invert colors for dark mode.
- * 
+ *
  * Use title prop to set the accessible label for screen-readers.
  */
 export default function Navansh({
   height = 36,
   className,
   title = 'Navansh Finserv',
-  alt,
+  ...props
 }: NavanshLogoProps) {
   const BASE_WIDTH = (height * 260) / 185
   const BASE_HEIGHT = height
-  const [darkVectorFill, setDarkVectorFill] = useState('#232931')
-
-  useEffect(() => {
-    setDarkVectorFill(alt ? '#eeeeee' : '#232931')
-  }, [alt])
 
   return (
     <svg
@@ -45,6 +35,7 @@ export default function Navansh({
       className={className}
       aria-label={title}
       role="img"
+      {...props}
     >
       <title>{title}</title>
       <defs>
@@ -86,7 +77,7 @@ export default function Navansh({
           id="path2"
           d="m 205.23351,210.56356 -9.0166,20.45924 -30.83009,-9e-5 -63.66388,-98.00794 -52.015769,98.00106 H 20.012491 L 99.465446,82.41333 179.5195,207.40096 190.01884,186.59583 Z"
           style={{
-            fill: darkVectorFill,
+            fill: 'var(--primary-foreground)',
             fillOpacity: 1,
             fillRule: 'nonzero',
             stroke: 'none',
@@ -108,7 +99,7 @@ export default function Navansh({
           id="path4"
           d="m 213.10494,144.50607 16.7869,25.6601 44.23879,-86.047267 -23.78112,-10.777632 z"
           style={{
-            fill: darkVectorFill,
+            fill: 'var(--primary-foreground)',
             fillOpacity: 1,
             fillRule: 'nonzero',
             stroke: 'none',
@@ -121,7 +112,7 @@ export default function Navansh({
           transform="matrix(1.3357927,0,0,-1.3068551,275.57435,51.346372)"
           clipPath="url(#navansh-clip-path)"
           style={{
-            fill: darkVectorFill,
+            fill: 'var(--primary-foreground)',
             fillOpacity: 1,
             fillRule: 'nonzero',
             stroke: 'none',
