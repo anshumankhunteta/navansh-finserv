@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 
 export default function MileePage() {
   return (
-    <div className="flex flex-col items-center">
-      <BackButton className="text-white" />
+    <div className="flex h-screen flex-col items-center bg-[#0d3621] py-10">
       <BusinessCard name="Milee Khunteta" designation="Founder" />
       <CardActionButton />
       <CardActionButton mode="share" />
