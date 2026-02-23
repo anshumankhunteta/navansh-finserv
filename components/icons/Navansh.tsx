@@ -4,7 +4,7 @@ interface NavanshLogoProps {
   className?: string
   /** Accessible label for screen-readers */
   title?: string
-  styles?: React.CSSProperties
+  style?: React.CSSProperties
 }
 
 /**
