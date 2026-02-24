@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import BusinessCard from '@/components/custom/BusinessCard'
+import type { Metadata } from 'next'
 import CardActionButton from './DownloadCardButton'
-import BackButton from '@/components/custom/BackButton'
 
 export const metadata: Metadata = {
   title: 'Milee Khunteta | Navansh Finserv',

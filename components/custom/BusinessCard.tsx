@@ -35,7 +35,10 @@ export default function BusinessCard({
       {/* Logo */}
       <div className="flex flex-row items-center gap-1">
         <div>
-          <Navansh height={48} />
+          <Navansh
+            height={48}
+            style={{ '--primary-foreground': '#eeeeee' } as React.CSSProperties}
+          />
         </div>
 
         <span>
