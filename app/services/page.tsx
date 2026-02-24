@@ -130,11 +130,16 @@ export default function ServicesPage() {
             Need Help Choosing the Right Service?
           </h2>
           <p className="text-muted-foreground mx-auto mb-6 max-w-2xl text-lg">
-            Our experts are here to guide you through every step
+            We will guide you through every step
           </p>
           <Button asChild size="lg">
-            <Link href="/contact" className="text-lg">
-              Get a Free Consultation
+            <Link href="/quote" className="text-lg">
+              Get a Quote
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="ml-2">
+            <Link href="/contact" className="text-primary text-lg">
+              Contact Us
             </Link>
           </Button>
         </div>
