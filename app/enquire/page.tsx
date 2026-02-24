@@ -1,4 +1,4 @@
-import { ContactForm } from '@/components/custom/contact-form'
+import { ContactForm } from '@/components/custom/ContactForm'
 import { SIPCalculator } from '@/components/custom/SIPCalculator'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
