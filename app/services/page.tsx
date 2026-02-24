@@ -114,7 +114,7 @@ export default function ServicesPage() {
                     variant="outline"
                     className="group-hover:bg-primary group-hover:border-primary w-full group-hover:text-white"
                   >
-                    <Link href="/contact">Learn More</Link>
+                    <Link href="/quote">Learn More</Link>
                   </Button>
                 </div>
               )
