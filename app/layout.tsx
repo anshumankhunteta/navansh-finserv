@@ -92,7 +92,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: 'https://navansh.in/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Navansh Finserv',
@@ -111,7 +111,7 @@ export const metadata: Metadata = {
     title: 'Navansh Finserv',
     description:
       'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
-    images: ['https://navansh.in/og-image.png'],
+    images: ['/og-image.png'],
   },
 }
 
