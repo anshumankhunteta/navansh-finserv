@@ -1,18 +1,11 @@
 'use client'
 'use no memo'
 
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import {
-  Mail,
-  Phone,
-  Loader2,
-  CheckCircle2,
-  Sparkles,
-  ArrowRight,
-} from 'lucide-react'
 import { submitEnquiry, type FormState } from '@/app/enquire/actions'
 import confetti from 'canvas-confetti'
+import { CheckCircle2, Loader2, Mail, Phone, Sparkles } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Button } from '../ui/button'
 
 type FormData = {
