@@ -3,9 +3,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Our Story | Navansh Finserv',
+  title: 'Our Story',
   description:
     "Learn about our founder's journey from sales manager to firm owner, with 15 years of experience and 500+ happy clients.",
+  alternates: {
+    canonical: 'https://navansh.in/about',
+  },
+  openGraph: {
+    url: 'https://navansh.in/about',
+    title: 'Our Story | Navansh Finserv',
+    description:
+      "Learn about our founder's journey from sales manager to firm owner, with 15 years of experience and 500+ happy clients.",
+  },
 }
 
 export default function AboutPage() {

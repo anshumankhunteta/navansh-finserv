@@ -4,9 +4,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Our Services | Navansh Finserv',
+  title: 'Our Services',
   description:
-    'Explore our comprehensive financial services including general insurance, health & mediclaim, life insurance, mutual funds, bonds, and corporate loans.',
+    'Explore all of our financial services including general insurance, health & mediclaim, life insurance, mutual funds, fixed deposits and bonds.',
+  alternates: {
+    canonical: 'https://navansh.in/services',
+  },
+  openGraph: {
+    url: 'https://navansh.in/services',
+    title: 'Our Services | Navansh Finserv',
+    description:
+      'Explore all of our financial services including general insurance, health & mediclaim, life insurance, mutual funds, fixed deposits and bonds.',
+  },
 }
 
 const services = [
