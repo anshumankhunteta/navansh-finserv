@@ -3,9 +3,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Navansh Finserv',
+  title: 'Privacy Policy',
   description:
     'Learn how Navansh Finserv collects, uses, and protects your personal information.',
+  alternates: {
+    canonical: 'https://navansh.in/privacy',
+  },
+  openGraph: {
+    url: 'https://navansh.in/privacy',
+    title: 'Privacy Policy | Navansh Finserv',
+    description:
+      'Learn how Navansh Finserv collects, uses, and protects your personal information.',
+  },
 }
 
 export default function PrivacyPage() {

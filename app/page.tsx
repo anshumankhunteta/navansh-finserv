@@ -9,7 +9,20 @@ import {
   Users,
   Wallet,
 } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Navansh Finserv | Financial Services & Insurance in Kolkata',
+  description:
+    'Securing Families & Futures with Two Decades of Experience. Comprehensive financial solutions including insurance, mutual funds, and wealth management in Kolkata.',
+  alternates: {
+    canonical: 'https://navansh.in',
+  },
+  openGraph: {
+    url: 'https://navansh.in',
+  },
+}
 
 export default function HomePage() {
   const allServices = [

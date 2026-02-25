@@ -16,9 +16,12 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://navansh.in'),
-  title: 'Navansh Finserv',
+  title: {
+    default: 'Navansh Finserv',
+    template: '%s | Navansh Finserv',
+  },
   description:
-    'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
+    'Financial Services made Easy for you. Over two decades of expertise in the financial services industry. Based out of Kolkata, India.',
   keywords: [
     'insurance',
     'wealth management',
@@ -33,7 +36,6 @@ export const metadata: Metadata = {
     'travel insurance',
     'business insurance',
     'loan',
-    'wealth management',
     'financial planning',
     'term insurance',
     'bonds',
@@ -51,8 +53,42 @@ export const metadata: Metadata = {
     'best finance in kolkata',
     'best finance firm in kolkata',
     'best financial services in kolkata',
+    'financial advisor kolkata',
+    'insurance agent kolkata',
+    'best financial planner in kolkata',
+    'wealth management kolkata',
+    'investment consultant kolkata',
+    'insurance broker kolkata',
+    'financial planner near me',
+    'SIP investment',
+    'systematic investment plan',
+    'SIP mutual funds',
+    'best SIP to invest',
+    'mediclaim policy',
+    'cashless health insurance',
+    'family health insurance',
+    'senior citizen health insurance',
+    'motor insurance',
+    'bike insurance',
+    'two wheeler insurance',
+    'personal accident insurance',
+    'investment planning',
+    'tax saving investment',
+    'tax planning',
+    'NPS',
+    'national pension scheme',
+    'best insurance advisor in kolkata',
+    'financial consultant kolkata',
+    'insurance policy comparison',
+    'how to invest in mutual funds',
+    'best health insurance plan india',
+    'child education planning',
+    'family financial planning',
   ],
   authors: [{ name: 'Anshuman Khunteta' }],
+  alternates: {
+    canonical: 'https://navansh.in',
+  },
   openGraph: {
     images: [
       {
@@ -66,8 +102,16 @@ export const metadata: Metadata = {
     title: 'Navansh Finserv',
     description:
       'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
+    url: 'https://navansh.in',
     type: 'website',
     locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Navansh Finserv',
+    description:
+      'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
+    images: ['/og-image.png'],
   },
 }
 

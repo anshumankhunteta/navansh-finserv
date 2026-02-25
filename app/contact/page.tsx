@@ -4,9 +4,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Navansh Finserv',
+  title: 'Contact Us',
   description:
     'Schedule a free consultation with our financial experts. Get personalized insurance and wealth management solutions.',
+  alternates: {
+    canonical: 'https://navansh.in/contact',
+  },
+  openGraph: {
+    url: 'https://navansh.in/contact',
+    title: 'Contact Us | Navansh Finserv',
+    description:
+      'Schedule a free consultation with our financial experts. Get personalized insurance and wealth management solutions.',
+  },
 }
 
 export default function ContactPage() {
