@@ -13,14 +13,27 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Navansh Finserv | Financial Services & Insurance in Kolkata',
+  title: 'Navansh Finserv',
   description:
     'Securing Families & Futures with Two Decades of Experience. Comprehensive financial solutions including insurance, mutual funds, and wealth management in Kolkata.',
   alternates: {
     canonical: 'https://navansh.in',
   },
   openGraph: {
+    title: 'Navansh Finserv',
+    type: 'website',
+    siteName: 'Navansh Finserv',
+    description:
+      'Securing Families & Futures with Two Decades of Experience. Comprehensive financial solutions including insurance, mutual funds, and wealth management in Kolkata.',
     url: 'https://navansh.in',
+    images: [
+      {
+        url: 'https://navansh.in/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Navansh Finserv',
+      },
+    ],
   },
 }
 
