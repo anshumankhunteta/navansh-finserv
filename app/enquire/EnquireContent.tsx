@@ -61,6 +61,16 @@ export function EnquireContent() {
               opts={{
                 align: 'start',
                 loop: true,
+                watchDrag: (_emblaApi, evt) => {
+                  const target = (evt as PointerEvent | TouchEvent)
+                    .target as HTMLElement | null
+                  if (!target) return true
+                  // If touch/pointer started inside a slider, input, textarea, select, or button — don't drag carousel
+                  const interactive = target.closest(
+                    '[data-slot="slider"], input, textarea, select, button, a, label'
+                  )
+                  return !interactive
+                },
               }}
               className="w-full"
             >

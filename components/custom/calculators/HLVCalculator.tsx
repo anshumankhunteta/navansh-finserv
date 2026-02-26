@@ -33,8 +33,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
     )
   }
 
-  const stopPropagation = (e: React.PointerEvent) => e.stopPropagation()
-
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
@@ -67,8 +65,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 Math.max(20000, Math.min(2000000, Number(e.target.value)))
               )
             }
-            onPointerDown={stopPropagation}
-            onPointerMove={stopPropagation}
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
         </div>
@@ -79,8 +75,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           value={[monthlyIncome]}
           onValueChange={(value) => setMonthlyIncome(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹20K</span>
@@ -109,8 +103,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 )
               )
             }
-            onPointerDown={stopPropagation}
-            onPointerMove={stopPropagation}
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
         </div>
@@ -121,8 +113,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           value={[monthlyExpenses]}
           onValueChange={(value) => setMonthlyExpenses(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹5K</span>
@@ -147,8 +137,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           value={[yearsToRetirement]}
           onValueChange={(value) => setYearsToRetirement(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1 year</span>

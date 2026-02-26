@@ -35,8 +35,6 @@ export function EducationInflationCalculator({
     )
   }
 
-  const stopPropagation = (e: React.PointerEvent) => e.stopPropagation()
-
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
@@ -68,8 +66,6 @@ export function EducationInflationCalculator({
                 Math.max(100000, Math.min(5000000, Number(e.target.value)))
               )
             }
-            onPointerDown={stopPropagation}
-            onPointerMove={stopPropagation}
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
         </div>
@@ -80,8 +76,6 @@ export function EducationInflationCalculator({
           value={[currentCost]}
           onValueChange={(value) => setCurrentCost(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹1L</span>
@@ -102,12 +96,10 @@ export function EducationInflationCalculator({
         <Slider
           min={5}
           max={15}
-          step={0.5}
+          step={0.1}
           value={[inflationRate]}
           onValueChange={(value) => setInflationRate(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>5%</span>
@@ -132,8 +124,6 @@ export function EducationInflationCalculator({
           value={[years]}
           onValueChange={(value) => setYears(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1 year</span>

@@ -146,8 +146,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     onConsult?.(label)
   }
 
-  const stopPropagation = (e: React.PointerEvent) => e.stopPropagation()
-
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
@@ -224,8 +222,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             onChange={(e) =>
               setCustomDays(Math.max(1, Math.min(365, Number(e.target.value))))
             }
-            onPointerDown={stopPropagation}
-            onPointerMove={stopPropagation}
             className="border-border bg-background focus:ring-primary/50 w-full rounded-lg border px-4 py-3 text-lg font-semibold focus:ring-2 focus:outline-none"
           />
         </div>
@@ -242,8 +238,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             onChange={(e) =>
               setInvestmentAmount(Math.max(0, Number(e.target.value)))
             }
-            onPointerDown={stopPropagation}
-            onPointerMove={stopPropagation}
             className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             min="0"
             max={
@@ -268,8 +262,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           value={[investmentAmount]}
           onValueChange={(value) => setInvestmentAmount(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹500</span>
@@ -302,8 +294,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           value={[returnRate]}
           onValueChange={(value) => setReturnRate(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1%</span>
@@ -326,8 +316,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           value={[timePeriod]}
           onValueChange={(value) => setTimePeriod(value[0])}
           className="w-full"
-          onPointerDown={stopPropagation}
-          onPointerMove={stopPropagation}
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>1 year</span>
@@ -365,8 +353,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
                 value={[stepUpPercent]}
                 onValueChange={(value) => setStepUpPercent(value[0])}
                 className="w-full"
-                onPointerDown={stopPropagation}
-                onPointerMove={stopPropagation}
               />
               <div className="text-muted-foreground mt-1 flex justify-between text-xs">
                 <span>1%</span>
