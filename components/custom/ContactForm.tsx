@@ -3,10 +3,24 @@
 
 import { submitEnquiry, type FormState } from '@/app/enquire/actions'
 import confetti from 'canvas-confetti'
-import { CheckCircle2, Loader2, Mail, Phone, Sparkles } from 'lucide-react'
+import {
+  CheckCircle2,
+  ChevronDown,
+  Loader2,
+  Mail,
+  Phone,
+  Sparkles,
+  X,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '../ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
 
 type FormData = {
   firstName: string
@@ -390,17 +404,57 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               Gender{' '}
               <span className="text-muted-foreground text-xs">(Optional)</span>
             </label>
-            <select
-              id="gender"
-              {...register('gender')}
-              className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-            >
-              <option value="">Select gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer-not-to-say">Prefer not to say</option>
-            </select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border-border bg-input focus:border-primary focus:ring-primary/20 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors focus:ring-2 focus:outline-none"
+                >
+                  <span
+                    className={
+                      watch('gender')
+                        ? 'text-foreground'
+                        : 'text-muted-foreground'
+                    }
+                  >
+                    {watch('gender')
+                      ? {
+                          male: 'Male',
+                          female: 'Female',
+                          other: 'Other',
+                          'prefer-not-to-say': 'Prefer not to say',
+                        }[
+                          watch('gender') as
+                            | 'male'
+                            | 'female'
+                            | 'other'
+                            | 'prefer-not-to-say'
+                        ]
+                      : 'Select gender'}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                <DropdownMenuItem onSelect={() => setValue('gender', '')}>
+                  Select gender
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setValue('gender', 'male')}>
+                  Male
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setValue('gender', 'female')}>
+                  Female
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setValue('gender', 'other')}>
+                  Other
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setValue('gender', 'prefer-not-to-say')}
+                >
+                  Prefer not to say
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {formState?.errors?.gender && (
               <p className="text-destructive mt-1 text-sm">
                 {formState.errors.gender[0]}
@@ -414,13 +468,26 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
           <label htmlFor="message" className="mb-2 block text-sm font-medium">
             Message
           </label>
-          <textarea
-            id="message"
-            rows={5}
-            {...register('message')}
-            className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full resize-none rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-            placeholder="Ask something if you want to..."
-          />
+          <div className="relative">
+            <textarea
+              id="message"
+              rows={5}
+              {...register('message')}
+              className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full resize-none rounded-lg border py-3 pr-10 pl-4 transition-colors focus:ring-2 focus:outline-none"
+              placeholder="Ask something if you want to..."
+            />
+            {watch('message') && (
+              <button
+                type="button"
+                onClick={() => setValue('message', '')}
+                className="text-muted-foreground hover:primary/40 hover:bg-primary/20 focus:ring-primary/20 absolute top-3 right-3 rounded-full p-1 transition-colors focus:ring-2 focus:outline-none"
+                title="Clear message"
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Clear message</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Row 4: Contact Method Selection */}
