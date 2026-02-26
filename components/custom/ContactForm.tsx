@@ -19,7 +19,11 @@ type FormData = {
   contactMethod: ('whatsapp' | 'call' | 'mail')[]
 }
 
-export function ContactForm() {
+interface ContactFormProps {
+  externalMessage?: string
+}
+
+export function ContactForm({ externalMessage }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formState, setFormState] = useState<FormState | null>(null)
   const [showSuccessCard, setShowSuccessCard] = useState(false)
@@ -80,6 +84,7 @@ export function ContactForm() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<FormData>({
@@ -94,6 +99,13 @@ export function ContactForm() {
       contactMethod: [],
     },
   })
+
+  // Auto-inject external message (from calculator consult buttons)
+  useEffect(() => {
+    if (externalMessage) {
+      setValue('message', externalMessage)
+    }
+  }, [externalMessage, setValue])
 
   const contactMethod = watch('contactMethod')
   const email = watch('email')
@@ -159,7 +171,10 @@ export function ContactForm() {
   if (showSuccessCard) {
     return (
       <div className="mx-auto w-full max-w-3xl">
-        <div className="bg-secondary/10 border-primary/40 h-full rounded-2xl border p-12 text-center">
+        <div
+          id="contact-form"
+          className="bg-secondary/10 border-primary/40 h-full rounded-2xl border p-12 text-center"
+        >
           <div className="mb-6 flex justify-center">
             <div className="bg-primary/10 rounded-full p-6">
               <CheckCircle2 className="text-primary h-16 w-16" />
@@ -211,13 +226,13 @@ export function ContactForm() {
   }
 
   return (
-    <div className="mx-auto mb-16 w-full max-w-3xl">
-      <h1 className="text-primary mb-4 text-center text-3xl font-bold md:text-4xl">
+    <div id="contact-form" className="mx-auto mb-16 w-full max-w-3xl">
+      {/* <h1 className="text-primary mb-4 text-center text-3xl font-bold md:text-4xl">
         Send us your Query
       </h1>
       <p className="text-muted-foreground mb-6 text-center text-lg">
         We&apos;ll personally review it and get back to you.
-      </p>
+      </p> */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: First Name & Last Name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
