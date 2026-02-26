@@ -47,9 +47,29 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
+  const [hidden, setHidden] = React.useState(false)
+  const lastScrollY = React.useRef(0)
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      const currentY = window.scrollY
+      // Only hide/show on mobile (< 768px) and ignore tiny scroll jitter
+      if (
+        window.innerWidth < 768 &&
+        Math.abs(currentY - lastScrollY.current) > 0
+      ) {
+        setHidden(currentY > 64 && currentY > lastScrollY.current)
+      }
+      lastScrollY.current = currentY
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur">
+    <header
+      className={`border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur transition-transform duration-300 ${hidden ? '-translate-y-full md:translate-y-0' : 'translate-y-0'}`}
+    >
       <div className="max-w-10xl container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-baseline gap-2">
