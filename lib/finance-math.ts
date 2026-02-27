@@ -159,3 +159,53 @@ export function calcHLV(
     totalExpenses: Math.round(monthlyExpenses * 12 * yearsToRetirement),
   }
 }
+
+// ────────────────────────────────────────────
+// GOAL SEEK (Reverse-Solve) Functions
+// ────────────────────────────────────────────
+
+/**
+ * Reverse SIP: Given a target future value, find the required periodic investment.
+ * P = FV × r / (((1+r)^n − 1) × (1+r))   (annuity-due PMT)
+ */
+export function calcSIPRequiredInvestment(
+  targetAmount: number,
+  annualRate: number,
+  years: number,
+  periodsPerYear: number
+): number {
+  if (annualRate === 0)
+    return Math.round(targetAmount / (years * periodsPerYear))
+  const r = annualRate / 100 / periodsPerYear
+  const n = years * periodsPerYear
+  const pmt = (targetAmount * r) / ((Math.pow(1 + r, n) - 1) * (1 + r))
+  return Math.round(pmt)
+}
+
+/**
+ * Reverse SWP: Given desired monthly withdrawal, return rate, and duration,
+ * find the required corpus (Present Value of Annuity).
+ * PV = PMT × (1 − (1+r)^(−n)) / r
+ * Returns { requiredCorpus, isPerpetual }
+ */
+export function calcSWPRequiredCorpus(
+  monthlyWithdrawal: number,
+  annualReturnRate: number,
+  desiredYears: number
+): { requiredCorpus: number; isPerpetual: boolean } {
+  const monthlyRate = annualReturnRate / 100 / 12
+  const n = desiredYears * 12
+
+  // If rate is 0, simple multiplication
+  if (monthlyRate === 0) {
+    return {
+      requiredCorpus: Math.round(monthlyWithdrawal * n),
+      isPerpetual: false,
+    }
+  }
+
+  // PV of annuity
+  const pv =
+    (monthlyWithdrawal * (1 - Math.pow(1 + monthlyRate, -n))) / monthlyRate
+  return { requiredCorpus: Math.round(pv), isPerpetual: false }
+}
