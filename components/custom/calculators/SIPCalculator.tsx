@@ -25,6 +25,8 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+const currentYear = new Date().getFullYear()
+
 type InvestmentFrequency =
   | 'daily'
   | 'weekly'
@@ -480,7 +482,8 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         <>
           <div className="mb-5 text-center">
             <p className="text-muted-foreground mb-1 text-sm">
-              Total value after {timePeriod} years
+              Total value after {timePeriod} years (by{' '}
+              {currentYear + timePeriod})
             </p>
             <p className="text-primary text-2xl font-bold md:text-3xl">
               {formatINR(calculations.totalValue)}
@@ -540,8 +543,8 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       {mode === 'goal' && goalResult && (
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
-            To reach {formatINRCompact(targetAmount)} in {timePeriod} years, you
-            need
+            To reach {formatINRCompact(targetAmount)} in {timePeriod} years (by{' '}
+            {currentYear + timePeriod}), you need
           </p>
           <p className="text-primary text-2xl font-bold md:text-3xl">
             {formatINR(goalResult.requiredInvestment)}

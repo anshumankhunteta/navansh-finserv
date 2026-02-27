@@ -6,6 +6,8 @@ import { calcHLV, formatINR, formatINRCompact } from '@/lib/finance-math'
 import { MessageSquare, Shield } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+const currentYear = new Date().getFullYear()
+
 interface HLVCalculatorProps {
   onConsult?: (msg: string) => void
 }
@@ -156,7 +158,8 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           {formatINR(calculations.hlvValue)}
         </p>
         <p className="text-muted-foreground mt-1 text-xs">
-          Based on {yearsToRetirement} years of income replacement
+          Based on {yearsToRetirement} years of income replacement (until{' '}
+          {currentYear + yearsToRetirement})
         </p>
       </div>
 

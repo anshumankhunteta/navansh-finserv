@@ -11,6 +11,8 @@ import {
 import { Calculator, Clock, MessageSquare, Target } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+const currentYear = new Date().getFullYear()
+
 type CalcMode = 'calculate' | 'goal'
 
 interface RetirementSWPCalculatorProps {
@@ -132,7 +134,7 @@ export function RetirementSWPCalculator({
           </div>
           <Slider
             min={1000000}
-            max={100000000}
+            max={200000000}
             step={500000}
             value={[corpus]}
             onValueChange={(value) => setCorpus(value[0])}
@@ -140,7 +142,7 @@ export function RetirementSWPCalculator({
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
             <span>₹10L</span>
-            <span>₹10Cr</span>
+            <span>₹20Cr</span>
           </div>
         </div>
       )}
@@ -165,7 +167,7 @@ export function RetirementSWPCalculator({
         </div>
         <Slider
           min={10000}
-          max={500000}
+          max={1500000}
           step={5000}
           value={[monthlyWithdrawal]}
           onValueChange={(value) => setMonthlyWithdrawal(value[0])}
@@ -173,7 +175,7 @@ export function RetirementSWPCalculator({
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
           <span>₹10K</span>
-          <span>₹5L</span>
+          <span>₹15L</span>
         </div>
       </div>
 
@@ -242,12 +244,17 @@ export function RetirementSWPCalculator({
                 ♾️ Forever
               </p>
             ) : (
-              <p className="text-primary text-2xl font-bold md:text-3xl">
-                {lastingYears} Years{' '}
-                {lastingRemainingMonths > 0
-                  ? `${lastingRemainingMonths} Months`
-                  : ''}
-              </p>
+              <>
+                <p className="text-primary text-2xl font-bold md:text-3xl">
+                  {lastingYears} Years{' '}
+                  {lastingRemainingMonths > 0
+                    ? `${lastingRemainingMonths} Months`
+                    : ''}
+                </p>
+                <p className="text-muted-foreground mt-0.5 text-xs">
+                  (until {currentYear + lastingYears})
+                </p>
+              </>
             )}
             <p className="text-muted-foreground mt-1 text-xs">
               Total withdrawn: {formatINR(calculations.totalWithdrawn)}
@@ -308,7 +315,7 @@ export function RetirementSWPCalculator({
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
             To withdraw {formatINRCompact(monthlyWithdrawal)}/mo for{' '}
-            {desiredYears} years, you need
+            {desiredYears} years (until {currentYear + desiredYears}), you need
           </p>
           <p className="text-primary text-2xl font-bold md:text-3xl">
             {formatINR(goalResult.requiredCorpus)}
