@@ -144,18 +144,97 @@ export function calcSWPDepletion(
 
 /**
  * Human Life Value (HLV)
- * HLV = (Annual Income − Annual Personal Expenses) × Years Until Retirement
+ * HLV = (Annual Income − Annual Personal Expenses) × Years Until Retirement + Liabilities
+ * Liabilities are outstanding loans that become the family's burden.
  */
 export function calcHLV(
   monthlyIncome: number,
   monthlyExpenses: number,
-  yearsToRetirement: number
-): { hlvValue: number; totalIncome: number; totalExpenses: number } {
+  yearsToRetirement: number,
+  liabilities: number = 0
+): {
+  hlvValue: number
+  totalIncome: number
+  totalExpenses: number
+  liabilities: number
+} {
   const annualSurplus = (monthlyIncome - monthlyExpenses) * 12
-  const hlvValue = Math.max(0, annualSurplus * yearsToRetirement)
+  const hlvValue = Math.max(0, annualSurplus * yearsToRetirement) + liabilities
   return {
     hlvValue: Math.round(hlvValue),
     totalIncome: Math.round(monthlyIncome * 12 * yearsToRetirement),
     totalExpenses: Math.round(monthlyExpenses * 12 * yearsToRetirement),
+    liabilities: Math.round(liabilities),
   }
+}
+
+// ────────────────────────────────────────────
+// GOAL SEEK (Reverse-Solve) Functions
+// ────────────────────────────────────────────
+
+/**
+ * Reverse SIP: Given a target future value, find the required periodic investment.
+ * P = FV × r / (((1+r)^n − 1) × (1+r))   (annuity-due PMT)
+ */
+export function calcSIPRequiredInvestment(
+  targetAmount: number,
+  annualRate: number,
+  years: number,
+  periodsPerYear: number
+): number {
+  if (annualRate === 0)
+    return Math.round(targetAmount / (years * periodsPerYear))
+  const r = annualRate / 100 / periodsPerYear
+  const n = years * periodsPerYear
+  const pmt = (targetAmount * r) / ((Math.pow(1 + r, n) - 1) * (1 + r))
+  return Math.round(pmt)
+}
+
+/**
+ * Reverse Step-Up SIP: Given a target FV, step-up %, rate, and years,
+ * find the required initial monthly investment.
+ * Exploits linearity: FV scales linearly with initial P, so P = target / (FV when P=1).
+ */
+export function calcStepUpSIPRequiredInvestment(
+  targetAmount: number,
+  annualStepUpPercent: number,
+  annualRate: number,
+  years: number
+): number {
+  const { futureValue: fvForOne } = calcStepUpSIPFutureValue(
+    1,
+    annualStepUpPercent,
+    annualRate,
+    years
+  )
+  if (fvForOne <= 0) return 0
+  return Math.round(targetAmount / fvForOne)
+}
+
+/**
+ * Reverse SWP: Given desired monthly withdrawal, return rate, and duration,
+ * find the required corpus(Present Value of Annuity).
+ * PV = PMT × (1 − (1 + r) ^ (−n)) / r
+ * Returns { requiredCorpus, isPerpetual }
+ */
+export function calcSWPRequiredCorpus(
+  monthlyWithdrawal: number,
+  annualReturnRate: number,
+  desiredYears: number
+): { requiredCorpus: number; isPerpetual: boolean } {
+  const monthlyRate = annualReturnRate / 100 / 12
+  const n = desiredYears * 12
+
+  // If rate is 0, simple multiplication
+  if (monthlyRate === 0) {
+    return {
+      requiredCorpus: Math.round(monthlyWithdrawal * n),
+      isPerpetual: false,
+    }
+  }
+
+  // PV of annuity
+  const pv =
+    (monthlyWithdrawal * (1 - Math.pow(1 + monthlyRate, -n))) / monthlyRate
+  return { requiredCorpus: Math.round(pv), isPerpetual: false }
 }

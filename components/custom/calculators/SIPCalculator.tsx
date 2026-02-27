@@ -11,7 +11,9 @@ import { Slider } from '@/components/ui/slider'
 import {
   calcLumpsumFV,
   calcSIPFutureValue,
+  calcSIPRequiredInvestment,
   calcStepUpSIPFutureValue,
+  calcStepUpSIPRequiredInvestment,
   formatINR,
   formatINRCompact,
 } from '@/lib/finance-math'
@@ -19,9 +21,12 @@ import {
   Calculator,
   ChevronDown,
   MessageSquare,
+  Target,
   TrendingUp,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+
+const currentYear = new Date().getFullYear()
 
 type InvestmentFrequency =
   | 'daily'
@@ -31,11 +36,14 @@ type InvestmentFrequency =
   | 'custom'
   | 'lumpsum'
 
+type CalcMode = 'calculate' | 'goal'
+
 interface SIPCalculatorProps {
   onConsult?: (msg: string) => void
 }
 
 export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
+  const [mode, setMode] = useState<CalcMode>('calculate')
   const [investmentAmount, setInvestmentAmount] = useState(10000)
   const [returnRate, setReturnRate] = useState(12)
   const [timePeriod, setTimePeriod] = useState(20)
@@ -46,7 +54,30 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
   const [stepUpEnabled, setStepUpEnabled] = useState(false)
   const [stepUpPercent, setStepUpPercent] = useState(10)
 
+  // Goal Seek
+  const [targetAmount, setTargetAmount] = useState(10000000) // ₹1Cr
+
+  const getPeriodsPerYear = () => {
+    switch (frequency) {
+      case 'daily':
+        return 365
+      case 'weekly':
+        return 52
+      case 'monthly':
+        return 12
+      case 'yearly':
+        return 1
+      case 'custom':
+        return 365 / customDays
+      default:
+        return 12
+    }
+  }
+
+  // ── Calculate mode ──
   const calculations = useMemo(() => {
+    if (mode === 'goal') return null
+
     if (frequency === 'lumpsum') {
       const investedAmount = investmentAmount
       const futureValue = calcLumpsumFV(
@@ -61,7 +92,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       }
     }
 
-    // Step-Up SIP (only for monthly)
     if (stepUpEnabled && frequency === 'monthly') {
       const { investedAmount, futureValue } = calcStepUpSIPFutureValue(
         investmentAmount,
@@ -76,28 +106,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       }
     }
 
-    // Standard SIP
-    let periodsPerYear: number
-    switch (frequency) {
-      case 'daily':
-        periodsPerYear = 365
-        break
-      case 'weekly':
-        periodsPerYear = 52
-        break
-      case 'monthly':
-        periodsPerYear = 12
-        break
-      case 'yearly':
-        periodsPerYear = 1
-        break
-      case 'custom':
-        periodsPerYear = 365 / customDays
-        break
-      default:
-        periodsPerYear = 12
-    }
-
+    const periodsPerYear = getPeriodsPerYear()
     const { investedAmount, futureValue } = calcSIPFutureValue(
       investmentAmount,
       returnRate,
@@ -109,7 +118,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       estimatedReturns: futureValue - investedAmount,
       totalValue: futureValue,
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    mode,
     investmentAmount,
     returnRate,
     timePeriod,
@@ -119,8 +130,53 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     stepUpPercent,
   ])
 
+  // ── Goal mode ──
+  const goalResult = useMemo(() => {
+    if (mode !== 'goal') return null
+
+    if (frequency === 'lumpsum') {
+      // Reverse lumpsum: PV = FV / (1+r)^t
+      const required = Math.round(
+        targetAmount / Math.pow(1 + returnRate / 100, timePeriod)
+      )
+      return { requiredInvestment: required, isStepUp: false }
+    }
+
+    // Step-Up SIP reverse (monthly only)
+    if (stepUpEnabled && frequency === 'monthly') {
+      const required = calcStepUpSIPRequiredInvestment(
+        targetAmount,
+        stepUpPercent,
+        returnRate,
+        timePeriod
+      )
+      return { requiredInvestment: required, isStepUp: true }
+    }
+
+    const periodsPerYear = getPeriodsPerYear()
+    const required = calcSIPRequiredInvestment(
+      targetAmount,
+      returnRate,
+      timePeriod,
+      periodsPerYear
+    )
+    return { requiredInvestment: required, isStepUp: false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    mode,
+    targetAmount,
+    returnRate,
+    timePeriod,
+    frequency,
+    customDays,
+    stepUpEnabled,
+    stepUpPercent,
+  ])
+
   const investedPercentage =
-    (calculations.investedAmount / calculations.totalValue) * 100
+    calculations && calculations.totalValue > 0
+      ? (calculations.investedAmount / calculations.totalValue) * 100
+      : 50
 
   const getFrequencyLabel = () => {
     switch (frequency) {
@@ -134,12 +190,20 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         return 'Yearly Investment'
       case 'custom':
         return `Investment (Every ${customDays} days)`
+      case 'lumpsum':
+        return 'Lumpsum Required'
       default:
         return 'Investment Amount'
     }
   }
 
   const handleConsult = () => {
+    if (mode === 'goal' && goalResult) {
+      const label = `SIP Goal Seek: Need ${formatINR(goalResult.requiredInvestment)} ${frequency} to reach ${formatINRCompact(targetAmount)} in ${timePeriod}yrs (${returnRate}% returns)`
+      onConsult?.(label)
+      return
+    }
+    if (!calculations) return
     const label = stepUpEnabled
       ? `SIP Goal: ${formatINRCompact(calculations.totalValue)} in ${timePeriod}yrs (${formatINR(investmentAmount)}/mo, ${stepUpPercent}% annual step-up, ${returnRate}% returns)`
       : `SIP Goal: ${formatINRCompact(calculations.totalValue)} in ${timePeriod}yrs (${formatINR(investmentAmount)} ${frequency}, ${returnRate}% returns)`
@@ -148,7 +212,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
 
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-4 flex items-center gap-3">
         <div className="bg-primary/10 text-primary rounded-lg p-2">
           <Calculator className="h-6 w-6" />
         </div>
@@ -158,6 +222,32 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             See the power of compounding with systematic investments.
           </p>
         </div>
+      </div>
+
+      {/* ── Mode Toggle ── */}
+      <div className="bg-muted ring-ring mb-5 flex rounded-md p-1 ring-1">
+        <button
+          onClick={() => setMode('calculate')}
+          className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+            mode === 'calculate'
+              ? 'bg-primary/70 text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Calculator className="h-3.5 w-3.5" />
+          Calculate
+        </button>
+        <button
+          onClick={() => setMode('goal')}
+          className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+            mode === 'goal'
+              ? 'bg-destructive/50 text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Target className="h-3.5 w-3.5" />
+          Goal Seek
+        </button>
       </div>
 
       {/* Investment Frequency Dropdown */}
@@ -227,55 +317,91 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         </div>
       )}
 
-      {/* Investment Amount */}
-      <div className="mb-5">
-        <label className="mb-2 flex items-center justify-between text-sm">
-          {getFrequencyLabel()} (₹)
-          <input
-            type="number"
-            step={100}
-            value={investmentAmount}
-            onChange={(e) =>
-              setInvestmentAmount(Math.max(0, Number(e.target.value)))
-            }
-            className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
-            min="0"
-            max={
-              frequency === 'yearly' || frequency === 'lumpsum'
-                ? 10000000
-                : frequency === 'monthly'
-                  ? 1000000
-                  : 100000
-            }
+      {/* ── GOAL MODE: Target Amount slider ── */}
+      {mode === 'goal' && (
+        <div className="mb-5">
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-muted-foreground text-sm">
+              🎯 Target Amount (₹)
+            </label>
+            <input
+              type="number"
+              step={100000}
+              value={targetAmount}
+              onChange={(e) =>
+                setTargetAmount(
+                  Math.max(100000, Math.min(500000000, Number(e.target.value)))
+                )
+              }
+              className="border-border bg-background focus:ring-primary/50 w-32 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
+            />
+          </div>
+          <Slider
+            min={100000}
+            max={100000000}
+            step={100000}
+            value={[targetAmount]}
+            onValueChange={(value) => setTargetAmount(value[0])}
+            className="w-full"
           />
-        </label>
-        <Slider
-          min={500}
-          max={
-            frequency === 'yearly' || frequency === 'lumpsum'
-              ? 1000000
-              : frequency === 'monthly'
-                ? 100000
-                : 10000
-          }
-          step={100}
-          value={[investmentAmount]}
-          onValueChange={(value) => setInvestmentAmount(value[0])}
-          className="w-full"
-        />
-        <div className="text-muted-foreground mt-1 flex justify-between text-xs">
-          <span>₹500</span>
-          <span>
-            {formatINRCompact(
+          <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+            <span>₹1L</span>
+            <span>₹10Cr</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── CALCULATE MODE: Investment Amount slider ── */}
+      {mode === 'calculate' && (
+        <div className="mb-5">
+          <label className="mb-2 flex items-center justify-between text-sm">
+            {getFrequencyLabel()} (₹)
+            <input
+              type="number"
+              step={100}
+              value={investmentAmount}
+              onChange={(e) =>
+                setInvestmentAmount(Math.max(0, Number(e.target.value)))
+              }
+              className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
+              min="0"
+              max={
+                frequency === 'yearly' || frequency === 'lumpsum'
+                  ? 10000000
+                  : frequency === 'monthly'
+                    ? 1000000
+                    : 100000
+              }
+            />
+          </label>
+          <Slider
+            min={500}
+            max={
               frequency === 'yearly' || frequency === 'lumpsum'
                 ? 1000000
                 : frequency === 'monthly'
                   ? 100000
                   : 10000
-            )}
-          </span>
+            }
+            step={100}
+            value={[investmentAmount]}
+            onValueChange={(value) => setInvestmentAmount(value[0])}
+            className="w-full"
+          />
+          <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+            <span>₹500</span>
+            <span>
+              {formatINRCompact(
+                frequency === 'yearly' || frequency === 'lumpsum'
+                  ? 1000000
+                  : frequency === 'monthly'
+                    ? 100000
+                    : 10000
+              )}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Expected Return Rate Slider */}
       <div className="mb-5">
@@ -323,7 +449,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         </div>
       </div>
 
-      {/* Step-Up SIP Toggle */}
+      {/* Step-Up SIP Toggle — calculate mode only */}
       {frequency === 'monthly' && (
         <div className="mb-5">
           <label className="text-muted-foreground mb-2 flex cursor-pointer items-center gap-2 text-sm">
@@ -369,63 +495,85 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
-      {/* Results */}
-      <div className="mb-5 text-center">
-        <p className="text-muted-foreground mb-1 text-sm">
-          Total value after {timePeriod} years
-        </p>
-        <p className="text-primary text-2xl font-bold md:text-3xl">
-          {formatINR(calculations.totalValue)}
-        </p>
-      </div>
+      {/* ── Results ── */}
+      {mode === 'calculate' && calculations && (
+        <>
+          <div className="mb-5 text-center">
+            <p className="text-muted-foreground mb-1 text-sm">
+              Total value after {timePeriod} years (by{' '}
+              {currentYear + timePeriod})
+            </p>
+            <p className="text-primary text-2xl font-bold md:text-3xl">
+              {formatINR(calculations.totalValue)}
+            </p>
+          </div>
 
-      {/* Donut Chart + Legend */}
-      <div className="flex items-center gap-6">
-        <div className="relative h-24 w-24 shrink-0">
-          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              className="text-orange-500"
-            />
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeDasharray={`${investedPercentage} ${100 - investedPercentage}`}
-              strokeDashoffset="0"
-              className="text-primary"
-            />
-          </svg>
-        </div>
-        <div className="flex-1 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
-            <div className="flex-1">
-              <p className="text-muted-foreground text-xs">Invested</p>
-              <p className="text-sm font-semibold">
-                {formatINR(calculations.investedAmount)}
-              </p>
+          {/* Donut Chart + Legend */}
+          <div className="flex items-center gap-6">
+            <div className="relative h-24 w-24 shrink-0">
+              <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  className="text-orange-500"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  strokeDasharray={`${investedPercentage} ${100 - investedPercentage}`}
+                  strokeDashoffset="0"
+                  className="text-primary"
+                />
+              </svg>
+            </div>
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs">Invested</p>
+                  <p className="text-sm font-semibold">
+                    {formatINR(calculations.investedAmount)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 shrink-0 rounded-sm bg-orange-500" />
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-xs">Est. returns</p>
+                  <p className="text-sm font-semibold">
+                    {formatINR(calculations.estimatedReturns)}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 shrink-0 rounded-sm bg-orange-500" />
-            <div className="flex-1">
-              <p className="text-muted-foreground text-xs">Est. returns</p>
-              <p className="text-sm font-semibold">
-                {formatINR(calculations.estimatedReturns)}
-              </p>
-            </div>
-          </div>
+        </>
+      )}
+
+      {mode === 'goal' && goalResult && (
+        <div className="mb-5 text-center">
+          <p className="text-muted-foreground mb-1 text-sm">
+            To reach {formatINRCompact(targetAmount)} in {timePeriod} years (by{' '}
+            {currentYear + timePeriod}), you need
+          </p>
+          <p className="text-primary text-2xl font-bold md:text-3xl">
+            {formatINR(goalResult.requiredInvestment)}
+          </p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            {goalResult.isStepUp
+              ? `Starting ${getFrequencyLabel()} with ${stepUpPercent}% annual step-up at ${returnRate}% p.a. returns`
+              : `${getFrequencyLabel()} at ${returnRate}% p.a. returns`}
+          </p>
         </div>
-      </div>
+      )}
 
       {/* Consult CTA */}
       {onConsult && (

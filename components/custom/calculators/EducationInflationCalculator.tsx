@@ -10,6 +10,8 @@ import {
 import { GraduationCap, MessageSquare } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+const currentYear = new Date().getFullYear()
+
 interface EducationInflationCalculatorProps {
   onConsult?: (msg: string) => void
 }
@@ -137,7 +139,7 @@ export function EducationInflationCalculator({
       {/* Results */}
       <div className="mb-5 text-center">
         <p className="text-muted-foreground mb-1 text-sm">
-          Future education cost in {years} years
+          Future education cost in {years} years (in {currentYear + years})
         </p>
         <p className="text-primary text-2xl font-bold md:text-3xl">
           {formatINR(calculations.futureCost)}

@@ -54,7 +54,7 @@ export function EnquireContent() {
         <div className="mx-auto grid w-full grid-cols-1 gap-10 xl:grid-cols-2 xl:gap-24">
           {/* Calculator Carousel */}
           <div className="mx-auto w-full pb-12">
-            <p className="text-muted-foreground mb-4 hidden text-center text-sm xl:block">
+            <p className="text-muted-foreground mb-4 text-center text-sm">
               ← Swipe or use arrows to explore all calculators →
             </p>
             <Carousel
