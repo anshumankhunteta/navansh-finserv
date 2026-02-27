@@ -144,19 +144,27 @@ export function calcSWPDepletion(
 
 /**
  * Human Life Value (HLV)
- * HLV = (Annual Income − Annual Personal Expenses) × Years Until Retirement
+ * HLV = (Annual Income − Annual Personal Expenses) × Years Until Retirement + Liabilities
+ * Liabilities are outstanding loans that become the family's burden.
  */
 export function calcHLV(
   monthlyIncome: number,
   monthlyExpenses: number,
-  yearsToRetirement: number
-): { hlvValue: number; totalIncome: number; totalExpenses: number } {
+  yearsToRetirement: number,
+  liabilities: number = 0
+): {
+  hlvValue: number
+  totalIncome: number
+  totalExpenses: number
+  liabilities: number
+} {
   const annualSurplus = (monthlyIncome - monthlyExpenses) * 12
-  const hlvValue = Math.max(0, annualSurplus * yearsToRetirement)
+  const hlvValue = Math.max(0, annualSurplus * yearsToRetirement) + liabilities
   return {
     hlvValue: Math.round(hlvValue),
     totalIncome: Math.round(monthlyIncome * 12 * yearsToRetirement),
     totalExpenses: Math.round(monthlyExpenses * 12 * yearsToRetirement),
+    liabilities: Math.round(liabilities),
   }
 }
 
@@ -183,9 +191,30 @@ export function calcSIPRequiredInvestment(
 }
 
 /**
+ * Reverse Step-Up SIP: Given a target FV, step-up %, rate, and years,
+ * find the required initial monthly investment.
+ * Exploits linearity: FV scales linearly with initial P, so P = target / (FV when P=1).
+ */
+export function calcStepUpSIPRequiredInvestment(
+  targetAmount: number,
+  annualStepUpPercent: number,
+  annualRate: number,
+  years: number
+): number {
+  const { futureValue: fvForOne } = calcStepUpSIPFutureValue(
+    1,
+    annualStepUpPercent,
+    annualRate,
+    years
+  )
+  if (fvForOne <= 0) return 0
+  return Math.round(targetAmount / fvForOne)
+}
+
+/**
  * Reverse SWP: Given desired monthly withdrawal, return rate, and duration,
- * find the required corpus (Present Value of Annuity).
- * PV = PMT × (1 − (1+r)^(−n)) / r
+ * find the required corpus(Present Value of Annuity).
+ * PV = PMT × (1 − (1 + r) ^ (−n)) / r
  * Returns { requiredCorpus, isPerpetual }
  */
 export function calcSWPRequiredCorpus(

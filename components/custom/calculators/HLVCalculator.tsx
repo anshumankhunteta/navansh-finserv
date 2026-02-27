@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { calcHLV, formatINR, formatINRCompact } from '@/lib/finance-math'
-import { MessageSquare, Shield } from 'lucide-react'
+import { Landmark, MessageSquare, Shield } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
@@ -17,9 +17,24 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
   const [monthlyExpenses, setMonthlyExpenses] = useState(30000)
   const [yearsToRetirement, setYearsToRetirement] = useState(25)
 
+  // Liabilities
+  const [liabilitiesEnabled, setLiabilitiesEnabled] = useState(false)
+  const [liabilities, setLiabilities] = useState(2000000)
+
   const calculations = useMemo(() => {
-    return calcHLV(monthlyIncome, monthlyExpenses, yearsToRetirement)
-  }, [monthlyIncome, monthlyExpenses, yearsToRetirement])
+    return calcHLV(
+      monthlyIncome,
+      monthlyExpenses,
+      yearsToRetirement,
+      liabilitiesEnabled ? liabilities : 0
+    )
+  }, [
+    monthlyIncome,
+    monthlyExpenses,
+    yearsToRetirement,
+    liabilitiesEnabled,
+    liabilities,
+  ])
 
   // Donut: expenses portion vs. family-needed portion
   const familyPercentage =
@@ -30,8 +45,11 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
       : 0
 
   const handleConsult = () => {
+    const liabText = liabilitiesEnabled
+      ? `, liabilities: ${formatINRCompact(liabilities)}`
+      : ''
     onConsult?.(
-      `Insurance Need: ${formatINRCompact(calculations.hlvValue)} HLV cover for ${yearsToRetirement} years (income: ${formatINRCompact(monthlyIncome * 12)}/yr, expenses: ${formatINRCompact(monthlyExpenses * 12)}/yr)`
+      `Insurance Need: ${formatINRCompact(calculations.hlvValue)} HLV cover for ${yearsToRetirement} years (income: ${formatINRCompact(monthlyIncome * 12)}/yr, expenses: ${formatINRCompact(monthlyExpenses * 12)}/yr${liabText})`
     )
   }
 
@@ -146,6 +164,56 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
         </div>
       </div>
 
+      {/* Liabilities Toggle */}
+      <div className="mb-5">
+        <label className="text-muted-foreground mb-2 flex cursor-pointer items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={liabilitiesEnabled}
+            onChange={(e) => setLiabilitiesEnabled(e.target.checked)}
+            className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
+          />
+          <Landmark className="h-4 w-4" />
+          Got Loans?
+        </label>
+        {liabilitiesEnabled && (
+          <div className="border-destructive/30 bg-destructive/5 mt-3 rounded-lg border border-dashed p-4">
+            <p className="text-muted-foreground mb-3 text-xs">
+              Car Loan, Home Loan, Any Loan : outstanding debt your family would
+              inherit.
+            </p>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-muted-foreground text-sm">
+                Total Liabilities (₹)
+              </label>
+              <input
+                type="number"
+                step={100000}
+                value={liabilities}
+                onChange={(e) =>
+                  setLiabilities(
+                    Math.max(0, Math.min(100000000, Number(e.target.value)))
+                  )
+                }
+                className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
+              />
+            </div>
+            <Slider
+              min={0}
+              max={50000000}
+              step={100000}
+              value={[liabilities]}
+              onValueChange={(value) => setLiabilities(value[0])}
+              className="w-full"
+            />
+            <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+              <span>₹0</span>
+              <span>₹5Cr</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
@@ -210,6 +278,17 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
               </p>
             </div>
           </div>
+          {liabilitiesEnabled && calculations.liabilities > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="bg-destructive h-3 w-3 shrink-0 rounded-sm" />
+              <div className="flex-1">
+                <p className="text-muted-foreground text-xs">Liabilities</p>
+                <p className="text-sm font-semibold">
+                  {formatINR(calculations.liabilities)}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

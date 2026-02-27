@@ -13,6 +13,7 @@ import {
   calcSIPFutureValue,
   calcSIPRequiredInvestment,
   calcStepUpSIPFutureValue,
+  calcStepUpSIPRequiredInvestment,
   formatINR,
   formatINRCompact,
 } from '@/lib/finance-math'
@@ -138,7 +139,18 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       const required = Math.round(
         targetAmount / Math.pow(1 + returnRate / 100, timePeriod)
       )
-      return { requiredInvestment: required }
+      return { requiredInvestment: required, isStepUp: false }
+    }
+
+    // Step-Up SIP reverse (monthly only)
+    if (stepUpEnabled && frequency === 'monthly') {
+      const required = calcStepUpSIPRequiredInvestment(
+        targetAmount,
+        stepUpPercent,
+        returnRate,
+        timePeriod
+      )
+      return { requiredInvestment: required, isStepUp: true }
     }
 
     const periodsPerYear = getPeriodsPerYear()
@@ -148,9 +160,18 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       timePeriod,
       periodsPerYear
     )
-    return { requiredInvestment: required }
+    return { requiredInvestment: required, isStepUp: false }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, targetAmount, returnRate, timePeriod, frequency, customDays])
+  }, [
+    mode,
+    targetAmount,
+    returnRate,
+    timePeriod,
+    frequency,
+    customDays,
+    stepUpEnabled,
+    stepUpPercent,
+  ])
 
   const investedPercentage =
     calculations && calculations.totalValue > 0
@@ -217,10 +238,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           Calculate
         </button>
         <button
-          onClick={() => {
-            setMode('goal')
-            setStepUpEnabled(false)
-          }}
+          onClick={() => setMode('goal')}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             mode === 'goal'
               ? 'bg-destructive/50 text-foreground shadow-sm'
@@ -432,7 +450,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       </div>
 
       {/* Step-Up SIP Toggle — calculate mode only */}
-      {mode === 'calculate' && frequency === 'monthly' && (
+      {frequency === 'monthly' && (
         <div className="mb-5">
           <label className="text-muted-foreground mb-2 flex cursor-pointer items-center gap-2 text-sm">
             <input
@@ -550,7 +568,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             {formatINR(goalResult.requiredInvestment)}
           </p>
           <p className="text-muted-foreground mt-1 text-xs">
-            {getFrequencyLabel()} at {returnRate}% p.a. returns
+            {goalResult.isStepUp
+              ? `Starting ${getFrequencyLabel()} with ${stepUpPercent}% annual step-up at ${returnRate}% p.a. returns`
+              : `${getFrequencyLabel()} at ${returnRate}% p.a. returns`}
           </p>
         </div>
       )}
