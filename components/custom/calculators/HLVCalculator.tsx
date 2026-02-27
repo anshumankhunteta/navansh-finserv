@@ -36,13 +36,25 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
     liabilities,
   ])
 
-  // Donut: expenses portion vs. family-needed portion
-  const familyPercentage =
+  // 2-segment donut: family needs vs expenses as % of total income
+  const familyPct =
     calculations.totalIncome > 0
       ? ((calculations.totalIncome - calculations.totalExpenses) /
           calculations.totalIncome) *
         100
       : 0
+
+  // 3-segment donut: all 3 parts as % of (totalIncome + liabilities)
+  const threeSegBase =
+    calculations.totalIncome +
+      (liabilitiesEnabled ? calculations.liabilities : 0) || 1
+  const familyNeedsPct =
+    ((calculations.totalIncome - calculations.totalExpenses) / threeSegBase) *
+    100
+  const liabSegPct = liabilitiesEnabled
+    ? (calculations.liabilities / threeSegBase) * 100
+    : 0
+  // expensesPct = 100 - familyNeedsPct - liabSegPct (the amber remainder)
 
   const handleConsult = () => {
     const liabText = liabilitiesEnabled
@@ -232,53 +244,111 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
       </div>
 
       {/* Donut Chart + Legend */}
-      <div className="flex items-center gap-6">
-        <div className="relative h-24 w-24 shrink-0">
-          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              className="text-amber-500"
-            />
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeDasharray={`${familyPercentage} ${100 - familyPercentage}`}
-              strokeDashoffset="0"
-              className="text-primary"
-            />
-          </svg>
+      {!liabilitiesEnabled ? (
+        /* 2-segment donut: Family Needs vs Expenses */
+        <div className="flex items-center gap-6">
+          <div className="relative h-24 w-24 shrink-0">
+            <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                className="text-amber-500"
+              />
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeDasharray={`${familyPct} ${100 - familyPct}`}
+                strokeDashoffset="0"
+                className="text-primary"
+              />
+            </svg>
+          </div>
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
+              <div className="flex-1">
+                <p className="text-muted-foreground text-xs">
+                  Family Needs (HLV)
+                </p>
+                <p className="text-sm font-semibold">
+                  {formatINR(calculations.hlvValue)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 shrink-0 rounded-sm bg-amber-500" />
+              <div className="flex-1">
+                <p className="text-muted-foreground text-xs">
+                  Personal Expenses
+                </p>
+                <p className="text-sm font-semibold">
+                  {formatINR(calculations.totalExpenses)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex-1 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
-            <div className="flex-1">
-              <p className="text-muted-foreground text-xs">
-                Family Needs (HLV)
-              </p>
-              <p className="text-sm font-semibold">
-                {formatINR(calculations.hlvValue)}
-              </p>
-            </div>
+      ) : (
+        /* 3-segment donut: Income Replacement + Liabilities + Expenses */
+        <div className="flex items-center gap-6">
+          <div className="relative h-24 w-24 shrink-0">
+            <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+              {/* Base: amber (expenses) */}
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                className="text-amber-500"
+              />
+              {/* Middle: destructive (liabilities) */}
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeDasharray={`${familyNeedsPct + liabSegPct} ${100 - familyNeedsPct - liabSegPct}`}
+                strokeDashoffset="0"
+                className="text-destructive"
+              />
+              {/* Top: primary (family needs) */}
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeDasharray={`${familyNeedsPct} ${100 - familyNeedsPct}`}
+                strokeDashoffset="0"
+                className="text-primary"
+              />
+            </svg>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 shrink-0 rounded-sm bg-amber-500" />
-            <div className="flex-1">
-              <p className="text-muted-foreground text-xs">Personal Expenses</p>
-              <p className="text-sm font-semibold">
-                {formatINR(calculations.totalExpenses)}
-              </p>
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary h-3 w-3 shrink-0 rounded-sm" />
+              <div className="flex-1">
+                <p className="text-muted-foreground text-xs">
+                  Family Needs (HLV)
+                </p>
+                <p className="text-sm font-semibold">
+                  {formatINR(calculations.hlvValue)}
+                </p>
+              </div>
             </div>
-          </div>
-          {liabilitiesEnabled && calculations.liabilities > 0 && (
             <div className="flex items-center gap-2">
               <div className="bg-destructive h-3 w-3 shrink-0 rounded-sm" />
               <div className="flex-1">
@@ -288,9 +358,20 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 </p>
               </div>
             </div>
-          )}
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 shrink-0 rounded-sm bg-amber-500" />
+              <div className="flex-1">
+                <p className="text-muted-foreground text-xs">
+                  Personal Expenses
+                </p>
+                <p className="text-sm font-semibold">
+                  {formatINR(calculations.totalExpenses)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Consult CTA */}
       {onConsult && (
