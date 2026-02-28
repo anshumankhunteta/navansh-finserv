@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 
 const services = [
   {
+    slug: 'mutual-funds',
     icon: TrendingUp,
     title: 'Mutual Funds & SIPs',
     description: 'Expert portfolio management for long-term wealth creation.',
@@ -30,6 +31,7 @@ const services = [
     ],
   },
   {
+    slug: 'health-mediclaim',
     icon: Heart,
     title: 'Health & Mediclaim',
     description:
@@ -41,6 +43,7 @@ const services = [
     ],
   },
   {
+    slug: 'general-insurance',
     icon: Car,
     title: 'General Insurance',
     description:
@@ -52,6 +55,7 @@ const services = [
     ],
   },
   {
+    slug: 'life-term-insurance',
     icon: Shield,
     title: 'Life & Term Insurance',
     description: 'Secure your legacy with affordable term plans.',
@@ -62,6 +66,7 @@ const services = [
     ],
   },
   {
+    slug: 'fd-bonds',
     icon: Wallet,
     title: 'Fixed Deposits & Bonds',
     description:
@@ -123,7 +128,9 @@ export default function ServicesPage() {
                     variant="outline"
                     className="group-hover:bg-primary group-hover:border-primary w-full group-hover:text-white"
                   >
-                    <Link href="/quote">Learn More</Link>
+                    <Link href={`/quote?service=${service.slug}`}>
+                      Learn More
+                    </Link>
                   </Button>
                 </div>
               )

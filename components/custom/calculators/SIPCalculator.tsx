@@ -43,7 +43,7 @@ interface SIPCalculatorProps {
 }
 
 export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
-  const [mode, setMode] = useState<CalcMode>('calculate')
+  const [goalMode, setGoalMode] = useState(false)
   const [investmentAmount, setInvestmentAmount] = useState(10000)
   const [returnRate, setReturnRate] = useState(12)
   const [timePeriod, setTimePeriod] = useState(20)
@@ -76,7 +76,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
 
   // ── Calculate mode ──
   const calculations = useMemo(() => {
-    if (mode === 'goal') return null
+    if (goalMode) return null
 
     if (frequency === 'lumpsum') {
       const investedAmount = investmentAmount
@@ -120,7 +120,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    mode,
+    goalMode,
     investmentAmount,
     returnRate,
     timePeriod,
@@ -130,9 +130,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     stepUpPercent,
   ])
 
-  // ── Goal mode ──
+  // ── Goal goalMode ──
   const goalResult = useMemo(() => {
-    if (mode !== 'goal') return null
+    if (!goalMode) return null
 
     if (frequency === 'lumpsum') {
       // Reverse lumpsum: PV = FV / (1+r)^t
@@ -163,7 +163,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     return { requiredInvestment: required, isStepUp: false }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    mode,
+    goalMode,
     targetAmount,
     returnRate,
     timePeriod,
@@ -198,7 +198,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
   }
 
   const handleConsult = () => {
-    if (mode === 'goal' && goalResult) {
+    if (goalMode && goalResult) {
       const label = `SIP Goal Seek: Need ${formatINR(goalResult.requiredInvestment)} ${frequency} to reach ${formatINRCompact(targetAmount)} in ${timePeriod}yrs (${returnRate}% returns)`
       onConsult?.(label)
       return
@@ -225,11 +225,11 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       </div>
 
       {/* ── Mode Toggle ── */}
-      <div className="bg-muted ring-ring mb-5 flex rounded-md p-1 ring-1">
+      <div className="bg-muted ring-ring mb-5 flex gap-2 rounded-md p-1 ring-1">
         <button
-          onClick={() => setMode('calculate')}
+          onClick={() => setGoalMode(!goalMode)}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-            mode === 'calculate'
+            !goalMode
               ? 'bg-primary/70 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -238,9 +238,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           Calculate
         </button>
         <button
-          onClick={() => setMode('goal')}
+          onClick={() => setGoalMode(!goalMode)}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-            mode === 'goal'
+            goalMode
               ? 'bg-destructive/50 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -318,7 +318,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       )}
 
       {/* ── GOAL MODE: Target Amount slider ── */}
-      {mode === 'goal' && (
+      {goalMode && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
@@ -352,7 +352,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       )}
 
       {/* ── CALCULATE MODE: Investment Amount slider ── */}
-      {mode === 'calculate' && (
+      {!goalMode && (
         <div className="mb-5">
           <label className="mb-2 flex items-center justify-between text-sm">
             {getFrequencyLabel()} (₹)
@@ -496,12 +496,15 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       <div className="border-border/50 my-5 border-t" />
 
       {/* ── Results ── */}
-      {mode === 'calculate' && calculations && (
+      {!goalMode && calculations && (
         <>
           <div className="mb-5 text-center">
             <p className="text-muted-foreground mb-1 text-sm">
               Total value after {timePeriod} years (by{' '}
-              {currentYear + timePeriod})
+              <span className="text-destructive">
+                {currentYear + timePeriod}
+              </span>
+              )
             </p>
             <p className="text-primary text-2xl font-bold md:text-3xl">
               {formatINR(calculations.totalValue)}
@@ -558,11 +561,12 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         </>
       )}
 
-      {mode === 'goal' && goalResult && (
+      {goalMode && goalResult && (
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
             To reach {formatINRCompact(targetAmount)} in {timePeriod} years (by{' '}
-            {currentYear + timePeriod}), you need
+            <span className="text-destructive">{currentYear + timePeriod}</span>
+            ), you need
           </p>
           <p className="text-primary text-2xl font-bold md:text-3xl">
             {formatINR(goalResult.requiredInvestment)}

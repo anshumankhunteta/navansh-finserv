@@ -20,8 +20,21 @@ import {
   UserSearch,
 } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import * as React from 'react'
 import Navansh from '../icons/Navansh'
+
+// ── Route → Display Title ──
+const ROUTE_TITLES: Record<string, string> = {
+  '/': 'Finserv',
+  '/services': 'Services',
+  '/about': 'About',
+  '/contact': 'Contact',
+  '/enquire': 'Calculator',
+  '/quote': 'Calculator',
+  '/privacy': 'Privacy',
+  '/milee': 'Milee',
+}
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
@@ -46,21 +59,23 @@ const navLinks = [
 ]
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = React.useState(false)
   const [hidden, setHidden] = React.useState(false)
   const lastScrollY = React.useRef(0)
 
+  // Derive page title from pathname — no state, no listeners
+  const pageTitle = React.useMemo(() => {
+    if (ROUTE_TITLES[pathname]) return ROUTE_TITLES[pathname]
+    const firstSegment = '/' + (pathname.split('/')[1] || '')
+    return ROUTE_TITLES[firstSegment] || 'Finserv'
+  }, [pathname])
+
   React.useEffect(() => {
     const onScroll = () => {
-      const currentY = window.scrollY
-      // Only hide/show on mobile (< 768px) and ignore tiny scroll jitter
-      if (
-        window.innerWidth < 768 &&
-        Math.abs(currentY - lastScrollY.current) > 0
-      ) {
-        setHidden(currentY > 64 && currentY > lastScrollY.current)
-      }
-      lastScrollY.current = currentY
+      const currentScrollY = window.scrollY
+      setHidden(currentScrollY > lastScrollY.current && currentScrollY > 80)
+      lastScrollY.current = currentScrollY
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -75,7 +90,8 @@ export default function Navbar() {
         <Link href="/" className="flex items-baseline gap-2">
           <Navansh height={24} />
           <span className="text-2xl font-bold tracking-tight">
-            Navansh <span className="text-primary">Finserv</span>
+            Navansh{' '}
+            <span className="text-primary inline-block w-28">{pageTitle}</span>
           </span>
         </Link>
 
