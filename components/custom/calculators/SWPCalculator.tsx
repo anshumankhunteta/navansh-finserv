@@ -13,8 +13,6 @@ import { useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
 
-type CalcMode = 'calculate' | 'goal'
-
 interface RetirementSWPCalculatorProps {
   onConsult?: (msg: string) => void
 }
@@ -22,7 +20,7 @@ interface RetirementSWPCalculatorProps {
 export function RetirementSWPCalculator({
   onConsult,
 }: RetirementSWPCalculatorProps) {
-  const [mode, setMode] = useState<CalcMode>('calculate')
+  const [goalMode, setGoalMode] = useState(false)
   const [corpus, setCorpus] = useState(10000000)
   const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(50000)
   const [returnRate, setReturnRate] = useState(8)
@@ -32,9 +30,9 @@ export function RetirementSWPCalculator({
 
   // ── Calculate mode ──
   const calculations = useMemo(() => {
-    if (mode === 'goal') return null
+    if (goalMode) return null
     return calcSWPDepletion(corpus, monthlyWithdrawal, returnRate)
-  }, [mode, corpus, monthlyWithdrawal, returnRate])
+  }, [goalMode, corpus, monthlyWithdrawal, returnRate])
 
   const lastingYears = calculations
     ? Math.floor(calculations.lastingMonths / 12)
@@ -51,12 +49,12 @@ export function RetirementSWPCalculator({
 
   // ── Goal mode ──
   const goalResult = useMemo(() => {
-    if (mode !== 'goal') return null
+    if (!goalMode) return null
     return calcSWPRequiredCorpus(monthlyWithdrawal, returnRate, desiredYears)
-  }, [mode, monthlyWithdrawal, returnRate, desiredYears])
+  }, [goalMode, monthlyWithdrawal, returnRate, desiredYears])
 
   const handleConsult = () => {
-    if (mode === 'goal' && goalResult) {
+    if (goalMode && goalResult) {
       onConsult?.(
         `SWP Goal Seek: Need ${formatINRCompact(goalResult.requiredCorpus)} corpus for ${formatINRCompact(monthlyWithdrawal)}/mo withdrawal over ${desiredYears} years (${returnRate}% returns)`
       )
@@ -88,11 +86,11 @@ export function RetirementSWPCalculator({
       </div>
 
       {/* ── Mode Toggle ── */}
-      <div className="bg-muted ring-ring mb-5 flex rounded-md p-1 ring-1">
+      <div className="bg-muted ring-ring mb-5 flex gap-2 rounded-md p-1 ring-1">
         <button
-          onClick={() => setMode('calculate')}
+          onClick={() => setGoalMode(!goalMode)}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-            mode === 'calculate'
+            !goalMode
               ? 'bg-primary/70 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -101,9 +99,9 @@ export function RetirementSWPCalculator({
           Calculate
         </button>
         <button
-          onClick={() => setMode('goal')}
+          onClick={() => setGoalMode(!goalMode)}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-            mode === 'goal'
+            goalMode
               ? 'bg-destructive/50 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -114,7 +112,7 @@ export function RetirementSWPCalculator({
       </div>
 
       {/* ── CALCULATE MODE: Corpus Slider ── */}
-      {mode === 'calculate' && (
+      {!goalMode && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
@@ -204,7 +202,7 @@ export function RetirementSWPCalculator({
       </div>
 
       {/* ── GOAL MODE: Desired Duration slider ── */}
-      {mode === 'goal' && (
+      {goalMode && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
@@ -233,7 +231,7 @@ export function RetirementSWPCalculator({
       <div className="border-border/50 my-5 border-t" />
 
       {/* ── Results ── */}
-      {mode === 'calculate' && calculations && (
+      {!goalMode && calculations && (
         <>
           <div className="mb-5 text-center">
             <p className="text-muted-foreground mb-1 text-sm">
@@ -311,7 +309,7 @@ export function RetirementSWPCalculator({
         </>
       )}
 
-      {mode === 'goal' && goalResult && (
+      {goalMode && goalResult && (
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
             To withdraw {formatINRCompact(monthlyWithdrawal)}/mo for{' '}

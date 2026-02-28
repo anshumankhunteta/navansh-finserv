@@ -3,7 +3,7 @@
 import { ContactForm } from '@/components/custom/ContactForm'
 import { SIPCalculator } from '@/components/custom/calculators/SIPCalculator'
 import { EducationInflationCalculator } from '@/components/custom/calculators/EducationInflationCalculator'
-import { RetirementSWPCalculator } from '@/components/custom/calculators/RetirementSWPCalculator'
+import { RetirementSWPCalculator } from '@/components/custom/calculators/SWPCalculator'
 import { HLVCalculator } from '@/components/custom/calculators/HLVCalculator'
 import {
   Carousel,
