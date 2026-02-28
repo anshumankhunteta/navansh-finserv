@@ -1,24 +1,23 @@
 'use client'
 
 import { ContactForm } from '@/components/custom/ContactForm'
-import { SIPCalculator } from '@/components/custom/calculators/SIPCalculator'
 import { EducationInflationCalculator } from '@/components/custom/calculators/EducationInflationCalculator'
-import { RetirementSWPCalculator } from '@/components/custom/calculators/SWPCalculator'
-import { HLVCalculator } from '@/components/custom/calculators/HLVCalculator'
 import { FDCalculator } from '@/components/custom/calculators/FDCalculator'
+import { HLVCalculator } from '@/components/custom/calculators/HLVCalculator'
 import { MediclaimEstimator } from '@/components/custom/calculators/MediclaimEstimator'
+import { SIPCalculator } from '@/components/custom/calculators/SIPCalculator'
+import { RetirementSWPCalculator } from '@/components/custom/calculators/SWPCalculator'
+import { Button } from '@/components/ui/button'
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  type CarouselApi,
 } from '@/components/ui/carousel'
-import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
 // ── All available calculators ──
 const ALL_CALCULATORS = {
@@ -42,6 +41,9 @@ const SERVICE_CALC_MAP: Record<string, CalcKey[]> = {
 }
 
 export function EnquireContent() {
+  const [api, setApi] = useState<CarouselApi>()
+  const [currentSlide, setCurrentSlide] = useState(0)
+
   const searchParams = useSearchParams()
   const service = searchParams.get('service')
   const [consultMessage, setConsultMessage] = useState('')
@@ -70,6 +72,20 @@ export function EnquireContent() {
 
   const isSingle = activeCalcs.length === 1
 
+  const NUMBER_OF_PAGES = activeCalcs.length
+
+  useEffect(() => {
+    if (!api) return
+    const onSelect = () => setCurrentSlide(api.selectedScrollSnap())
+    // Initial sync — standard Embla subscription pattern
+     
+    onSelect()
+    api.on('select', onSelect)
+    return () => {
+      api.off('select', onSelect)
+    }
+  }, [api])
+
   return (
     <div className="flex flex-col">
       <div className="container mx-auto px-6 sm:px-6 lg:px-8">
@@ -78,14 +94,11 @@ export function EnquireContent() {
             Navansh <span className="text-primary">Financial Suite</span>
           </h1>
           <p className="text-muted-foreground text-lg">
-            Plan your Wealth, Protect your Family - explore our interactive
-            calculators.
-            <br />
-            Fill the form below to get a free personalised quote!
+            Explore our interactive calculators!
           </p>
         </div>
 
-        <div className="mx-auto grid w-full grid-cols-1 gap-10 xl:grid-cols-2 xl:gap-24">
+        <div className="mx-auto grid w-full grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-24">
           {/* Calculator(s) */}
           <div className="mx-auto w-full pb-12">
             {isSingle ? (
@@ -97,10 +110,8 @@ export function EnquireContent() {
             ) : (
               // Multiple calculators — show carousel
               <>
-                <p className="text-muted-foreground mb-4 text-center text-sm">
-                  ← Swipe or use arrows to explore all calculators →
-                </p>
                 <Carousel
+                  setApi={setApi}
                   opts={{
                     align: 'start',
                     loop: true,
@@ -116,6 +127,27 @@ export function EnquireContent() {
                   }}
                   className="w-full"
                 >
+                  <div className="text-muted-foreground mb-4 flex scale-80 items-center justify-center gap-8 lg:scale-110">
+                    <ChevronLeft
+                      className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
+                      onClick={() => api?.scrollTo(currentSlide - 1)}
+                    />
+                    <div className="flex items-center space-x-3">
+                      {Array.from({ length: NUMBER_OF_PAGES }, (_, i) => i).map(
+                        (index) => (
+                          <button
+                            key={index}
+                            onClick={() => api?.scrollTo(index)}
+                            className={`hover:bg-primary/50 h-3 w-3 cursor-pointer rounded-full shadow-lg transition-all duration-300 ease-in-out ${index === currentSlide ? 'bg-primary scale-125' : 'bg-muted'}`}
+                          />
+                        )
+                      )}
+                    </div>
+                    <ChevronRight
+                      className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
+                      onClick={() => api?.scrollTo(currentSlide + 1)}
+                    />
+                  </div>
                   <CarouselContent>
                     {activeCalcs.map(({ key, Component }) => (
                       <CarouselItem key={key}>
@@ -123,8 +155,6 @@ export function EnquireContent() {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="hidden md:flex" />
-                  <CarouselNext className="hidden md:flex" />
                 </Carousel>
               </>
             )}
