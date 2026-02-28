@@ -7,8 +7,14 @@ CREATE TABLE IF NOT EXISTS leads (
   message TEXT,
   contact_method TEXT[] NOT NULL,
   country TEXT, -- Two-letter ISO country code (e.g., 'IN', 'US')
+  age INTEGER,
+  gender TEXT,
+  persona TEXT, -- Comma-separated interest history (e.g., 'Investor,Family Protector')
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Migration for existing tables:
+-- ALTER TABLE leads ADD COLUMN IF NOT EXISTS persona TEXT;
 
 -- Create an index on created_at for faster querying
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);

@@ -14,7 +14,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from '@/components/ui/carousel'
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -180,12 +180,20 @@ export function EnquireContent() {
             Don&apos;t want to share your data? Visit our contact page to get in
             touch with us.
           </p>
-          <Button asChild size="lg">
-            <Link href="/contact">
-              <span className="text-lg">Contact Page </span>
-              <ArrowRight />
-            </Link>
-          </Button>
+          <div className="flex items-center justify-center gap-4">
+            <Button asChild variant="link" size="lg">
+              <Link href="/services">
+                <ArrowLeft className="text-primary" />
+                <span className="text-primary">Explore Services </span>
+              </Link>
+            </Button>
+            <Button asChild size="lg">
+              <Link href="/contact">
+                <span className="">Contact Page </span>
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

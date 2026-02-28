@@ -83,10 +83,10 @@ export default function HomePage() {
             <Button
               asChild
               size="lg"
-              className="hover:bg-primary/20 active:bg-primary/50 w-auto px-10 text-xl font-bold shadow-md transition-all duration-500 hover:scale-103"
+              className="hover:bg-primary/40 hover:border-ring active:bg-primary/50 w-auto px-10 text-xl font-bold shadow-md transition-all duration-150 ease-in-out hover:scale-102 hover:rounded-sm hover:border-2"
             >
               <Link
-                className="hover:text-primary active:text-primary transition-colors"
+                className="hover:text-primary transition-all active:text-white/70"
                 href="/enquire"
               >
                 Get a Free Consultation!
@@ -127,26 +127,30 @@ export default function HomePage() {
           </Link>
         </p>
       </div>
-      <div className="mb-16 grid grid-cols-1 gap-3 px-10 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8">
-        {allServices.map((service) => {
-          const Icon = service.icon
-          return (
-            <div
-              key={service.title}
-              className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
-            >
-              <div className="mb-4 flex flex-row items-center gap-2">
-                <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
-                  <Icon className="h-6 w-6" />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 lg:gap-8">
+          {allServices.map((service) => {
+            const Icon = service.icon
+            return (
+              <div
+                key={service.title}
+                className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
+              >
+                <div className="mb-4 flex flex-row items-center gap-2">
+                  <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold sm:text-2xl">
+                    {service.title}
+                  </h3>
                 </div>
-                <h3 className="text-xl font-semibold">{service.title}</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  {service.description}
+                </p>
               </div>
-              <p className="text-muted-foreground text-sm">
-                {service.description}
-              </p>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
 
       {/* Why Us Section */}
@@ -279,7 +283,7 @@ export default function HomePage() {
             <Button asChild size="lg">
               <Link href="/contact">Get Started Today</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="link" size="lg">
               <Link href="/services">Explore Services</Link>
             </Button>
           </div>

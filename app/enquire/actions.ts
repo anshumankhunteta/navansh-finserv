@@ -1,7 +1,7 @@
 'use server'
 
 import { createServiceClient } from '@/lib/supabase/server'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { z } from 'zod'
 
 // Helper: Get country from IP using Vercel headers or fallback API
@@ -219,7 +219,7 @@ export async function submitEnquiry(
     // 1. Validate the form data (with sanitization via transforms)
     const validatedData = enquirySchema.parse(formData)
 
-    // 2. Get client IP and country for rate limiting and analytics
+    // 2. Get client IP, country, and persona for analytics
     const clientIP = await getClientIP()
     const country = await getCountryFromIP()
     const fingerprint = createFingerprint(
@@ -227,15 +227,21 @@ export async function submitEnquiry(
       validatedData.lastName
     )
 
+    // Read persona cookie (set by middleware from ?service= or ?utm_campaign=)
+    const cookieStore = await cookies()
+    const persona = cookieStore.get('navansh_persona')?.value || null
+
     // 3. Multi-tier rate limiting using Supabase
     const supabase = createServiceClient()
 
     // Check for exact name match (case-insensitive)
     const { data: existingLeads } = await supabase
       .from('leads')
-      .select('id, first_name, last_name, created_at')
+      .select('id, first_name, last_name, age, gender, created_at')
       .ilike('first_name', validatedData.firstName)
       .ilike('last_name', validatedData.lastName)
+      .eq('age', validatedData.age)
+      .eq('gender', validatedData.gender)
       .order('created_at', { ascending: false })
       .limit(1)
 
@@ -250,7 +256,7 @@ export async function submitEnquiry(
       })
       return {
         success: false,
-        message: `You have already submitted an enquiry on ${submittedDate}. Our team will contact you soon!`,
+        message: `You have already submitted an enquiry for this profile on ${submittedDate}.Our team will contact you soon!`,
       }
     }
 
@@ -278,7 +284,7 @@ export async function submitEnquiry(
       .eq('client_ip', clientIP)
       .gte('created_at', oneHourAgo)
 
-    if (hourlyCount && hourlyCount >= 8) {
+    if (hourlyCount && hourlyCount >= 30) {
       return {
         success: false,
         message: 'Too many submissions. Please try again later.',
@@ -293,7 +299,7 @@ export async function submitEnquiry(
       .eq('client_ip', clientIP)
       .gte('created_at', oneDayAgo)
 
-    if (dailyCount && dailyCount >= 15) {
+    if (dailyCount && dailyCount >= 360) {
       return {
         success: false,
         message: 'Daily submission limit reached. Please try again tomorrow.',
@@ -315,7 +321,8 @@ export async function submitEnquiry(
           age: validatedData.age || null,
           gender: validatedData.gender || null,
           contact_method: validatedData.contactMethod,
-          country: country, // Add country from geolocation
+          country: country,
+          persona: persona,
         },
       ])
       .select()
@@ -445,8 +452,14 @@ export async function submitEnquiry(
                 inline: false,
               },
               {
+                name: '🧬 Persona',
+                value: persona
+                  ? `**${persona.split(',').join('** → **')}**`
+                  : '_Unknown visitor_',
+                inline: false,
+              },
+              {
                 name: '⚡ Quick Actions',
-                // Join the generated links with a separator
                 value: actionLinks.join(' • ') || 'No actions available',
                 inline: false,
               },
