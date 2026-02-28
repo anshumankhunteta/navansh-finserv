@@ -35,8 +35,8 @@ type CalcKey = keyof typeof ALL_CALCULATORS
 const SERVICE_CALC_MAP: Record<string, CalcKey[]> = {
   'mutual-funds': ['sip', 'swp'],
   'health-mediclaim': ['mediclaim'],
-  'general-insurance': ['sip', 'education', 'swp', 'hlv', 'fd', 'mediclaim'],
-  'life-term-insurance': ['hlv'],
+  'general-insurance': ['mediclaim', 'education', 'swp', 'hlv', 'fd', 'sip'],
+  'life-term-insurance': ['hlv', 'education'],
   'fd-bonds': ['fd'],
 }
 
@@ -78,7 +78,7 @@ export function EnquireContent() {
     if (!api) return
     const onSelect = () => setCurrentSlide(api.selectedScrollSnap())
     // Initial sync — standard Embla subscription pattern
-     
+
     onSelect()
     api.on('select', onSelect)
     return () => {
@@ -110,6 +110,28 @@ export function EnquireContent() {
             ) : (
               // Multiple calculators — show carousel
               <>
+                {/* Pagination */}
+                <div className="text-muted-foreground mb-4 flex scale-80 items-center justify-center gap-8 lg:scale-110">
+                  <ChevronLeft
+                    className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
+                    onClick={() => api?.scrollTo(currentSlide - 1)}
+                  />
+                  <div className="flex items-center space-x-3">
+                    {Array.from({ length: NUMBER_OF_PAGES }, (_, i) => i).map(
+                      (index) => (
+                        <button
+                          key={index}
+                          onClick={() => api?.scrollTo(index)}
+                          className={`hover:bg-primary/50 h-3 w-3 cursor-pointer rounded-full shadow-lg transition-all duration-300 ease-in-out ${index === currentSlide ? 'bg-primary scale-125' : 'bg-muted'}`}
+                        />
+                      )
+                    )}
+                  </div>
+                  <ChevronRight
+                    className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
+                    onClick={() => api?.scrollTo(currentSlide + 1)}
+                  />
+                </div>
                 <Carousel
                   setApi={setApi}
                   opts={{
@@ -125,29 +147,8 @@ export function EnquireContent() {
                       return !interactive
                     },
                   }}
-                  className="w-full"
+                  className="bg-muted/60 dark:bg-muted/30 w-full rounded-3xl p-1"
                 >
-                  <div className="text-muted-foreground mb-4 flex scale-80 items-center justify-center gap-8 lg:scale-110">
-                    <ChevronLeft
-                      className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
-                      onClick={() => api?.scrollTo(currentSlide - 1)}
-                    />
-                    <div className="flex items-center space-x-3">
-                      {Array.from({ length: NUMBER_OF_PAGES }, (_, i) => i).map(
-                        (index) => (
-                          <button
-                            key={index}
-                            onClick={() => api?.scrollTo(index)}
-                            className={`hover:bg-primary/50 h-3 w-3 cursor-pointer rounded-full shadow-lg transition-all duration-300 ease-in-out ${index === currentSlide ? 'bg-primary scale-125' : 'bg-muted'}`}
-                          />
-                        )
-                      )}
-                    </div>
-                    <ChevronRight
-                      className="h-6 w-6 cursor-pointer transition-all duration-100 ease-in-out hover:scale-125 active:scale-125"
-                      onClick={() => api?.scrollTo(currentSlide + 1)}
-                    />
-                  </div>
                   <CarouselContent>
                     {activeCalcs.map(({ key, Component }) => (
                       <CarouselItem className="h-full" key={key}>
