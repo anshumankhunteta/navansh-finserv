@@ -139,7 +139,8 @@ export function EducationInflationCalculator({
       {/* Results */}
       <div className="mb-5 text-center">
         <p className="text-muted-foreground mb-1 text-sm">
-          Future education cost in {years} years (in {currentYear + years})
+          Future education cost in {years} years (in{' '}
+          <span className="text-destructive">{currentYear + years}</span>)
         </p>
         <p className="text-primary text-2xl font-bold md:text-3xl">
           {formatINR(calculations.futureCost)}

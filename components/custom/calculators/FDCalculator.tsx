@@ -277,7 +277,10 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
           <div className="mb-5 text-center">
             <p className="text-muted-foreground mb-1 text-sm">
               Maturity amount after {timePeriod} years (by{' '}
-              {currentYear + timePeriod})
+              <span className="text-destructive">
+                {currentYear + timePeriod}
+              </span>
+              )
             </p>
             <p className="text-primary text-2xl font-bold md:text-3xl">
               {formatINR(calculations.maturityAmount)}

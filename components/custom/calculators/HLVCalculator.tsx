@@ -239,7 +239,10 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
         </p>
         <p className="text-muted-foreground mt-1 text-xs">
           Based on {yearsToRetirement} years of income replacement (until{' '}
-          {currentYear + yearsToRetirement})
+          <span className="text-destructive">
+            {currentYear + yearsToRetirement}
+          </span>
+          )
         </p>
       </div>
 

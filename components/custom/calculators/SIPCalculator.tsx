@@ -501,7 +501,10 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           <div className="mb-5 text-center">
             <p className="text-muted-foreground mb-1 text-sm">
               Total value after {timePeriod} years (by{' '}
-              {currentYear + timePeriod})
+              <span className="text-destructive">
+                {currentYear + timePeriod}
+              </span>
+              )
             </p>
             <p className="text-primary text-2xl font-bold md:text-3xl">
               {formatINR(calculations.totalValue)}
@@ -562,7 +565,8 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
             To reach {formatINRCompact(targetAmount)} in {timePeriod} years (by{' '}
-            {currentYear + timePeriod}), you need
+            <span className="text-destructive">{currentYear + timePeriod}</span>
+            ), you need
           </p>
           <p className="text-primary text-2xl font-bold md:text-3xl">
             {formatINR(goalResult.requiredInvestment)}

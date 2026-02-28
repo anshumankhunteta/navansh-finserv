@@ -88,8 +88,8 @@ export function EnquireContent() {
 
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl py-12 text-center">
+      <div className="container mx-auto px-6 py-6 md:py-0 lg:px-6 lg:px-8">
+        <div className="mx-auto hidden max-w-3xl py-12 text-center md:block">
           <h1 className="mb-4 text-3xl font-bold md:text-5xl">
             Navansh <span className="text-primary">Financial Suite</span>
           </h1>
@@ -150,7 +150,7 @@ export function EnquireContent() {
                   </div>
                   <CarouselContent>
                     {activeCalcs.map(({ key, Component }) => (
-                      <CarouselItem key={key}>
+                      <CarouselItem className="h-full" key={key}>
                         <Component onConsult={handleConsult} />
                       </CarouselItem>
                     ))}

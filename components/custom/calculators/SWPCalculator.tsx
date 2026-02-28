@@ -250,7 +250,11 @@ export function RetirementSWPCalculator({
                     : ''}
                 </p>
                 <p className="text-muted-foreground mt-0.5 text-xs">
-                  (until {currentYear + lastingYears})
+                  (until{' '}
+                  <span className="text-destructive">
+                    {currentYear + lastingYears}
+                  </span>
+                  )
                 </p>
               </>
             )}
@@ -313,7 +317,11 @@ export function RetirementSWPCalculator({
         <div className="mb-5 text-center">
           <p className="text-muted-foreground mb-1 text-sm">
             To withdraw {formatINRCompact(monthlyWithdrawal)}/mo for{' '}
-            {desiredYears} years (until {currentYear + desiredYears}), you need
+            {desiredYears} years (until{' '}
+            <span className="text-destructive">
+              {currentYear + desiredYears}
+            </span>
+            ), you need
           </p>
           <p className="text-primary text-2xl font-bold md:text-3xl">
             {formatINR(goalResult.requiredCorpus)}
