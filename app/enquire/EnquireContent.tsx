@@ -5,6 +5,8 @@ import { SIPCalculator } from '@/components/custom/calculators/SIPCalculator'
 import { EducationInflationCalculator } from '@/components/custom/calculators/EducationInflationCalculator'
 import { RetirementSWPCalculator } from '@/components/custom/calculators/SWPCalculator'
 import { HLVCalculator } from '@/components/custom/calculators/HLVCalculator'
+import { FDCalculator } from '@/components/custom/calculators/FDCalculator'
+import { MediclaimEstimator } from '@/components/custom/calculators/MediclaimEstimator'
 import {
   Carousel,
   CarouselContent,
@@ -16,18 +18,48 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+
+// ── All available calculators ──
+const ALL_CALCULATORS = {
+  sip: { key: 'sip', Component: SIPCalculator },
+  swp: { key: 'swp', Component: RetirementSWPCalculator },
+  education: { key: 'education', Component: EducationInflationCalculator },
+  hlv: { key: 'hlv', Component: HLVCalculator },
+  fd: { key: 'fd', Component: FDCalculator },
+  mediclaim: { key: 'mediclaim', Component: MediclaimEstimator },
+} as const
+
+type CalcKey = keyof typeof ALL_CALCULATORS
+
+// ── Service → Calculator mapping ──
+const SERVICE_CALC_MAP: Record<string, CalcKey[]> = {
+  'mutual-funds': ['sip', 'swp'],
+  'health-mediclaim': ['mediclaim'],
+  'general-insurance': ['sip', 'education', 'swp', 'hlv', 'fd', 'mediclaim'],
+  'life-term-insurance': ['hlv'],
+  'fd-bonds': ['fd'],
+}
 
 export function EnquireContent() {
+  const searchParams = useSearchParams()
+  const service = searchParams.get('service')
   const [consultMessage, setConsultMessage] = useState('')
+
+  // Determine which calculators to show
+  const activeKeys: CalcKey[] =
+    service && SERVICE_CALC_MAP[service]
+      ? SERVICE_CALC_MAP[service]
+      : (Object.keys(ALL_CALCULATORS) as CalcKey[])
+
+  const activeCalcs = activeKeys.map((k) => ALL_CALCULATORS[k])
 
   const handleConsult = useCallback((msg: string) => {
     setConsultMessage(msg)
-    // Smooth-scroll to contact form
     setTimeout(() => {
       const el = document.getElementById('contact-form')
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        // Focus the message textarea after scroll
         setTimeout(() => {
           const textarea = el.querySelector('textarea')
           if (textarea) textarea.focus()
@@ -35,6 +67,8 @@ export function EnquireContent() {
       }
     }, 100)
   }, [])
+
+  const isSingle = activeCalcs.length === 1
 
   return (
     <div className="flex flex-col">
@@ -52,45 +86,48 @@ export function EnquireContent() {
         </div>
 
         <div className="mx-auto grid w-full grid-cols-1 gap-10 xl:grid-cols-2 xl:gap-24">
-          {/* Calculator Carousel */}
+          {/* Calculator(s) */}
           <div className="mx-auto w-full pb-12">
-            <p className="text-muted-foreground mb-4 text-center text-sm">
-              ← Swipe or use arrows to explore all calculators →
-            </p>
-            <Carousel
-              opts={{
-                align: 'start',
-                loop: true,
-                watchDrag: (_emblaApi, evt) => {
-                  const target = (evt as PointerEvent | TouchEvent)
-                    .target as HTMLElement | null
-                  if (!target) return true
-                  // If touch/pointer started inside a slider, input, textarea, select, or button — don't drag carousel
-                  const interactive = target.closest(
-                    '[data-slot="slider"], input, textarea, select, button, a, label'
-                  )
-                  return !interactive
-                },
-              }}
-              className="w-full"
-            >
-              <CarouselContent>
-                <CarouselItem>
-                  <SIPCalculator onConsult={handleConsult} />
-                </CarouselItem>
-                <CarouselItem>
-                  <EducationInflationCalculator onConsult={handleConsult} />
-                </CarouselItem>
-                <CarouselItem>
-                  <RetirementSWPCalculator onConsult={handleConsult} />
-                </CarouselItem>
-                <CarouselItem>
-                  <HLVCalculator onConsult={handleConsult} />
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex" />
-              <CarouselNext className="hidden md:flex" />
-            </Carousel>
+            {isSingle ? (
+              // Single calculator — no carousel needed
+              (() => {
+                const { Component } = activeCalcs[0]
+                return <Component onConsult={handleConsult} />
+              })()
+            ) : (
+              // Multiple calculators — show carousel
+              <>
+                <p className="text-muted-foreground mb-4 text-center text-sm">
+                  ← Swipe or use arrows to explore all calculators →
+                </p>
+                <Carousel
+                  opts={{
+                    align: 'start',
+                    loop: true,
+                    watchDrag: (_emblaApi, evt) => {
+                      const target = (evt as PointerEvent | TouchEvent)
+                        .target as HTMLElement | null
+                      if (!target) return true
+                      const interactive = target.closest(
+                        '[data-slot="slider"], input, textarea, select, button, a, label'
+                      )
+                      return !interactive
+                    },
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {activeCalcs.map(({ key, Component }) => (
+                      <CarouselItem key={key}>
+                        <Component onConsult={handleConsult} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden md:flex" />
+                  <CarouselNext className="hidden md:flex" />
+                </Carousel>
+              </>
+            )}
           </div>
           {/* Contact Form */}
           <div className="mx-auto w-full">

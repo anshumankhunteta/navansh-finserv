@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { EnquireContent } from './EnquireContent'
 
 export const metadata: Metadata = {
@@ -17,5 +18,9 @@ export const metadata: Metadata = {
 }
 
 export default function GetQuotePage() {
-  return <EnquireContent />
+  return (
+    <Suspense fallback={null}>
+      <EnquireContent />
+    </Suspense>
+  )
 }
