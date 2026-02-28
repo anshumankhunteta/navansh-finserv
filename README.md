@@ -94,7 +94,9 @@ A performance-focused, SEO-optimized lead generation website for a financial ser
 ---
 
 ## Directory structure:
-└── anshumankhunteta-navansh-finserv/
+
+```
+└── navansh-finserv
     ├── README.md
     ├── components.json
     ├── eslint.config.mjs
@@ -165,12 +167,12 @@ A performance-focused, SEO-optimized lead generation website for a financial ser
     └── .husky/
         └── pre-commit
 
-
-
+```
+---
 ## Getting Started
 
 ```bash
-# Clone the repository
+# Clone the repo
 git clone https://github.com/anshumankhunteta/navansh-finserv.git
 cd navansh-finserv
 
