@@ -89,7 +89,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-baseline gap-2">
           <Navansh height={24} />
-          <span className="text-2xl font-bold tracking-tight">
+          <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
             Navansh{' '}
             <span className="text-primary inline-block w-28">{pageTitle}</span>
           </span>

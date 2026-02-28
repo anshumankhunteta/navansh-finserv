@@ -88,15 +88,19 @@ export function EnquireContent() {
 
   return (
     <div className="flex flex-col">
-      <div className="container mx-auto px-6 py-6 md:py-0 lg:px-6 lg:px-8">
-        <div className="mx-auto hidden max-w-3xl py-12 text-center md:block">
-          <h1 className="mb-4 text-3xl font-bold md:text-5xl">
-            Navansh <span className="text-primary">Financial Suite</span>
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Explore our interactive calculators!
-          </p>
-        </div>
+      <div className="container mx-auto px-6 lg:px-8">
+        <section className="py-8 md:py-12">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <h1 className="mb-4 text-3xl font-bold md:text-4xl">
+                Navansh <span className="text-primary">Financial Suite</span>
+              </h1>
+              <p className="text-muted-foreground">
+                Explore our interactive calculators!
+              </p>
+            </div>
+          </div>
+        </section>
 
         <div className="mx-auto grid w-full grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-24">
           {/* Calculator(s) */}
