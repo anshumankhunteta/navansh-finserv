@@ -1,6 +1,7 @@
 import Navansh from '@/components/icons/Navansh'
 import { Button } from '@/components/ui/button'
 import {
+  ArrowRight,
   CheckCircle2,
   HeadphonesIcon,
   Heart,
@@ -284,7 +285,10 @@ export default function HomePage() {
               <Link href="/contact">Get Started Today</Link>
             </Button>
             <Button asChild variant="link" size="lg">
-              <Link href="/services">Explore Services</Link>
+              <Link href="/services">
+                Explore Services
+                <ArrowRight />
+              </Link>
             </Button>
           </div>
         </div>
