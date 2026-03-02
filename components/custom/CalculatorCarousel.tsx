@@ -91,7 +91,7 @@ export function CalculatorCarousel({
 
   useEffect(() => {
     if (!isStoreLoaded) return
-    const t = setTimeout(() => setIsLoaded(true), 1000)
+    const t = setTimeout(() => setIsLoaded(true), 500)
     return () => clearTimeout(t)
   }, [isStoreLoaded])
 
@@ -249,9 +249,15 @@ export function CalculatorCarousel({
       </AlertDialog>
     </>
   ) : (
-    <div className="bg-muted fixed top-0 left-0 z-100 flex h-[115vh] w-full animate-pulse flex-col items-center justify-center overflow-hidden rounded-3xl duration-500">
-      <div className="p-10">
-        <Navansh height={100} />
+    <div className="bg-primary-foreground/50 fixed top-0 right-0 bottom-0 left-0 z-100 flex h-[100vh] w-[100vw] overflow-hidden rounded-none">
+      {/* <Navansh height={120} />
+      <p className="text-3xl font-bold">
+        Navansh<span className="text-primary">Finserv</span>
+      </p> */}
+      <div className="flex w-full flex-col items-center justify-center gap-4">
+        <div className="text-primary border-t-primary flex h-20 w-20 animate-spin items-center justify-center rounded-full border-4 border-transparent text-4xl">
+          <div className="text-secondary border-t-muted flex h-16 w-16 animate-spin items-center justify-center rounded-full border-4 border-transparent text-2xl"></div>
+        </div>
       </div>
     </div>
   )
