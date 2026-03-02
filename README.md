@@ -1,6 +1,6 @@
 # Navansh Finserv
 
-A performance-focused, SEO-optimized lead generation website for a financial services firm. Built with a modern, minimal design language and engineered for conversion, speed, and long-term maintainability.
+A performance and UX-focused, SEO-optimized lead generation website for a financial services firm. Built with a modern, minimal design language and engineered for conversion, speed, and long-term maintainability.
 
 **Live:** [navansh.in](https://navansh.in)
 
