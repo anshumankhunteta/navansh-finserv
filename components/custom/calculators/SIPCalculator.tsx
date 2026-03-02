@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Slider } from '@/components/ui/slider'
+import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import {
   calcLumpsumFV,
   calcSIPFutureValue,
@@ -19,43 +20,42 @@ import {
 } from '@/lib/finance-math'
 import {
   Calculator,
+  Check,
   ChevronDown,
   MessageSquare,
+  Share2,
   Target,
   TrendingUp,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
-
-type InvestmentFrequency =
-  | 'daily'
-  | 'weekly'
-  | 'monthly'
-  | 'yearly'
-  | 'custom'
-  | 'lumpsum'
-
-type CalcMode = 'calculate' | 'goal'
 
 interface SIPCalculatorProps {
   onConsult?: (msg: string) => void
 }
 
 export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
-  const [goalMode, setGoalMode] = useState(false)
-  const [investmentAmount, setInvestmentAmount] = useState(10000)
-  const [returnRate, setReturnRate] = useState(12)
-  const [timePeriod, setTimePeriod] = useState(20)
-  const [frequency, setFrequency] = useState<InvestmentFrequency>('monthly')
-  const [customDays, setCustomDays] = useState(30)
+  // ── Hydration guard ──
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)  
+  }, [])
 
-  // Step-Up SIP
-  const [stepUpEnabled, setStepUpEnabled] = useState(false)
-  const [stepUpPercent, setStepUpPercent] = useState(10)
+  // ── Store selectors (granular to avoid cross-calc re-renders) ──
+  const goalMode = useCalculatorStore((s) => s.sip.goalMode)
+  const investmentAmount = useCalculatorStore((s) => s.sip.investmentAmount)
+  const returnRate = useCalculatorStore((s) => s.sip.returnRate)
+  const timePeriod = useCalculatorStore((s) => s.sip.timePeriod)
+  const frequency = useCalculatorStore((s) => s.sip.frequency)
+  const customDays = useCalculatorStore((s) => s.sip.customDays)
+  const stepUpEnabled = useCalculatorStore((s) => s.sip.stepUpEnabled)
+  const stepUpPercent = useCalculatorStore((s) => s.sip.stepUpPercent)
+  const targetAmount = useCalculatorStore((s) => s.sip.targetAmount)
+  const setSip = useCalculatorStore((s) => s.setSip)
 
-  // Goal Seek
-  const [targetAmount, setTargetAmount] = useState(10000000) // ₹1Cr
+  // ── Share button state ──
+  const [copied, setCopied] = useState(false)
 
   const getPeriodsPerYear = () => {
     switch (frequency) {
@@ -130,19 +130,17 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     stepUpPercent,
   ])
 
-  // ── Goal goalMode ──
+  // ── Goal mode ──
   const goalResult = useMemo(() => {
     if (!goalMode) return null
 
     if (frequency === 'lumpsum') {
-      // Reverse lumpsum: PV = FV / (1+r)^t
       const required = Math.round(
         targetAmount / Math.pow(1 + returnRate / 100, timePeriod)
       )
       return { requiredInvestment: required, isStepUp: false }
     }
 
-    // Step-Up SIP reverse (monthly only)
     if (stepUpEnabled && frequency === 'monthly') {
       const required = calcStepUpSIPRequiredInvestment(
         targetAmount,
@@ -210,6 +208,15 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     onConsult?.(label)
   }
 
+  const handleShare = async () => {
+    const url = buildShareUrl('sip')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
+
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-4 flex items-center gap-3">
@@ -227,7 +234,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
       {/* ── Mode Toggle ── */}
       <div className="bg-muted ring-ring mb-5 flex gap-2 rounded-md p-1 ring-1">
         <button
-          onClick={() => setGoalMode(!goalMode)}
+          onClick={() => setSip({ goalMode: !goalMode })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             !goalMode
               ? 'bg-primary/70 text-foreground shadow-sm'
@@ -238,7 +245,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           Calculate
         </button>
         <button
-          onClick={() => setGoalMode(!goalMode)}
+          onClick={() => setSip({ goalMode: !goalMode })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             goalMode
               ? 'bg-destructive/50 text-foreground shadow-sm'
@@ -259,7 +266,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
               type="checkbox"
               checked={frequency === 'lumpsum'}
               onChange={() =>
-                setFrequency(frequency === 'lumpsum' ? 'monthly' : 'lumpsum')
+                setSip({
+                  frequency: frequency === 'lumpsum' ? 'monthly' : 'lumpsum',
+                })
               }
             />{' '}
             Lumpsum
@@ -279,19 +288,19 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             align="start"
             className="w-[var(--radix-dropdown-menu-trigger-width)]"
           >
-            <DropdownMenuItem onClick={() => setFrequency('daily')}>
+            <DropdownMenuItem onClick={() => setSip({ frequency: 'daily' })}>
               Daily
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setFrequency('weekly')}>
+            <DropdownMenuItem onClick={() => setSip({ frequency: 'weekly' })}>
               Weekly
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setFrequency('monthly')}>
+            <DropdownMenuItem onClick={() => setSip({ frequency: 'monthly' })}>
               Monthly
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setFrequency('yearly')}>
+            <DropdownMenuItem onClick={() => setSip({ frequency: 'yearly' })}>
               Yearly
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setFrequency('custom')}>
+            <DropdownMenuItem onClick={() => setSip({ frequency: 'custom' })}>
               Custom
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -310,7 +319,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             max="365"
             value={customDays}
             onChange={(e) =>
-              setCustomDays(Math.max(1, Math.min(365, Number(e.target.value))))
+              setSip({
+                customDays: Math.max(1, Math.min(365, Number(e.target.value))),
+              })
             }
             className="border-border bg-background focus:ring-primary/50 w-full rounded-lg border px-4 py-3 text-lg font-semibold focus:ring-2 focus:outline-none"
           />
@@ -329,9 +340,12 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
               step={100000}
               value={targetAmount}
               onChange={(e) =>
-                setTargetAmount(
-                  Math.max(100000, Math.min(500000000, Number(e.target.value)))
-                )
+                setSip({
+                  targetAmount: Math.max(
+                    100000,
+                    Math.min(500000000, Number(e.target.value))
+                  ),
+                })
               }
               className="border-border bg-background focus:ring-primary/50 w-32 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             />
@@ -341,7 +355,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             max={100000000}
             step={100000}
             value={[targetAmount]}
-            onValueChange={(value) => setTargetAmount(value[0])}
+            onValueChange={(value) => setSip({ targetAmount: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -361,7 +375,9 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
               step={100}
               value={investmentAmount}
               onChange={(e) =>
-                setInvestmentAmount(Math.max(0, Number(e.target.value)))
+                setSip({
+                  investmentAmount: Math.max(0, Number(e.target.value)),
+                })
               }
               className="border-border bg-background focus:ring-primary/50 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
               min="0"
@@ -385,7 +401,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             }
             step={100}
             value={[investmentAmount]}
-            onValueChange={(value) => setInvestmentAmount(value[0])}
+            onValueChange={(value) => setSip({ investmentAmount: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -418,7 +434,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           max={30}
           step={0.1}
           value={[returnRate]}
-          onValueChange={(value) => setReturnRate(value[0])}
+          onValueChange={(value) => setSip({ returnRate: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -440,7 +456,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
           max={40}
           step={1}
           value={[timePeriod]}
-          onValueChange={(value) => setTimePeriod(value[0])}
+          onValueChange={(value) => setSip({ timePeriod: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -456,7 +472,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
             <input
               type="checkbox"
               checked={stepUpEnabled}
-              onChange={(e) => setStepUpEnabled(e.target.checked)}
+              onChange={(e) => setSip({ stepUpEnabled: e.target.checked })}
               className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
             />
             <TrendingUp className="h-4 w-4" />
@@ -477,7 +493,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
                 max={25}
                 step={1}
                 value={[stepUpPercent]}
-                onValueChange={(value) => setStepUpPercent(value[0])}
+                onValueChange={(value) => setSip({ stepUpPercent: value[0] })}
                 className="w-full"
               />
               <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -579,13 +595,28 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         </div>
       )}
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-10 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Consult on this Goal
+      {/* Action buttons */}
+      <div className="mt-10 flex gap-2">
+        {onConsult && (
+          <Button onClick={handleConsult} className="flex-1">
+            <MessageSquare className="h-4 w-4" />
+            Consult on this Goal
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size={onConsult ? 'icon' : 'default'}
+          onClick={handleShare}
+          className={onConsult ? 'shrink-0' : 'w-full'}
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
+          {!onConsult && (copied ? 'Copied!' : 'Share My Calculation')}
         </Button>
-      )}
+      </div>
     </div>
   )
 }

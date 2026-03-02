@@ -7,8 +7,9 @@ import {
   formatINR,
   formatINRCompact,
 } from '@/lib/finance-math'
-import { GraduationCap, MessageSquare } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useCalculatorStore, buildShareUrl } from '@/lib/calculator-store'
+import { Check, GraduationCap, MessageSquare, Share2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
 
@@ -19,9 +20,17 @@ interface EducationInflationCalculatorProps {
 export function EducationInflationCalculator({
   onConsult,
 }: EducationInflationCalculatorProps) {
-  const [currentCost, setCurrentCost] = useState(1500000)
-  const [inflationRate, setInflationRate] = useState(10)
-  const [years, setYears] = useState(12)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
+
+  const currentCost = useCalculatorStore((s) => s.education.currentCost)
+  const inflationRate = useCalculatorStore((s) => s.education.inflationRate)
+  const years = useCalculatorStore((s) => s.education.years)
+  const setEducation = useCalculatorStore((s) => s.setEducation)
+
+  const [copied, setCopied] = useState(false)
 
   const calculations = useMemo(() => {
     const futureCost = calcEducationInflation(currentCost, inflationRate, years)
@@ -36,6 +45,15 @@ export function EducationInflationCalculator({
       `Goal: ${formatINRCompact(calculations.futureCost)} for Child Education in ${years} years (current cost: ${formatINRCompact(currentCost)}, ${inflationRate}% inflation)`
     )
   }
+
+  const handleShare = async () => {
+    const url = buildShareUrl('education')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
 
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
@@ -64,9 +82,12 @@ export function EducationInflationCalculator({
             step={50000}
             value={currentCost}
             onChange={(e) =>
-              setCurrentCost(
-                Math.max(100000, Math.min(5000000, Number(e.target.value)))
-              )
+              setEducation({
+                currentCost: Math.max(
+                  100000,
+                  Math.min(5000000, Number(e.target.value))
+                ),
+              })
             }
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
@@ -76,7 +97,7 @@ export function EducationInflationCalculator({
           max={5000000}
           step={50000}
           value={[currentCost]}
-          onValueChange={(value) => setCurrentCost(value[0])}
+          onValueChange={(value) => setEducation({ currentCost: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -100,7 +121,7 @@ export function EducationInflationCalculator({
           max={15}
           step={0.1}
           value={[inflationRate]}
-          onValueChange={(value) => setInflationRate(value[0])}
+          onValueChange={(value) => setEducation({ inflationRate: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -124,7 +145,7 @@ export function EducationInflationCalculator({
           max={18}
           step={1}
           value={[years]}
-          onValueChange={(value) => setYears(value[0])}
+          onValueChange={(value) => setEducation({ years: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -133,7 +154,6 @@ export function EducationInflationCalculator({
         </div>
       </div>
 
-      {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
       {/* Results */}
@@ -197,13 +217,27 @@ export function EducationInflationCalculator({
         </div>
       </div>
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-10 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Consult on this Goal
+      {/* Action buttons */}
+      <div className="mt-10 flex gap-2">
+        {onConsult && (
+          <Button onClick={handleConsult} className="flex-1">
+            <MessageSquare className="h-4 w-4" /> Consult on this Goal
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size={onConsult ? 'icon' : 'default'}
+          onClick={handleShare}
+          className={onConsult ? 'shrink-0' : 'w-full'}
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
+          {!onConsult && (copied ? 'Copied!' : 'Share My Calculation')}
         </Button>
-      )}
+      </div>
     </div>
   )
 }

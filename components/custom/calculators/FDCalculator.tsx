@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import {
   calcFDMaturity,
   calcFDRequiredPrincipal,
@@ -9,28 +10,38 @@ import {
   formatINR,
   formatINRCompact,
 } from '@/lib/finance-math'
-import { Calculator, Landmark, MessageSquare, Target } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import {
+  Calculator,
+  Check,
+  Landmark,
+  MessageSquare,
+  Share2,
+  Target,
+} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
-
-type CalcMode = 'calculate' | 'goal'
 
 interface FDCalculatorProps {
   onConsult?: (msg: string) => void
 }
 
 export function FDCalculator({ onConsult }: FDCalculatorProps) {
-  const [mode, setMode] = useState<CalcMode>('calculate')
-  const [principal, setPrincipal] = useState(500000)
-  const [interestRate, setInterestRate] = useState(7)
-  const [inflationRate, setInflationRate] = useState(6)
-  const [timePeriod, setTimePeriod] = useState(5)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
 
-  // Goal Seek
-  const [targetAmount, setTargetAmount] = useState(1000000)
+  const mode = useCalculatorStore((s) => s.fd.mode)
+  const principal = useCalculatorStore((s) => s.fd.principal)
+  const interestRate = useCalculatorStore((s) => s.fd.interestRate)
+  const inflationRate = useCalculatorStore((s) => s.fd.inflationRate)
+  const timePeriod = useCalculatorStore((s) => s.fd.timePeriod)
+  const targetAmount = useCalculatorStore((s) => s.fd.targetAmount)
+  const setFd = useCalculatorStore((s) => s.setFd)
 
-  // ── Calculate mode ──
+  const [copied, setCopied] = useState(false)
+
   const calculations = useMemo(() => {
     if (mode === 'goal') return null
     const { maturityAmount, interestEarned } = calcFDMaturity(
@@ -47,7 +58,6 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
     return { maturityAmount, interestEarned, realValue, inflationErosion }
   }, [mode, principal, interestRate, inflationRate, timePeriod])
 
-  // ── Goal mode ──
   const goalResult = useMemo(() => {
     if (mode !== 'goal') return null
     const required = calcFDRequiredPrincipal(
@@ -63,14 +73,11 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
     return { requiredPrincipal: required, realValue }
   }, [mode, targetAmount, interestRate, inflationRate, timePeriod])
 
-  // Donut percentages for calculate mode
-  // No inflation: principal vs interest (as % of maturity)
   const principalPct =
     calculations && calculations.maturityAmount > 0
       ? (principal / calculations.maturityAmount) * 100
       : 50
 
-  // With inflation: real value vs erosion (as % of maturity)
   const showInflation = inflationRate > 0
   const realPct =
     calculations && showInflation && calculations.maturityAmount > 0
@@ -90,6 +97,15 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
     )
   }
 
+  const handleShare = async () => {
+    const url = buildShareUrl('fd')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
+
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-4 flex items-center gap-3">
@@ -107,7 +123,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
       {/* Mode Toggle */}
       <div className="bg-muted ring-ring mb-5 flex rounded-md p-1 ring-1">
         <button
-          onClick={() => setMode('calculate')}
+          onClick={() => setFd({ mode: 'calculate' })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             mode === 'calculate'
               ? 'bg-primary/70 text-foreground shadow-sm'
@@ -118,7 +134,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
           Calculate
         </button>
         <button
-          onClick={() => setMode('goal')}
+          onClick={() => setFd({ mode: 'goal' })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             mode === 'goal'
               ? 'bg-destructive/50 text-foreground shadow-sm'
@@ -142,9 +158,12 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
               step={100000}
               value={targetAmount}
               onChange={(e) =>
-                setTargetAmount(
-                  Math.max(100000, Math.min(100000000, Number(e.target.value)))
-                )
+                setFd({
+                  targetAmount: Math.max(
+                    100000,
+                    Math.min(100000000, Number(e.target.value))
+                  ),
+                })
               }
               className="border-border bg-background focus:ring-primary/50 w-32 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             />
@@ -154,7 +173,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
             max={50000000}
             step={100000}
             value={[targetAmount]}
-            onValueChange={(value) => setTargetAmount(value[0])}
+            onValueChange={(value) => setFd({ targetAmount: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -176,9 +195,12 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
               step={10000}
               value={principal}
               onChange={(e) =>
-                setPrincipal(
-                  Math.max(10000, Math.min(50000000, Number(e.target.value)))
-                )
+                setFd({
+                  principal: Math.max(
+                    10000,
+                    Math.min(50000000, Number(e.target.value))
+                  ),
+                })
               }
               className="border-border bg-background focus:ring-primary/50 w-32 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             />
@@ -188,7 +210,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
             max={10000000}
             step={10000}
             value={[principal]}
-            onValueChange={(value) => setPrincipal(value[0])}
+            onValueChange={(value) => setFd({ principal: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -213,7 +235,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
           max={10}
           step={0.1}
           value={[interestRate]}
-          onValueChange={(value) => setInterestRate(value[0])}
+          onValueChange={(value) => setFd({ interestRate: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -237,7 +259,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
           max={12}
           step={0.1}
           value={[inflationRate]}
-          onValueChange={(value) => setInflationRate(value[0])}
+          onValueChange={(value) => setFd({ inflationRate: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -259,7 +281,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
           max={30}
           step={1}
           value={[timePeriod]}
-          onValueChange={(value) => setTimePeriod(value[0])}
+          onValueChange={(value) => setFd({ timePeriod: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -268,10 +290,9 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
         </div>
       </div>
 
-      {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
-      {/* ── Results ── */}
+      {/* Results */}
       {mode === 'calculate' && calculations && (
         <>
           <div className="mb-5 text-center">
@@ -294,14 +315,11 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
               </p>
             )}
           </div>
-
-          {/* Donut Chart + Legend */}
           <div className="flex items-center gap-6">
             <div className="relative h-24 w-24 shrink-0">
               <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
                 {showInflation ? (
                   <>
-                    {/* Base: amber (inflation erosion) */}
                     <circle
                       cx="18"
                       cy="18"
@@ -311,7 +329,6 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
                       strokeWidth="4"
                       className="text-amber-500"
                     />
-                    {/* Top: primary (real value retained) */}
                     <circle
                       cx="18"
                       cy="18"
@@ -424,13 +441,28 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
         </div>
       )}
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-10 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Consult on this Goal
+      {/* Action buttons */}
+      <div className="mt-10 flex gap-2">
+        {onConsult && (
+          <Button onClick={handleConsult} className="flex-1">
+            <MessageSquare className="h-4 w-4" />
+            Consult on this Goal
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size={onConsult ? 'icon' : 'default'}
+          onClick={handleShare}
+          className={onConsult ? 'shrink-0' : 'w-full'}
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
+          {!onConsult && (copied ? 'Copied!' : 'Share My Calculation')}
         </Button>
-      )}
+      </div>
     </div>
   )
 }

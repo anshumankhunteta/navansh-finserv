@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { CalculatorCarousel } from './enquire/EnquireContent'
 
 export const metadata: Metadata = {
   title: 'Navansh Finserv',
@@ -153,6 +154,25 @@ export default function HomePage() {
           })}
         </div>
       </div>
+
+      {/* Interactive Calculators Preview */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+              Try Our Financial{' '}
+              <span className="text-primary">Calculators</span>
+            </h2>
+            <p className="text-muted-foreground mx-auto text-lg">
+              Plan your investments, estimate returns, and set financial goals
+              with our interactive tools.
+            </p>
+          </div>
+          <div className="mx-auto max-w-4xl">
+            <CalculatorCarousel mode="preview" />
+          </div>
+        </div>
+      </section>
 
       {/* Why Us Section */}
       <section className="py-20">

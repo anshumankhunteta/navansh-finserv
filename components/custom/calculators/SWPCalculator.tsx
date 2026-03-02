@@ -2,14 +2,22 @@
 
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import {
   calcSWPDepletion,
   calcSWPRequiredCorpus,
   formatINR,
   formatINRCompact,
 } from '@/lib/finance-math'
-import { Calculator, Clock, MessageSquare, Target } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import {
+  Calculator,
+  Check,
+  Clock,
+  MessageSquare,
+  Share2,
+  Target,
+} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 
 const currentYear = new Date().getFullYear()
 
@@ -20,15 +28,20 @@ interface RetirementSWPCalculatorProps {
 export function RetirementSWPCalculator({
   onConsult,
 }: RetirementSWPCalculatorProps) {
-  const [goalMode, setGoalMode] = useState(false)
-  const [corpus, setCorpus] = useState(10000000)
-  const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(50000)
-  const [returnRate, setReturnRate] = useState(8)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
 
-  // Goal Seek
-  const [desiredYears, setDesiredYears] = useState(25)
+  const goalMode = useCalculatorStore((s) => s.swp.goalMode)
+  const corpus = useCalculatorStore((s) => s.swp.corpus)
+  const monthlyWithdrawal = useCalculatorStore((s) => s.swp.monthlyWithdrawal)
+  const returnRate = useCalculatorStore((s) => s.swp.returnRate)
+  const desiredYears = useCalculatorStore((s) => s.swp.desiredYears)
+  const setSwp = useCalculatorStore((s) => s.setSwp)
 
-  // ── Calculate mode ──
+  const [copied, setCopied] = useState(false)
+
   const calculations = useMemo(() => {
     if (goalMode) return null
     return calcSWPDepletion(corpus, monthlyWithdrawal, returnRate)
@@ -47,7 +60,6 @@ export function RetirementSWPCalculator({
       ? Math.min((corpus / calculations.totalWithdrawn) * 100, 100)
       : 50
 
-  // ── Goal mode ──
   const goalResult = useMemo(() => {
     if (!goalMode) return null
     return calcSWPRequiredCorpus(monthlyWithdrawal, returnRate, desiredYears)
@@ -69,6 +81,15 @@ export function RetirementSWPCalculator({
     )
   }
 
+  const handleShare = async () => {
+    const url = buildShareUrl('swp')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
+
   return (
     <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
       <div className="mb-4 flex items-center gap-3">
@@ -85,33 +106,31 @@ export function RetirementSWPCalculator({
         </div>
       </div>
 
-      {/* ── Mode Toggle ── */}
+      {/* Mode Toggle */}
       <div className="bg-muted ring-ring mb-5 flex gap-2 rounded-md p-1 ring-1">
         <button
-          onClick={() => setGoalMode(!goalMode)}
+          onClick={() => setSwp({ goalMode: !goalMode })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             !goalMode
               ? 'bg-primary/70 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Calculator className="h-3.5 w-3.5" />
-          Calculate
+          <Calculator className="h-3.5 w-3.5" /> Calculate
         </button>
         <button
-          onClick={() => setGoalMode(!goalMode)}
+          onClick={() => setSwp({ goalMode: !goalMode })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             goalMode
               ? 'bg-destructive/50 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Target className="h-3.5 w-3.5" />
-          Goal Seek
+          <Target className="h-3.5 w-3.5" /> Goal Seek
         </button>
       </div>
 
-      {/* ── CALCULATE MODE: Corpus Slider ── */}
+      {/* CALCULATE MODE: Corpus Slider */}
       {!goalMode && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
@@ -123,9 +142,12 @@ export function RetirementSWPCalculator({
               step={500000}
               value={corpus}
               onChange={(e) =>
-                setCorpus(
-                  Math.max(1000000, Math.min(100000000, Number(e.target.value)))
-                )
+                setSwp({
+                  corpus: Math.max(
+                    1000000,
+                    Math.min(100000000, Number(e.target.value))
+                  ),
+                })
               }
               className="border-border bg-background focus:ring-primary/50 w-32 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
             />
@@ -135,7 +157,7 @@ export function RetirementSWPCalculator({
             max={200000000}
             step={500000}
             value={[corpus]}
-            onValueChange={(value) => setCorpus(value[0])}
+            onValueChange={(value) => setSwp({ corpus: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -145,7 +167,7 @@ export function RetirementSWPCalculator({
         </div>
       )}
 
-      {/* Monthly Withdrawal Slider — shared */}
+      {/* Monthly Withdrawal Slider */}
       <div className="mb-5">
         <div className="mb-2 flex items-center justify-between">
           <label className="text-muted-foreground text-sm">
@@ -156,9 +178,12 @@ export function RetirementSWPCalculator({
             step={5000}
             value={monthlyWithdrawal}
             onChange={(e) =>
-              setMonthlyWithdrawal(
-                Math.max(10000, Math.min(500000, Number(e.target.value)))
-              )
+              setSwp({
+                monthlyWithdrawal: Math.max(
+                  10000,
+                  Math.min(500000, Number(e.target.value))
+                ),
+              })
             }
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
@@ -168,7 +193,7 @@ export function RetirementSWPCalculator({
           max={1500000}
           step={5000}
           value={[monthlyWithdrawal]}
-          onValueChange={(value) => setMonthlyWithdrawal(value[0])}
+          onValueChange={(value) => setSwp({ monthlyWithdrawal: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -177,7 +202,7 @@ export function RetirementSWPCalculator({
         </div>
       </div>
 
-      {/* Post-Retirement Returns Slider — shared */}
+      {/* Post-Retirement Returns Slider */}
       <div className="mb-5">
         <div className="mb-2 flex items-center justify-between">
           <label className="text-muted-foreground text-sm">
@@ -192,7 +217,7 @@ export function RetirementSWPCalculator({
           max={15}
           step={0.1}
           value={[returnRate]}
-          onValueChange={(value) => setReturnRate(value[0])}
+          onValueChange={(value) => setSwp({ returnRate: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -201,7 +226,7 @@ export function RetirementSWPCalculator({
         </div>
       </div>
 
-      {/* ── GOAL MODE: Desired Duration slider ── */}
+      {/* GOAL MODE: Desired Duration slider */}
       {goalMode && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
@@ -217,7 +242,7 @@ export function RetirementSWPCalculator({
             max={50}
             step={1}
             value={[desiredYears]}
-            onValueChange={(value) => setDesiredYears(value[0])}
+            onValueChange={(value) => setSwp({ desiredYears: value[0] })}
             className="w-full"
           />
           <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -227,10 +252,9 @@ export function RetirementSWPCalculator({
         </div>
       )}
 
-      {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
-      {/* ── Results ── */}
+      {/* Results */}
       {!goalMode && calculations && (
         <>
           <div className="mb-5 text-center">
@@ -262,8 +286,6 @@ export function RetirementSWPCalculator({
               Total withdrawn: {formatINR(calculations.totalWithdrawn)}
             </p>
           </div>
-
-          {/* Donut Chart + Legend */}
           <div className="flex items-center gap-6">
             <div className="relative h-24 w-24 shrink-0">
               <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
@@ -332,13 +354,27 @@ export function RetirementSWPCalculator({
         </div>
       )}
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-10 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Consult on this Goal
+      {/* Action buttons */}
+      <div className="mt-10 flex gap-2">
+        {onConsult && (
+          <Button onClick={handleConsult} className="flex-1">
+            <MessageSquare className="h-4 w-4" /> Consult on this Goal
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size={onConsult ? 'icon' : 'default'}
+          onClick={handleShare}
+          className={onConsult ? 'shrink-0' : 'w-full'}
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
+          {!onConsult && (copied ? 'Copied!' : 'Share My Calculation')}
         </Button>
-      )}
+      </div>
     </div>
   )
 }
