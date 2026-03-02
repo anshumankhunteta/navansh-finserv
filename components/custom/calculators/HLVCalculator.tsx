@@ -1,11 +1,11 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import { calcHLV, formatINR, formatINRCompact } from '@/lib/finance-math'
-import { Check, Landmark, MessageSquare, Share2, Shield } from 'lucide-react'
+import { Landmark, Shield } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import CalculatorActionButtons from './CalculatorActionButtons'
 
 const currentYear = new Date().getFullYear()
 
@@ -79,7 +79,7 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
   if (!mounted) return null
 
   return (
-    <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
+    <div className="bg-card rounded-2xl p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-primary/10 text-primary rounded-lg p-2">
           <Shield className="h-6 w-6" />
@@ -389,26 +389,12 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
       )}
 
       {/* Action buttons */}
-      <div className="mt-10 flex gap-2">
-        {onConsult && (
-          <Button onClick={handleConsult} className="flex-1">
-            <MessageSquare className="h-4 w-4" /> Consult on this Goal
-          </Button>
-        )}
-        <Button
-          variant="outline"
-          size={onConsult ? 'icon' : 'default'}
-          onClick={handleShare}
-          className={onConsult ? 'shrink-0' : 'w-full'}
-        >
-          {copied ? (
-            <Check className="h-4 w-4 text-green-500" />
-          ) : (
-            <Share2 className="h-4 w-4" />
-          )}
-          {!onConsult && (copied ? 'Copied!' : 'Share My Calculation')}
-        </Button>
-      </div>
+      <CalculatorActionButtons
+        onConsult={onConsult}
+        handleConsult={handleConsult}
+        handleShare={handleShare}
+        copied={copied}
+      />
     </div>
   )
 }

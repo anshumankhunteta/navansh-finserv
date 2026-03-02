@@ -13,6 +13,7 @@ import {
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CalculatorCarousel } from './enquire/EnquireContent'
+import { useCalculatorStore } from '@/lib/calculator-store'
 
 export const metadata: Metadata = {
   title: 'Navansh Finserv',
@@ -82,17 +83,8 @@ export default function HomePage() {
             <p className="text-muted-foreground mb-8 text-lg md:text-xl">
               Financial Planning made Easy
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="hover:bg-primary/40 hover:border-ring active:bg-primary/50 w-auto px-10 text-xl font-bold shadow-md transition-all duration-150 ease-in-out hover:scale-102 hover:rounded-sm hover:border-2"
-            >
-              <Link
-                className="hover:text-primary transition-all active:text-white/70"
-                href="/enquire"
-              >
-                Get a Free Consultation!
-              </Link>
+            <Button asChild size="lg" className="text-xl font-bold">
+              <Link href="/enquire">Get a Free Consultation!</Link>
             </Button>
           </div>
         </div>

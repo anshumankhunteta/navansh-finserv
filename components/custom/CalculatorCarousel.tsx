@@ -23,9 +23,11 @@ import {
   CarouselItem,
   type CarouselApi,
 } from '@/components/ui/carousel'
+import { useCalculatorStore } from '@/lib/calculator-store'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import Navansh from '../icons/Navansh'
 
 // ── All available calculators ──
 export const ALL_CALCULATORS = {
@@ -84,6 +86,15 @@ export function CalculatorCarousel({
 
   const isSingle = activeCalcs.length === 1
 
+  const isStoreLoaded = useCalculatorStore((state) => state.isLoaded)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    if (!isStoreLoaded) return
+    const t = setTimeout(() => setIsLoaded(true), 1000)
+    return () => clearTimeout(t)
+  }, [isStoreLoaded])
+
   // ── Carousel sync ──
   useEffect(() => {
     if (!api) return
@@ -128,7 +139,7 @@ export function CalculatorCarousel({
     router.push(`/enquire?${params.toString()}`)
   }, [pendingCalcKey, router])
 
-  return (
+  return isLoaded ? (
     <>
       <div className="mx-auto w-full">
         {isSingle ? (
@@ -179,7 +190,7 @@ export function CalculatorCarousel({
                   return !interactive
                 },
               }}
-              className="bg-muted/60 dark:bg-muted/30 w-full rounded-3xl p-1"
+              className="bg-card w-full rounded-3xl p-1 shadow-md"
             >
               <CarouselContent>
                 {activeCalcs.map(({ key, Component }) => (
@@ -237,5 +248,11 @@ export function CalculatorCarousel({
         </AlertDialogContent>
       </AlertDialog>
     </>
+  ) : (
+    <div className="bg-muted fixed top-0 left-0 z-100 flex h-[115vh] w-full animate-pulse flex-col items-center justify-center overflow-hidden rounded-3xl duration-500">
+      <div className="p-10">
+        <Navansh height={100} />
+      </div>
+    </div>
   )
 }

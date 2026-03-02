@@ -137,6 +137,7 @@ const DEFAULT_MEDICLAIM: MediclaimState = {
 // ══════════════════════════════════════════════════
 
 interface CalculatorStore {
+  isLoaded: boolean
   sip: SipState
   fd: FdState
   swp: SwpState
@@ -166,6 +167,7 @@ export const useCalculatorStore = create<CalculatorStore>()(
       hlv: { ...DEFAULT_HLV },
       education: { ...DEFAULT_EDUCATION },
       mediclaim: { ...DEFAULT_MEDICLAIM },
+      isLoaded: false,
 
       setSip: (partial) => set((s) => ({ sip: { ...s.sip, ...partial } })),
       setFd: (partial) => set((s) => ({ fd: { ...s.fd, ...partial } })),
@@ -192,6 +194,16 @@ export const useCalculatorStore = create<CalculatorStore>()(
           if (typeof window === 'undefined') return
           sessionStorage.removeItem(name)
         },
+      },
+      onRehydrateStorage: () => {
+        // This function runs before rehydration starts
+        return (state?: CalculatorStore, error?: unknown) => {
+          // This function runs after rehydration finishes
+          if (!error && state) {
+            // Set the state to loaded once complete
+            state.isLoaded = true
+          }
+        }
       },
     }
   )
