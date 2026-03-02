@@ -1,10 +1,11 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import { calcHLV, formatINR, formatINRCompact } from '@/lib/finance-math'
-import { Landmark, MessageSquare, Shield } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Landmark, Shield } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import CalculatorActionButtons from './CalculatorActionButtons'
 
 const currentYear = new Date().getFullYear()
 
@@ -13,13 +14,19 @@ interface HLVCalculatorProps {
 }
 
 export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
-  const [monthlyIncome, setMonthlyIncome] = useState(100000)
-  const [monthlyExpenses, setMonthlyExpenses] = useState(30000)
-  const [yearsToRetirement, setYearsToRetirement] = useState(25)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
 
-  // Liabilities
-  const [liabilitiesEnabled, setLiabilitiesEnabled] = useState(false)
-  const [liabilities, setLiabilities] = useState(2000000)
+  const monthlyIncome = useCalculatorStore((s) => s.hlv.monthlyIncome)
+  const monthlyExpenses = useCalculatorStore((s) => s.hlv.monthlyExpenses)
+  const yearsToRetirement = useCalculatorStore((s) => s.hlv.yearsToRetirement)
+  const liabilitiesEnabled = useCalculatorStore((s) => s.hlv.liabilitiesEnabled)
+  const liabilities = useCalculatorStore((s) => s.hlv.liabilities)
+  const setHlv = useCalculatorStore((s) => s.setHlv)
+
+  const [copied, setCopied] = useState(false)
 
   const calculations = useMemo(() => {
     return calcHLV(
@@ -36,7 +43,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
     liabilities,
   ])
 
-  // 2-segment donut: family needs vs expenses as % of total income
   const familyPct =
     calculations.totalIncome > 0
       ? ((calculations.totalIncome - calculations.totalExpenses) /
@@ -44,7 +50,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
         100
       : 0
 
-  // 3-segment donut: all 3 parts as % of (totalIncome + liabilities)
   const threeSegBase =
     calculations.totalIncome +
       (liabilitiesEnabled ? calculations.liabilities : 0) || 1
@@ -54,7 +59,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
   const liabSegPct = liabilitiesEnabled
     ? (calculations.liabilities / threeSegBase) * 100
     : 0
-  // expensesPct = 100 - familyNeedsPct - liabSegPct (the amber remainder)
 
   const handleConsult = () => {
     const liabText = liabilitiesEnabled
@@ -65,8 +69,17 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
     )
   }
 
+  const handleShare = async () => {
+    const url = buildShareUrl('hlv')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
+
   return (
-    <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
+    <div className="bg-card rounded-2xl p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-primary/10 text-primary rounded-lg p-2">
           <Shield className="h-6 w-6" />
@@ -93,9 +106,12 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
             step={5000}
             value={monthlyIncome}
             onChange={(e) =>
-              setMonthlyIncome(
-                Math.max(20000, Math.min(2000000, Number(e.target.value)))
-              )
+              setHlv({
+                monthlyIncome: Math.max(
+                  20000,
+                  Math.min(2000000, Number(e.target.value))
+                ),
+              })
             }
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
@@ -105,7 +121,7 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           max={2000000}
           step={5000}
           value={[monthlyIncome]}
-          onValueChange={(value) => setMonthlyIncome(value[0])}
+          onValueChange={(value) => setHlv({ monthlyIncome: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -125,15 +141,15 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
             step={5000}
             value={monthlyExpenses}
             onChange={(e) =>
-              setMonthlyExpenses(
-                Math.max(
+              setHlv({
+                monthlyExpenses: Math.max(
                   5000,
                   Math.min(
                     Math.min(monthlyIncome, 1000000),
                     Number(e.target.value)
                   )
-                )
-              )
+                ),
+              })
             }
             className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
           />
@@ -143,7 +159,7 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           max={Math.min(monthlyIncome, 1000000)}
           step={5000}
           value={[monthlyExpenses]}
-          onValueChange={(value) => setMonthlyExpenses(value[0])}
+          onValueChange={(value) => setHlv({ monthlyExpenses: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -167,7 +183,7 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           max={40}
           step={1}
           value={[yearsToRetirement]}
-          onValueChange={(value) => setYearsToRetirement(value[0])}
+          onValueChange={(value) => setHlv({ yearsToRetirement: value[0] })}
           className="w-full"
         />
         <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -182,11 +198,10 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           <input
             type="checkbox"
             checked={liabilitiesEnabled}
-            onChange={(e) => setLiabilitiesEnabled(e.target.checked)}
+            onChange={(e) => setHlv({ liabilitiesEnabled: e.target.checked })}
             className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
           />
-          <Landmark className="h-4 w-4" />
-          Got Loans?
+          <Landmark className="h-4 w-4" /> Got Loans?
         </label>
         {liabilitiesEnabled && (
           <div className="border-destructive/30 bg-destructive/5 mt-3 rounded-lg border border-dashed p-4">
@@ -203,9 +218,12 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 step={100000}
                 value={liabilities}
                 onChange={(e) =>
-                  setLiabilities(
-                    Math.max(0, Math.min(100000000, Number(e.target.value)))
-                  )
+                  setHlv({
+                    liabilities: Math.max(
+                      0,
+                      Math.min(100000000, Number(e.target.value))
+                    ),
+                  })
                 }
                 className="border-border bg-background focus:ring-primary/50 w-28 rounded-lg border px-3 py-1 text-right text-sm font-semibold focus:ring-2 focus:outline-none"
               />
@@ -215,7 +233,7 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
               max={50000000}
               step={100000}
               value={[liabilities]}
-              onValueChange={(value) => setLiabilities(value[0])}
+              onValueChange={(value) => setHlv({ liabilities: value[0] })}
               className="w-full"
             />
             <div className="text-muted-foreground mt-1 flex justify-between text-xs">
@@ -226,7 +244,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
         )}
       </div>
 
-      {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
       {/* Results */}
@@ -248,7 +265,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
 
       {/* Donut Chart + Legend */}
       {!liabilitiesEnabled ? (
-        /* 2-segment donut: Family Needs vs Expenses */
         <div className="flex items-center gap-6">
           <div className="relative h-24 w-24 shrink-0">
             <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
@@ -300,11 +316,9 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
           </div>
         </div>
       ) : (
-        /* 3-segment donut: Income Replacement + Liabilities + Expenses */
         <div className="flex items-center gap-6">
           <div className="relative h-24 w-24 shrink-0">
             <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-              {/* Base: amber (expenses) */}
               <circle
                 cx="18"
                 cy="18"
@@ -314,7 +328,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 strokeWidth="4"
                 className="text-amber-500"
               />
-              {/* Middle: destructive (liabilities) */}
               <circle
                 cx="18"
                 cy="18"
@@ -326,7 +339,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
                 strokeDashoffset="0"
                 className="text-destructive"
               />
-              {/* Top: primary (family needs) */}
               <circle
                 cx="18"
                 cy="18"
@@ -376,13 +388,13 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
         </div>
       )}
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-10 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Consult on this Goal
-        </Button>
-      )}
+      {/* Action buttons */}
+      <CalculatorActionButtons
+        onConsult={onConsult}
+        handleConsult={handleConsult}
+        handleShare={handleShare}
+        copied={copied}
+      />
     </div>
   )
 }

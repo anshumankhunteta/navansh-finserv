@@ -1,15 +1,20 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import {
+  buildShareUrl,
+  useCalculatorStore,
+  type MediclaimMember,
+} from '@/lib/calculator-store'
 import {
   estimateMediclaimPremium,
   formatINR,
   formatINRCompact,
   type MediclaimInput,
 } from '@/lib/finance-math'
-import { Heart, MessageSquare, Minus, Plus, Users } from 'lucide-react'
-import { useMemo, useState, useCallback } from 'react'
+import { Heart, Minus, Plus, Users } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import CalculatorActionButtons from './CalculatorActionButtons'
 
 const SUM_INSURED_OPTIONS = [
   { value: 300000, label: '₹3 Lakh' },
@@ -21,19 +26,6 @@ const SUM_INSURED_OPTIONS = [
   { value: 10000000, label: '₹1 Crore' },
 ]
 
-interface Member {
-  age: number
-  label: string
-  enabled: boolean
-}
-
-const DEFAULT_INDIVIDUAL: Member[] = [{ age: 30, label: 'Self', enabled: true }]
-
-const DEFAULT_FLOATER: Member[] = [
-  { age: 30, label: 'Self', enabled: true },
-  { age: 28, label: 'Spouse', enabled: true },
-]
-
 const FLOATER_SLOTS: string[] = [
   'Self',
   'Spouse',
@@ -42,7 +34,6 @@ const FLOATER_SLOTS: string[] = [
   'Parent 1',
   'Parent 2',
 ]
-
 const INDIVIDUAL_SLOTS: string[] = [
   'Person 1',
   'Person 2',
@@ -57,37 +48,48 @@ interface MediclaimEstimatorProps {
 }
 
 export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
-  const [planType, setPlanType] = useState<'individual' | 'floater'>('floater')
-  const [sumInsured, setSumInsured] = useState(500000)
-  const [isMetro, setIsMetro] = useState(true)
-  const [hasPreExisting, setHasPreExisting] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
 
-  // ── Separate state for each tab ──
-  const [individualMembers, setIndividualMembers] =
-    useState<Member[]>(DEFAULT_INDIVIDUAL)
-  const [floaterMembers, setFloaterMembers] =
-    useState<Member[]>(DEFAULT_FLOATER)
+  const planType = useCalculatorStore((s) => s.mediclaim.planType)
+  const sumInsured = useCalculatorStore((s) => s.mediclaim.sumInsured)
+  const isMetro = useCalculatorStore((s) => s.mediclaim.isMetro)
+  const hasPreExisting = useCalculatorStore((s) => s.mediclaim.hasPreExisting)
+  const individualMembers = useCalculatorStore(
+    (s) => s.mediclaim.individualMembers
+  )
+  const floaterMembers = useCalculatorStore((s) => s.mediclaim.floaterMembers)
+  const setMediclaim = useCalculatorStore((s) => s.setMediclaim)
+
+  const [copied, setCopied] = useState(false)
 
   const members = planType === 'individual' ? individualMembers : floaterMembers
-  const setMembers =
-    planType === 'individual' ? setIndividualMembers : setFloaterMembers
   const slotLabels =
     planType === 'individual' ? INDIVIDUAL_SLOTS : FLOATER_SLOTS
 
-  // ── Self age for floater restrictions ──
   const selfMember = floaterMembers.find((m) => m.label === 'Self')
   const selfAge = selfMember?.age ?? 30
   const selfOver24 = selfAge > 24
   const selfUnder18 = selfAge < 18
 
-  // Is this a parent slot?
   const isParentSlot = (label: string) =>
     label === 'Parent 1' || label === 'Parent 2'
-  // Is this a child slot?
   const isChildSlot = (label: string) =>
     label === 'Child 1' || label === 'Child 2'
-  // Is this a spouse slot?
   const isSpouseSlot = (label: string) => label === 'Spouse'
+
+  const setMembers = useCallback(
+    (newMembers: MediclaimMember[]) => {
+      if (planType === 'individual') {
+        setMediclaim({ individualMembers: newMembers })
+      } else {
+        setMediclaim({ floaterMembers: newMembers })
+      }
+    },
+    [planType, setMediclaim]
+  )
 
   const addMember = useCallback(() => {
     if (members.length >= 6) return
@@ -112,7 +114,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
   const updateMemberAge = useCallback(
     (index: number, age: number) => {
       const member = members[index]
-      // For floater: cap child ages at 24
       const maxAge =
         planType === 'floater' && isChildSlot(member.label) ? 24 : 100
       const updated = [...members]
@@ -127,7 +128,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
 
   const toggleMember = useCallback(
     (index: number) => {
-      // Can't toggle Self off
       if (members[index].label === 'Self') return
       const updated = [...members]
       updated[index] = { ...updated[index], enabled: !updated[index].enabled }
@@ -136,17 +136,13 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
     [members, setMembers]
   )
 
-  // Enabled members for calculation (excluding disabled and restricted)
   const activeMembers = useMemo(() => {
     return members.filter((m) => {
       if (!m.enabled) return false
-      // In floater: parents are excluded when self > 24
       if (planType === 'floater' && selfOver24 && isParentSlot(m.label))
         return false
-      // In floater: children are excluded when self < 18
       if (planType === 'floater' && selfUnder18 && isChildSlot(m.label))
         return false
-      // In floater: spouse is excluded when self < 18
       if (planType === 'floater' && selfUnder18 && isSpouseSlot(m.label))
         return false
       return true
@@ -182,8 +178,17 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
     )
   }
 
+  const handleShare = async () => {
+    const url = buildShareUrl('mediclaim')
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (!mounted) return null
+
   return (
-    <div className="bg-card border-border/50 rounded-2xl border p-6 md:p-8">
+    <div className="bg-card rounded-2xl p-6 md:p-8">
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-primary/10 text-primary rounded-lg p-2">
           <Heart className="h-6 w-6" />
@@ -201,26 +206,24 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
       {/* Plan Type Toggle */}
       <div className="bg-muted ring-ring mb-5 flex rounded-md p-1 ring-1">
         <button
-          onClick={() => setPlanType('individual')}
+          onClick={() => setMediclaim({ planType: 'individual' })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             planType === 'individual'
               ? 'bg-primary/70 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Heart className="h-3.5 w-3.5" />
-          Individual
+          <Heart className="h-3.5 w-3.5" /> Individual
         </button>
         <button
-          onClick={() => setPlanType('floater')}
+          onClick={() => setMediclaim({ planType: 'floater' })}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all ${
             planType === 'floater'
               ? 'bg-primary/70 text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Users className="h-3.5 w-3.5" />
-          Family Floater
+          <Users className="h-3.5 w-3.5" /> Family Floater
         </button>
       </div>
 
@@ -252,7 +255,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
         </div>
         <div className="space-y-2">
           {members.map((member, idx) => {
-            // Floater restrictions
             const isRestricted =
               planType === 'floater' &&
               ((selfOver24 && isParentSlot(member.label)) ||
@@ -270,7 +272,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
                   isDisabled ? 'bg-muted/10 opacity-40' : 'bg-muted/30'
                 }`}
               >
-                {/* Toggle checkbox (not for Self) */}
                 {!isSelf ? (
                   <input
                     type="checkbox"
@@ -319,7 +320,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
             )
           })}
         </div>
-        {/* Floater age restriction warning */}
         {planType === 'floater' &&
           selfOver24 &&
           members.some((m) => isParentSlot(m.label)) && (
@@ -339,7 +339,7 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
           {SUM_INSURED_OPTIONS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => setSumInsured(opt.value)}
+              onClick={() => setMediclaim({ sumInsured: opt.value })}
               className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                 sumInsured === opt.value
                   ? 'bg-primary text-primary-foreground border-primary'
@@ -359,7 +359,7 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
         </label>
         <div className="flex gap-3">
           <button
-            onClick={() => setIsMetro(true)}
+            onClick={() => setMediclaim({ isMetro: true })}
             className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
               isMetro
                 ? 'bg-primary/10 border-primary text-primary'
@@ -372,7 +372,7 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
             </span>
           </button>
           <button
-            onClick={() => setIsMetro(false)}
+            onClick={() => setMediclaim({ isMetro: false })}
             className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
               !isMetro
                 ? 'bg-primary/10 border-primary text-primary'
@@ -393,7 +393,7 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
           <input
             type="checkbox"
             checked={hasPreExisting}
-            onChange={(e) => setHasPreExisting(e.target.checked)}
+            onChange={(e) => setMediclaim({ hasPreExisting: e.target.checked })}
             className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
           />
           Pre-existing conditions (Diabetes, BP, etc.)
@@ -405,7 +405,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
         )}
       </div>
 
-      {/* Divider */}
       <div className="border-border/50 my-5 border-t" />
 
       {/* Results */}
@@ -461,18 +460,17 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
         </p>
       </div>
 
-      {/* Disclaimer */}
       <p className="text-muted-foreground mb-3 text-center text-[10px]">
         *Estimates based on market averages. Actual premiums vary by insurer.
       </p>
 
-      {/* Consult CTA */}
-      {onConsult && (
-        <Button onClick={handleConsult} className="mt-4 w-full">
-          <MessageSquare className="h-4 w-4" />
-          Get an Exact Quote
-        </Button>
-      )}
+      {/* Action buttons */}
+      <CalculatorActionButtons
+        onConsult={onConsult}
+        handleConsult={handleConsult}
+        handleShare={handleShare}
+        copied={copied}
+      />
     </div>
   )
 }

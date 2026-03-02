@@ -83,7 +83,7 @@ export function FloatingWhatsAppButton() {
     return null
   }
 
-  const whatsappLink = `https://wa.me/${contactPhone?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`
+  const whatsappLink = `https://wa.me/${contactPhone?.replace(/[^0-9]/g, '')}`
 
   return (
     <div

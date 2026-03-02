@@ -30,11 +30,11 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="mb-4 font-semibold">Quick Links</h3>
-            <ul className="grid grid-cols-5 gap-2 md:grid-cols-1">
+            <ul className="grid grid-cols-6 gap-1 text-center md:grid-cols-1 md:text-left">
               <li>
                 <Link
                   href="/"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Home
                 </Link>
@@ -42,7 +42,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/services"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Services
                 </Link>
@@ -50,7 +50,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   About
                 </Link>
@@ -58,17 +58,25 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
                   Contact
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/privacy"
-                  className="text-secondary-foreground/80 hover:text-primary text-sm transition-colors"
+                  href="/enquire"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
-                  Privacy Policy
+                  Enquire
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
+                >
+                  Privacy
                 </Link>
               </li>
             </ul>
@@ -76,7 +84,7 @@ export default function Footer() {
         </div>
 
         {/* Disclaimer & Copyright */}
-        <div className="border-secondary-foreground/10 mt-12 border-t pt-8">
+        <div className="border-secondary-foreground/10 mt-8 border-t pt-8">
           <p className="text-secondary-foreground/60 mb-4 text-xs">
             Insurance is the subject matter of solicitation. IRDAI Registration:
             <span className="italic"> Application in Progress.</span> For more

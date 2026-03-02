@@ -44,10 +44,10 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
   const [countdown, setCountdown] = useState(60) // 60 seconds = 1 minute rate limit
   const [confettiCount, setConfettiCount] = useState(0)
 
-  // Load persisted state from localStorage on mount
+  // Load persisted state from sessionStorage on mount
   useEffect(() => {
-    const savedEndTime = localStorage.getItem('successCardEndTime')
-    const savedConfettiCount = localStorage.getItem('confettiCount')
+    const savedEndTime = sessionStorage.getItem('successCardEndTime')
+    const savedConfettiCount = sessionStorage.getItem('confettiCount')
 
     if (savedConfettiCount) {
       setConfettiCount(parseInt(savedConfettiCount, 10))
@@ -63,8 +63,8 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
         setCountdown(remaining)
       } else {
         // Clear expired state
-        localStorage.removeItem('successCardEndTime')
-        localStorage.removeItem('confettiCount')
+        sessionStorage.removeItem('successCardEndTime')
+        sessionStorage.removeItem('confettiCount')
       }
     }
   }, [])
@@ -77,7 +77,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer)
-          localStorage.removeItem('successCardEndTime')
+          sessionStorage.removeItem('successCardEndTime')
           return 0 // Stop at 0 instead of resetting
         }
         return prev - 1
@@ -90,7 +90,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
   // Reset form and clear success card
   const resetForm = () => {
     setShowSuccessCard(false)
-    localStorage.removeItem('successCardEndTime')
+    sessionStorage.removeItem('successCardEndTime')
     setCountdown(60)
   }
 
@@ -157,9 +157,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
       })
       reset()
 
-      // Show success card and persist end time in localStorage
+      // Show success card and persist end time in sessionStorage
       const endTime = Date.now() + 60 * 1000 // 60 seconds from now
-      localStorage.setItem('successCardEndTime', endTime.toString())
+      sessionStorage.setItem('successCardEndTime', endTime.toString())
       setShowSuccessCard(true)
       setCountdown(60)
     }
@@ -178,7 +178,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
 
     const newCount = confettiCount + 1
     setConfettiCount(newCount)
-    localStorage.setItem('confettiCount', newCount.toString())
+    sessionStorage.setItem('confettiCount', newCount.toString())
   }
 
   // If success card is showing, render that instead of the form
@@ -240,13 +240,16 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
   }
 
   return (
-    <div id="contact-form" className="mx-auto mb-16 w-full max-w-3xl">
-      {/* <h1 className="text-primary mb-4 text-center text-3xl font-bold md:text-4xl">
+    <div
+      id="contact-form"
+      className={`mx-auto mb-16 w-full max-w-3xl ${showSuccessCard ? 'hidden' : 'block'}`}
+    >
+      <h1 className="text-primary mb-4 text-center text-2xl font-bold md:text-3xl">
         Send us your Query
       </h1>
-      <p className="text-muted-foreground mb-6 text-center text-lg">
+      <p className="text-muted-foreground mb-6 text-center text-sm">
         We&apos;ll personally review it and get back to you.
-      </p> */}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Row 1: First Name & Last Name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -263,7 +266,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               autoComplete="given-name"
               {...register('firstName', { required: 'First name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-              placeholder="First name"
+              placeholder="First"
+              maxLength={30}
+              pattern="[A-Za-z]{1,30}"
             />
             {errors.firstName && (
               <p className="text-destructive mt-1 text-sm">
@@ -290,7 +295,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               autoComplete="family-name"
               {...register('lastName', { required: 'Last name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-              placeholder="Last name"
+              placeholder="Last"
+              maxLength={30}
+              pattern="[A-Za-z]{1,30}"
             />
             {errors.lastName && (
               <p className="text-destructive mt-1 text-sm">
@@ -306,8 +313,8 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
         </div>
 
         {/* Row 2: Phone & Email */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-9">
+          <div className="col-span-1 md:col-span-3">
             <label htmlFor="phone" className="mb-2 block text-sm font-medium">
               Phone Number
               {isPhoneRequired && <span className="text-destructive"> *</span>}
@@ -316,7 +323,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <Phone className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
               <input
                 id="phone"
-                type="tel"
+                type="phone"
                 autoComplete="tel"
                 {...register('phone', {
                   required: isPhoneRequired
@@ -326,7 +333,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 maxLength={10}
                 pattern="[0-9]{10}"
                 className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border py-3 pr-4 pl-11 transition-colors focus:ring-2 focus:outline-none"
-                placeholder="+91 9087654321"
+                placeholder="9876543210"
               />
             </div>
             {errors.phone && (
@@ -340,8 +347,10 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               </p>
             )}
           </div>
-
-          <div>
+          <p className="text-primary-foreground mt-10 hidden text-center text-xl md:block">
+            or
+          </p>
+          <div className="col-span-1 md:col-span-5">
             <label htmlFor="email" className="mb-2 block text-sm font-medium">
               Email
               {isEmailRequired && <span className="text-destructive"> *</span>}
@@ -360,7 +369,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                   },
                 })}
                 className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border py-3 pr-4 pl-11 transition-colors focus:ring-2 focus:outline-none"
-                placeholder="your@email.com"
+                placeholder="firstlast@gmail.com"
               />
             </div>
             {errors.email && (
@@ -390,7 +399,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               max="100"
               {...register('age', { valueAsNumber: true })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-              placeholder="e.g. 25"
+              placeholder="e.g. 67"
             />
             {formState?.errors?.age && (
               <p className="text-destructive mt-1 text-sm">

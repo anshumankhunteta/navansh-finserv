@@ -1,6 +1,7 @@
 import Navansh from '@/components/icons/Navansh'
 import { Button } from '@/components/ui/button'
 import {
+  ArrowRight,
   CheckCircle2,
   HeadphonesIcon,
   Heart,
@@ -11,6 +12,8 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { CalculatorCarousel } from './enquire/EnquireContent'
+import { useCalculatorStore } from '@/lib/calculator-store'
 
 export const metadata: Metadata = {
   title: 'Navansh Finserv',
@@ -80,17 +83,8 @@ export default function HomePage() {
             <p className="text-muted-foreground mb-8 text-lg md:text-xl">
               Financial Planning made Easy
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="hover:bg-primary/20 active:bg-primary/50 w-auto px-10 text-xl font-bold shadow-md transition-all duration-500 hover:scale-103"
-            >
-              <Link
-                className="hover:text-primary active:text-primary transition-colors"
-                href="/enquire"
-              >
-                Get a Free Consultation!
-              </Link>
+            <Button asChild size="lg" className="text-xl font-bold">
+              <Link href="/enquire">Get a Free Consultation!</Link>
             </Button>
           </div>
         </div>
@@ -127,27 +121,50 @@ export default function HomePage() {
           </Link>
         </p>
       </div>
-      <div className="mb-16 grid grid-cols-1 gap-3 px-10 sm:mx-auto md:grid-cols-3 md:gap-6 lg:gap-8">
-        {allServices.map((service) => {
-          const Icon = service.icon
-          return (
-            <div
-              key={service.title}
-              className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
-            >
-              <div className="mb-4 flex flex-row items-center gap-2">
-                <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
-                  <Icon className="h-6 w-6" />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 lg:gap-8">
+          {allServices.map((service) => {
+            const Icon = service.icon
+            return (
+              <div
+                key={service.title}
+                className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
+              >
+                <div className="mb-4 flex flex-row items-center gap-2">
+                  <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold sm:text-2xl">
+                    {service.title}
+                  </h3>
                 </div>
-                <h3 className="text-xl font-semibold">{service.title}</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  {service.description}
+                </p>
               </div>
-              <p className="text-muted-foreground text-sm">
-                {service.description}
-              </p>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
+
+      {/* Interactive Calculators Preview */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+              Try Our Financial{' '}
+              <span className="text-primary">Calculators</span>
+            </h2>
+            <p className="text-muted-foreground mx-auto text-lg">
+              Plan your investments, estimate returns, and set financial goals
+              with our interactive tools.
+            </p>
+          </div>
+          <div className="mx-auto max-w-4xl">
+            <CalculatorCarousel mode="preview" />
+          </div>
+        </div>
+      </section>
 
       {/* Why Us Section */}
       <section className="py-20">
@@ -279,8 +296,11 @@ export default function HomePage() {
             <Button asChild size="lg">
               <Link href="/contact">Get Started Today</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/services">Explore Services</Link>
+            <Button asChild variant="link" size="lg">
+              <Link href="/services">
+                Explore Services
+                <ArrowRight />
+              </Link>
             </Button>
           </div>
         </div>

@@ -1,0 +1,27 @@
+# Walkthrough: Zustand Calculator State + Share via Link
+
+### Architecture
+
+```mermaid
+graph LR
+  A["Zustand Store<br/>(sessionStorage)"] --> B["SIP Calculator"]
+  A --> C["FD Calculator"]
+  A --> D["SWP Calculator"]
+  A --> E["HLV Calculator"]
+  A --> F["Education Calculator"]
+  A --> G["Mediclaim Estimator"]
+  B -- "Share2 button" --> H["buildShareUrl()"]
+  H --> I["Clipboard URL<br/>navansh.in/enquire?calc=sip&amt=15000..."]
+  I -- "User pastes URL" --> J["restoreFromUrl()"]
+  J --> A
+```
+
+### Key design decisions
+- **Granular selectors**: Each calculator reads only its own slice via `useCalculatorStore(s => s.sip.investmentAmount)` — moving a slider in SIP won't re-render FD
+- **Hydration guard**: `if (!mounted) return null` prevents SSR/sessionStorage mismatch
+- **Share button**: Icon-only when next to Consult, full-width when Consult is hidden (preview mode)
+- **URL format**: `?calc=sip&amt=15000&rate=12&yrs=15` — compact and human-readable
+
+## Verification
+
+- `npx next build` → exit code 0, all 14 routes generated

@@ -83,13 +83,13 @@ export default function Navbar() {
 
   return (
     <header
-      className={`border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur transition-transform duration-300 ${hidden ? '-translate-y-full md:translate-y-0' : 'translate-y-0'}`}
+      className={`border-border/40 bg-background/95 supports-backdrop-filter:bg-primary/20 sticky top-0 z-50 w-full border-b backdrop-blur transition-transform duration-300 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
     >
       <div className="max-w-10xl container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-baseline gap-2">
           <Navansh height={24} />
-          <span className="text-2xl font-bold tracking-tight">
+          <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
             Navansh{' '}
             <span className="text-primary inline-block w-28">{pageTitle}</span>
           </span>
