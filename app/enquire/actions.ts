@@ -234,29 +234,51 @@ export async function submitEnquiry(
     // 3. Multi-tier rate limiting using Supabase
     const supabase = createServiceClient()
 
-    // Check for exact name match (case-insensitive)
-    const { data: existingLeads } = await supabase
-      .from('leads')
-      .select('id, first_name, last_name, age, gender, created_at')
-      .ilike('first_name', validatedData.firstName)
-      .ilike('last_name', validatedData.lastName)
-      .eq('age', validatedData.age)
-      .eq('gender', validatedData.gender)
-      .order('created_at', { ascending: false })
-      .limit(1)
+    // Check for exact name match (case-insensitive) within the last 48 hours,
+    // AND at least one contact detail (phone or email) must match to avoid
+    // false positives for users who share the same name, age, and gender.
+    const fortyEightHoursAgo = new Date(
+      Date.now() - 48 * 60 * 60 * 1000
+    ).toISOString()
+
+    const contactOrParts: string[] = []
+    if (validatedData.phone)
+      contactOrParts.push(`phone.eq.${validatedData.phone}`)
+    if (validatedData.email)
+      contactOrParts.push(`email.eq.${validatedData.email}`)
+
+    // Only run the duplicate check if we have at least one contact detail to match on
+    const existingLeads =
+      contactOrParts.length > 0
+        ? (
+            await supabase
+              .from('leads')
+              .select('id, first_name, last_name, age, gender, created_at')
+              .ilike('first_name', validatedData.firstName)
+              .ilike('last_name', validatedData.lastName)
+              .eq('age', validatedData.age)
+              .eq('gender', validatedData.gender)
+              .or(contactOrParts.join(','))
+              .gte('created_at', fortyEightHoursAgo)
+              .order('created_at', { ascending: false })
+              .limit(1)
+          ).data
+        : null
 
     if (existingLeads && existingLeads.length > 0) {
       const existingLead = existingLeads[0]
-      const submittedDate = new Date(
-        existingLead.created_at
-      ).toLocaleDateString('en-IN', {
+      const resubmitAt = new Date(
+        new Date(existingLead.created_at).getTime() + 48 * 60 * 60 * 1000
+      ).toLocaleString('en-IN', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       })
       return {
         success: false,
-        message: `You have already submitted an enquiry for this profile on ${submittedDate}.Our team will contact you soon!`,
+        message: `You have already submitted an enquiry for this profile. You can resubmit after ${resubmitAt}. Our team will contact you soon!`,
       }
     }
 
