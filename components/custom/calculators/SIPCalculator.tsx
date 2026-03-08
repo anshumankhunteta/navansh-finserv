@@ -28,12 +28,6 @@ interface SIPCalculatorProps {
 }
 
 export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
-  // ── Hydration guard ──
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   // ── Store selectors (granular to avoid cross-calc re-renders) ──
   const goalMode = useCalculatorStore((s) => s.sip.goalMode)
   const investmentAmount = useCalculatorStore((s) => s.sip.investmentAmount)
@@ -206,8 +200,6 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">

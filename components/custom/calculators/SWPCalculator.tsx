@@ -21,11 +21,6 @@ interface RetirementSWPCalculatorProps {
 export function RetirementSWPCalculator({
   onConsult,
 }: RetirementSWPCalculatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const goalMode = useCalculatorStore((s) => s.swp.goalMode)
   const corpus = useCalculatorStore((s) => s.swp.corpus)
   const monthlyWithdrawal = useCalculatorStore((s) => s.swp.monthlyWithdrawal)
@@ -80,8 +75,6 @@ export function RetirementSWPCalculator({
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">

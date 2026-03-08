@@ -14,11 +14,6 @@ interface HLVCalculatorProps {
 }
 
 export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const monthlyIncome = useCalculatorStore((s) => s.hlv.monthlyIncome)
   const monthlyExpenses = useCalculatorStore((s) => s.hlv.monthlyExpenses)
   const yearsToRetirement = useCalculatorStore((s) => s.hlv.yearsToRetirement)
@@ -75,8 +70,6 @@ export function HLVCalculator({ onConsult }: HLVCalculatorProps) {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">
