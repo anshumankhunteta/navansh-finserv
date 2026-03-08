@@ -205,8 +205,8 @@ export default function HomePage() {
                 <li className="flex items-start text-sm">
                   <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
                   <span>
-                    Gen-Z, Alpha or Boomers, we can understand everyone because
-                    of our diverse team and experience
+                    Gen-Alpha, Gen-Z, Millennials or Boomers, we understand
+                    everyone because of our diverse team and experience
                   </span>
                 </li>
               </ul>

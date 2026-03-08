@@ -1,8 +1,14 @@
 import Link from 'next/link'
 import Navansh from '../icons/Navansh'
+import { Mail } from 'lucide-react'
+import { Discord } from '../icons/Discord'
+import { Github } from '../icons/Github'
+import { Instagram } from '../icons/Instagram'
+import Whatsapp from '../icons/Whatsapp'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const contactPhone = process.env.NEXT_PUBLIC_PHONE_NUMBER || ''
 
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
@@ -25,6 +31,48 @@ export default function Footer() {
             <p className="text-secondary-foreground/80 text-sm">
               Securing Families & Futures with Two Decades of Experience
             </p>
+            <br />
+            <p className="text-secondary-foreground/80 mt-6 mb-2 text-sm">
+              Need Support?
+            </p>
+            <div className="flex gap-3">
+              <Link href="mailto:admin@navansh.in" aria-label="Mail">
+                <Mail className="text-secondary-foreground h-5 w-5" />
+              </Link>
+              <Link
+                href="https://discord.gg/YuPpRjzYtA"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Discord"
+              >
+                <Discord
+                  fill="var(--secondary-foreground)"
+                  className="h-5 w-5"
+                />
+              </Link>
+              <Link
+                href="https://instagram.com/navansh_finserv"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
+                <Instagram
+                  fill="var(--secondary-foreground)"
+                  className="h-5 w-5"
+                />
+              </Link>
+              <Link
+                href={`https://wa.me/${contactPhone?.replace(/[^0-9]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Whatsapp"
+              >
+                <Whatsapp
+                  fill="var(--secondary-foreground)"
+                  className="h-5 w-5"
+                />
+              </Link>
+            </div>
           </div>
 
           {/* Quick Links */}

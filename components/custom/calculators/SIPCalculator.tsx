@@ -317,7 +317,7 @@ export function SIPCalculator({ onConsult }: SIPCalculatorProps) {
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
-              🎯 Target Amount (₹)
+              Target Amount (₹)
             </label>
             <input
               type="number"

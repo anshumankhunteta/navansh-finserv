@@ -137,7 +137,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
-              🎯 Target Maturity Amount (₹)
+              Target Maturity Amount (₹)
             </label>
             <input
               type="number"
