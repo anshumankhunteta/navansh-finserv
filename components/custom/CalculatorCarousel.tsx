@@ -23,7 +23,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from '@/components/ui/carousel'
-import { useCalculatorStore } from '@/lib/calculator-store'
+import { useHydrateStore } from '@/lib/calculator-store'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -86,14 +86,7 @@ export function CalculatorCarousel({
 
   const isSingle = activeCalcs.length === 1
 
-  const isStoreLoaded = useCalculatorStore((state) => state.isLoaded)
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    if (!isStoreLoaded) return
-    const t = setTimeout(() => setIsLoaded(true), 500)
-    return () => clearTimeout(t)
-  }, [isStoreLoaded])
+  useHydrateStore()
 
   // ── Carousel sync ──
   useEffect(() => {
@@ -139,7 +132,7 @@ export function CalculatorCarousel({
     router.push(`/enquire?${params.toString()}`)
   }, [pendingCalcKey, router])
 
-  return isLoaded ? (
+  return (
     <>
       <div className="mx-auto w-full">
         {isSingle ? (
@@ -248,13 +241,5 @@ export function CalculatorCarousel({
         </AlertDialogContent>
       </AlertDialog>
     </>
-  ) : (
-    <div className="bg-primary-foreground/50 fixed top-0 right-0 bottom-0 left-0 z-100 flex h-[100vh] w-[100vw] overflow-hidden rounded-none">
-      <div className="flex w-full flex-col items-center justify-center gap-4">
-        <div className="text-primary border-t-primary flex h-20 w-20 animate-spin items-center justify-center rounded-full border-4 border-transparent text-4xl">
-          <div className="text-secondary border-t-muted flex h-16 w-16 animate-spin items-center justify-center rounded-full border-4 border-transparent text-2xl"></div>
-        </div>
-      </div>
-    </div>
   )
 }

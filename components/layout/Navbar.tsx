@@ -30,8 +30,8 @@ const ROUTE_TITLES: Record<string, string> = {
   '/services': 'Services',
   '/about': 'About',
   '/contact': 'Contact',
-  '/enquire': 'Calculator',
-  '/quote': 'Calculator',
+  '/enquire': 'Enquire',
+  '/quote': 'Enquire',
   '/privacy': 'Privacy',
   '/milee': 'Milee',
 }

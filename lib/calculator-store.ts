@@ -2,6 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useEffect, useRef } from 'react'
 
 // ══════════════════════════════════════════════════
 // State types for each calculator
@@ -137,7 +138,6 @@ const DEFAULT_MEDICLAIM: MediclaimState = {
 // ══════════════════════════════════════════════════
 
 interface CalculatorStore {
-  isLoaded: boolean
   sip: SipState
   fd: FdState
   swp: SwpState
@@ -167,7 +167,6 @@ export const useCalculatorStore = create<CalculatorStore>()(
       hlv: { ...DEFAULT_HLV },
       education: { ...DEFAULT_EDUCATION },
       mediclaim: { ...DEFAULT_MEDICLAIM },
-      isLoaded: false,
 
       setSip: (partial) => set((s) => ({ sip: { ...s.sip, ...partial } })),
       setFd: (partial) => set((s) => ({ fd: { ...s.fd, ...partial } })),
@@ -195,19 +194,25 @@ export const useCalculatorStore = create<CalculatorStore>()(
           sessionStorage.removeItem(name)
         },
       },
-      onRehydrateStorage: () => {
-        // This function runs before rehydration starts
-        return (state?: CalculatorStore, error?: unknown) => {
-          // This function runs after rehydration finishes
-          if (!error && state) {
-            // Set the state to loaded once complete
-            state.isLoaded = true
-          }
-        }
-      },
+      skipHydration: true,
     }
   )
 )
+
+/**
+ * Call once near the top of any client component that reads the store.
+ * Triggers Zustand persist rehydration from sessionStorage on first mount.
+ * Safe to call multiple times — only rehydrates once.
+ */
+export function useHydrateStore() {
+  const hydrated = useRef(false)
+  useEffect(() => {
+    if (!hydrated.current) {
+      useCalculatorStore.persist.rehydrate()
+      hydrated.current = true
+    }
+  }, [])
+}
 
 // ══════════════════════════════════════════════════
 // URL Serialize / Parse helpers (for Share via Link)

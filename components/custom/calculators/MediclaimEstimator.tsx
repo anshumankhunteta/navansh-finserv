@@ -48,11 +48,6 @@ interface MediclaimEstimatorProps {
 }
 
 export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const planType = useCalculatorStore((s) => s.mediclaim.planType)
   const sumInsured = useCalculatorStore((s) => s.mediclaim.sumInsured)
   const isMetro = useCalculatorStore((s) => s.mediclaim.isMetro)
@@ -184,8 +179,6 @@ export function MediclaimEstimator({ onConsult }: MediclaimEstimatorProps) {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">

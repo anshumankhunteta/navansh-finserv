@@ -20,11 +20,6 @@ interface FDCalculatorProps {
 }
 
 export function FDCalculator({ onConsult }: FDCalculatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const mode = useCalculatorStore((s) => s.fd.mode)
   const principal = useCalculatorStore((s) => s.fd.principal)
   const interestRate = useCalculatorStore((s) => s.fd.interestRate)
@@ -97,8 +92,6 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  if (!mounted) return null
-
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">
       <div className="mb-4 flex items-center gap-3">
@@ -144,7 +137,7 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-muted-foreground text-sm">
-              🎯 Target Maturity Amount (₹)
+              Target Maturity Amount (₹)
             </label>
             <input
               type="number"
