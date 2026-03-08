@@ -14,7 +14,7 @@ const COOKIE_NAME = 'navansh_persona'
 const MAX_PERSONAS = 5
 const COOKIE_MAX_AGE = 30 * 24 * 60 * 60 // 30 days in seconds
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { searchParams } = request.nextUrl
 
   // Extract persona slug from ?service= or ?utm_campaign=

@@ -13,7 +13,6 @@ import {
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CalculatorCarousel } from './enquire/EnquireContent'
-import { useCalculatorStore } from '@/lib/calculator-store'
 
 export const metadata: Metadata = {
   title: 'Navansh Finserv',

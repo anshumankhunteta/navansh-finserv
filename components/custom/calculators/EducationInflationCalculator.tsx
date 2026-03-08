@@ -20,11 +20,6 @@ interface EducationInflationCalculatorProps {
 export function EducationInflationCalculator({
   onConsult,
 }: EducationInflationCalculatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const currentCost = useCalculatorStore((s) => s.education.currentCost)
   const inflationRate = useCalculatorStore((s) => s.education.inflationRate)
   const years = useCalculatorStore((s) => s.education.years)
@@ -52,8 +47,6 @@ export function EducationInflationCalculator({
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">

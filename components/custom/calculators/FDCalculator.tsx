@@ -20,11 +20,6 @@ interface FDCalculatorProps {
 }
 
 export function FDCalculator({ onConsult }: FDCalculatorProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
-
   const mode = useCalculatorStore((s) => s.fd.mode)
   const principal = useCalculatorStore((s) => s.fd.principal)
   const interestRate = useCalculatorStore((s) => s.fd.interestRate)
@@ -96,8 +91,6 @@ export function FDCalculator({ onConsult }: FDCalculatorProps) {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  if (!mounted) return null
 
   return (
     <div className="bg-card rounded-2xl p-6 md:p-8">
