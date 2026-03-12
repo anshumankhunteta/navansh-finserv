@@ -20,8 +20,7 @@ export const metadata: Metadata = {
     default: 'Navansh Finserv',
     template: '%s | Navansh Finserv',
   },
-  description:
-    'Financial Services made Easy for you. Over two decades of expertise in the financial services industry. Based out of Kolkata, India.',
+  description: 'Personalised Finance Services, based out of Kolkata, India.',
   keywords: [
     'insurance',
     'wealth management',
@@ -90,28 +89,15 @@ export const metadata: Metadata = {
     canonical: 'https://navansh.in',
   },
   openGraph: {
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Navansh Finserv',
-      },
-    ],
     siteName: 'Navansh Finserv',
-    title: 'Navansh Finserv',
-    description:
-      'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
+    title: 'Navansh Finserv | Finance Made Easy',
+    description: 'Personalised Finance Services, based out of Kolkata, India.',
     url: 'https://navansh.in',
     type: 'website',
     locale: 'en_IN',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Navansh Finserv',
-    description:
-      'Securing Families & Futures with 20 Years of Expertise. Based out of Kolkata, India.',
-    images: ['/og-image.png'],
   },
 }
 
@@ -133,7 +119,7 @@ export default function RootLayout({
               description:
                 'Comprehensive Financial Solutions tailored for you. Over two decades of expertise in the financial services industry.',
               url: 'https://navansh.in',
-              image: 'https://navansh.in/og-image.png',
+              image: 'https://navansh.in/opengraph-image',
               address: {
                 '@type': 'PostalAddress',
                 addressCountry: 'India',

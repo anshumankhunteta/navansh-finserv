@@ -1,9 +1,10 @@
 interface NavanshLogoProps {
-  /** Multiplier applied to the base 260×180 dimensions. Default: 1 */
+  /** Multiplier applied to the base 260×180 dimensions. Default: height={36} */
   height?: number
   className?: string
   /** Accessible label for screen-readers */
   title?: string
+  hideTitle?: boolean
   style?: React.CSSProperties
 }
 
@@ -20,6 +21,7 @@ export default function Navansh({
   height = 36,
   className,
   title = 'Navansh Finserv',
+  hideTitle = false,
   ...props
 }: NavanshLogoProps) {
   const BASE_WIDTH = (height * 260) / 185
@@ -37,7 +39,7 @@ export default function Navansh({
       role="img"
       {...props}
     >
-      <title>{title}</title>
+      {!hideTitle && <title>{title}</title>}
       <defs>
         <linearGradient id="navansh-gold-gradient">
           <stop style={{ stopColor: '#eccc59', stopOpacity: 1 }} offset="0" />

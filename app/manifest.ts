@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Insurance & Wealth Expert in Kolkata, India',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#0D9488',
+    background_color: '#c4dbc7',
+    theme_color: '#409e54',
     icons: [
       {
         src: '/android-chrome-192x192.png',
@@ -20,9 +20,6 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '512x512',
         type: 'image/png',
       },
-      { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-      { src: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { src: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
   }
 }
