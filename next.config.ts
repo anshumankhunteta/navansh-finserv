@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
     return [
       { source: '/card', destination: '/milee' },
       { source: '/businesscard', destination: '/milee' },
-      { source: '/quote', destination: '/enquire' },
     ]
   },
 }

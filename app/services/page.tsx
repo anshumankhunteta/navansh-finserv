@@ -128,7 +128,7 @@ export default function ServicesPage() {
                     variant="outline"
                     className="group-hover:bg-primary group-hover:border-primary w-full group-hover:text-white"
                   >
-                    <Link href={`/quote?service=${service.slug}`}>
+                    <Link href={`/enquire?service=${service.slug}`}>
                       Learn More
                     </Link>
                   </Button>
@@ -149,7 +149,7 @@ export default function ServicesPage() {
             We will guide you through every step
           </p>
           <Button asChild size="lg">
-            <Link href="/quote" className="text-lg">
+            <Link href="/enquire" className="text-lg">
               Get a Quote
             </Link>
           </Button>
