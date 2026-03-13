@@ -103,7 +103,7 @@ export function FloatingWhatsAppButton() {
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        className={`outline-primary/20 block rounded-full bg-[#25D366] p-3 text-white shadow-lg outline-3 transition-colors duration-300 hover:bg-[#20BA5A] hover:shadow-xl sm:p-4`}
+        className={`outline-primary/20 block animate-pulse rounded-full bg-[#25D366] p-3 text-white shadow-lg outline-3 transition-colors duration-300 hover:bg-[#20BA5A] hover:shadow-xl sm:p-4`}
         aria-label="Contact us on WhatsApp"
         onClick={(e) => {
           // Prevent navigation if dragging
