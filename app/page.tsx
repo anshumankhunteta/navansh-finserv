@@ -4,278 +4,219 @@ import {
   ArrowRight,
   CheckCircle2,
   HeadphonesIcon,
-  Heart,
   Shield,
-  TrendingUp,
   Users,
-  Wallet,
 } from 'lucide-react'
 import Link from 'next/link'
 import { CalculatorCarousel } from './enquire/EnquireContent'
+import { HeroSection } from '@/components/landing/HeroSection'
+import { BentoServices } from '@/components/landing/BentoServices'
+import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
 
 export default function HomePage() {
-  const allServices = [
-    {
-      title: 'Build a Foundation',
-      description:
-        'Started a new Job? Got some savings? Start Investing early to build a strong financial foundation to avoid headaches later.',
-      icon: TrendingUp,
-    },
-    {
-      title: 'Grow Your Wealth',
-      description:
-        'Starting a New Family? Just got Married? Do you have a good Foundation? Money attracts Money!',
-      icon: Heart,
-    },
-    {
-      title: 'Retirement Planning',
-      description:
-        'Wondering when you can stop working with what you have? We can help you allocate and grow funds according to your goals.',
-      icon: Wallet,
-    },
-  ]
-
   return (
-    <div className="flex flex-col">
+    <div className="relative flex flex-col overflow-hidden">
       {/* Hero Section */}
-      <section
-        style={{
-          backgroundImage: `
-        radial-gradient(140% 140% at 50% 35%, var(--card) 10%, transparent 40%)
-      `,
-          backgroundSize: '100% 100%',
-        }}
-        className="relative py-20 md:py-32"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-              Securing Families & Futures with{' '}
-              <span className="text-primary">Two Decades of Experience</span>
-            </h1>
-            <p className="text-muted-foreground mb-8 text-lg md:text-xl">
-              Financial Planning made Easy
-            </p>
-            <Button asChild size="lg" className="text-xl font-bold">
-              <Link href="/enquire">Get a Free Consultation!</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
-      {/* Trust Strip - Partner Logos */}
-      {/* <section className="py-12 border-y bg-card">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm font-semibold text-muted-foreground mb-8">
-            TRUSTED PARTNERS
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center opacity-70">
-            {["HDFC", "LIC", "Star Health", "ICICI"].map((partner) => (
-              <div
-                key={partner}
-                className="text-xl font-bold text-foreground/60 hover:text-foreground transition-colors"
-              >
-                {partner}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
+      {/* Our Offerings / Bento Services */}
+      <BentoServices />
 
-      {/* Our Offerings */}
-      <div className="mt-20 mb-16 text-center">
-        <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-          How Our Services Can Help <span className="text-primary">You</span>?
-        </h2>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-          We can offer you personalized services based on your Life Stage.{' '}
-          <Link href="/services" className="text-primary hover:underline">
-            Learn More
-          </Link>
-        </p>
-      </div>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16 grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 lg:gap-8">
-          {allServices.map((service) => {
-            const Icon = service.icon
-            return (
-              <div
-                key={service.title}
-                className="group bg-card border-border/50 hover:border-primary/50 flex flex-col items-center rounded-xl border p-4 text-center transition-all hover:shadow-lg md:p-6"
-              >
-                <div className="mb-4 flex flex-row items-center gap-2">
-                  <div className="bg-primary/10 group-hover:bg-primary text-primary rounded-lg p-3 transition-colors group-hover:text-white">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-semibold sm:text-2xl">
-                    {service.title}
-                  </h3>
-                </div>
-                <p className="text-muted-foreground text-xs sm:text-sm">
-                  {service.description}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Interactive Calculators Preview */}
-      <section className="py-20">
+      {/* Interactive Calculators Preview (Point of Clarity - sharpest element) */}
+      <section className="relative z-20 py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Try Our Financial{' '}
-              <span className="text-primary">Calculators</span>
+          <RefractiveContainer className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
+              Focus on Your <span className="text-primary italic">Future</span>
             </h2>
-            <p className="text-muted-foreground mx-auto text-lg">
-              Plan your investments, estimate returns, and set financial goals
-              with our interactive tools.
+            <p className="text-muted-foreground mx-auto text-lg md:text-xl">
+              Plan your investments, estimate returns, and set clear financial
+              benchmarks with our interactive foresight tools.
             </p>
-          </div>
-          <div className="mx-auto max-w-4xl">
+          </RefractiveContainer>
+
+          <RefractiveContainer
+            delay={0.2}
+            className="relative mx-auto max-w-4xl"
+          >
+            {/* Glow backing to indicate "clarity" */}
+            <div className="bg-primary/5 absolute inset-0 -z-10 rounded-full blur-[100px]" />
             <CalculatorCarousel mode="preview" />
-          </div>
+          </RefractiveContainer>
         </div>
       </section>
 
       {/* Why Us Section */}
-      <section className="py-20">
+      <section className="bg-card/50 border-border/50 relative z-10 border-y py-24 backdrop-blur-3xl">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Why Choose <Navansh className="inline-flex pb-2" />
-              Navansh <span className="text-primary">Finserv</span>?
+          <RefractiveContainer className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
+              Why Choose <Navansh className="-mt-1 inline-flex pb-2" />
+              Navansh <span className="text-primary italic">Finserv</span>?
             </h2>
-            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-              Experience personalized financial solutions backed by expertise
-              and compassion.
+            <p className="text-muted-foreground mx-auto max-w-2xl text-lg md:text-xl">
+              Experience transparent financial intelligence backed by two
+              decades of expertise and compassion.
             </p>
-          </div>
+          </RefractiveContainer>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Card 1 */}
-            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
-              <div className="mb-6">
-                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-                  <Users className="h-7 w-7" />
+            <RefractiveContainer delay={0.1}>
+              <div className="group bg-card border-border hover:border-primary/50 relative h-full overflow-hidden rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
+                <div className="bg-primary/10 group-hover:bg-primary/20 pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full blur-3xl transition-all duration-700" />
+                <div className="relative z-10 mb-6">
+                  <div className="bg-primary/10 group-hover:bg-primary text-primary group-hover:text-primary-foreground mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl transition-colors duration-500">
+                    <Users className="h-7 w-7" />
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold tracking-tight">
+                    Women Leadership
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Founded by a single mom with 20 years of expertise in
+                    financial services, bringing genuine care to every long-term
+                    relationship.
+                  </p>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold">Women Leadership</h3>
-                <p className="text-muted-foreground">
-                  Founded by a single mom with 20 years of expertise in
-                  financial services, we bring genuine care and understanding to
-                  every client relationship, even in the long term.
-                </p>
+                <ul className="relative z-10 space-y-3">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Total transparency
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Empathetic planning approach
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Cross-generational expertise
+                    </span>
+                  </li>
+                </ul>
               </div>
-              <ul className="space-y-2">
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>We believe in total transparency</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Empathetic approach to financial planning</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>
-                    Gen-Alpha, Gen-Z, Millennials or Boomers, we understand
-                    everyone because of our diverse team and experience
-                  </span>
-                </li>
-              </ul>
-            </div>
+            </RefractiveContainer>
 
             {/* Card 2 */}
-            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
-              <div className="mb-6">
-                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-                  <Shield className="h-7 w-7" />
+            <RefractiveContainer delay={0.3}>
+              <div className="group bg-card border-border hover:border-primary/50 relative h-full overflow-hidden rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
+                <div className="bg-primary/10 group-hover:bg-primary/20 pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full blur-3xl transition-all duration-700" />
+                <div className="relative z-10 mb-6">
+                  <div className="bg-primary/10 group-hover:bg-primary text-primary group-hover:text-primary-foreground mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl transition-colors duration-500">
+                    <Shield className="h-7 w-7" />
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold tracking-tight">
+                    Personalized Advisory
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Holistic financial health assessments tailored to your life
+                    stage, clarifying the path to a secure future.
+                  </p>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold">
-                  Personalized Advisory
-                </h3>
-                <p className="text-muted-foreground">
-                  Comprehensive financial health assessments tailored to your
-                  unique needs and life stage with proper goal setting. We will
-                  help build a secure future for your Family.
-                </p>
+                <ul className="relative z-10 space-y-3">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Retirement Planning
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Family-First Framework
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      HNI & Super-HNI Experience
+                    </span>
+                  </li>
+                </ul>
               </div>
-              <ul className="space-y-2">
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Retirement Planning</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Family First Approach</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Portfolio Reviews</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Worked 10+ Years with HNI and Super-HNI Clients</span>
-                </li>
-              </ul>
-            </div>
+            </RefractiveContainer>
 
             {/* Card 3 */}
-            <div className="group bg-card border-border hover:border-primary/50 rounded-lg border p-8 transition-all hover:shadow-lg">
-              <div className="mb-6">
-                <div className="bg-primary/10 group-hover:bg-primary text-primary mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-                  <HeadphonesIcon className="h-7 w-7" />
+            <RefractiveContainer delay={0.5}>
+              <div className="group bg-card border-border hover:border-primary/50 relative h-full overflow-hidden rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
+                <div className="bg-primary/10 group-hover:bg-primary/20 pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full blur-3xl transition-all duration-700" />
+                <div className="relative z-10 mb-6">
+                  <div className="bg-primary/10 group-hover:bg-primary text-primary group-hover:text-primary-foreground mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl transition-colors duration-500">
+                    <HeadphonesIcon className="h-7 w-7" />
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold tracking-tight">
+                    Decade-Scale Support
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Securing your wealth is an ongoing journey. We provide
+                    proactive, end-to-end support throughout your relationship
+                    lifecycle.
+                  </p>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold">
-                  Long Term Support Guarantee
-                </h3>
-                <p className="text-muted-foreground">
-                  Insurance, or any financial product is not a one-time
-                  purchase, it is a long-term commitment. We believe in keeping
-                  the client relationship healthy and strong in the long term.
-                </p>
+                <ul className="relative z-10 space-y-3">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Dedicated claims concierge
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Proactive milestone reminders
+                    </span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle2 className="text-primary mt-0.5 mr-3 h-5 w-5 flex-shrink-0" />
+                    <span className="text-foreground/80 font-medium">
+                      Periodic strategy realignment
+                    </span>
+                  </li>
+                </ul>
               </div>
-              <ul className="space-y-2">
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Dedicated claims assistance</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Pro-active reminders and helpful tips</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <CheckCircle2 className="text-primary mt-0.5 mr-2 h-5 w-5 flex-shrink-0" />
-                  <span>Regular reviews and updates</span>
-                </li>
-              </ul>
-            </div>
+            </RefractiveContainer>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="relative z-20 py-32">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Ready to Secure Your Future?
-          </h2>
-          <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-            Reach out to us if you have any questions or need assistance.
-            {/* Get expert financial guidance tailored to your family&apos;s needs */}
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="/contact">Get Started Today</Link>
-            </Button>
-            <Button asChild variant="link" size="lg">
-              <Link href="/services">
-                Explore Services
-                <ArrowRight />
-              </Link>
-            </Button>
-          </div>
+          <RefractiveContainer>
+            <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
+              Ready to Find{' '}
+              <span className="text-primary italic">Absolute</span>{' '}
+              <span className="italic">Clarity?</span>
+            </h2>
+            <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-xl">
+              Elevate your portfolio with strategies forged from 20 years of
+              active market intelligence.
+            </p>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary hover:bg-primary/90 h-14 rounded-full px-8 text-lg"
+              >
+                <Link href="/contact">Schedule a Review</Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-primary/50 text-foreground hover:bg-primary/10 h-14 rounded-full px-8 text-lg"
+              >
+                <Link href="/services">
+                  Explore Services
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+          </RefractiveContainer>
         </div>
       </section>
     </div>

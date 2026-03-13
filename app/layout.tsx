@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -155,28 +156,30 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <FloatingWhatsAppButton />
-          <main className="min-h-screen">
-            <div //bg pattern
-              className="fixed inset-0 -z-10"
-              style={{
-                backgroundImage: `
-                repeating-linear-gradient(45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px),
-                repeating-linear-gradient(-45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 20px)
-                `,
-                backgroundSize: '40px 40px',
-              }}
-            />
-            {children}
-            <SpeedInsights />
-            <Analytics />
-          </main>
-          <Footer />
+          <SmoothScrollProvider>
+            <Navbar />
+            <FloatingWhatsAppButton />
+            <main className="min-h-screen">
+              <div //bg pattern
+                className="fixed inset-0 -z-10"
+                style={{
+                  backgroundImage: `
+                  repeating-linear-gradient(45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 30px),
+                  repeating-linear-gradient(-45deg, var(--muted) 0, var(--muted) 1px, transparent 1px, transparent 30px)
+                  `,
+                  backgroundSize: '40px 40px',
+                }}
+              />
+              {children}
+              <SpeedInsights />
+              <Analytics />
+            </main>
+            <Footer />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

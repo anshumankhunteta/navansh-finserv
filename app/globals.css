@@ -98,7 +98,7 @@
   --primary-foreground: #ececec;
   --secondary: #0d3621;
   --secondary-foreground: #e0e0e0;
-  --muted: #102e1e;
+  --muted: #102e1e99;
   --muted-foreground: #b8c5bc;
   --accent: #52c77d;
   --accent-foreground: #001407;
@@ -155,4 +155,38 @@
 
 .animate-pop-in {
   animation: pop-in 0.4s ease-in forwards;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 8s infinite ease-in-out;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
 }
