@@ -1,5 +1,4 @@
 'use client'
-'use no memo'
 
 import { submitEnquiry, type FormState } from '@/app/enquire/actions'
 import confetti from 'canvas-confetti'
@@ -148,13 +147,17 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
     setIsSubmitting(false)
 
     if (result.success) {
-      // Trigger confetti animation
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#0d9488', '#14b8a6', '#2dd4bf'], // Teal theme colors
-      })
+      // Trigger confetti animation safely
+      try {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#52c77d', '#60a5fa', '#f472b6'],
+        })
+      } catch (e) {
+        console.error('Confetti animation failed', e)
+      }
       reset()
 
       // Show success card and persist end time in sessionStorage
@@ -169,12 +172,16 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
   const triggerConfetti = () => {
     if (confettiCount >= 10) return // Max 10 uses
 
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#0d9488', '#14b8a6', '#2dd4bf'],
-    })
+    try {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#52c77d', '#60a5fa', '#f472b6'],
+      })
+    } catch (e) {
+      console.error('Confetti animation failed', e)
+    }
 
     const newCount = confettiCount + 1
     setConfettiCount(newCount)
@@ -263,6 +270,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="firstName"
               type="text"
+              disabled={isSubmitting}
               autoComplete="given-name"
               {...register('firstName', { required: 'First name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
@@ -292,6 +300,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="lastName"
               type="text"
+              disabled={isSubmitting}
               autoComplete="family-name"
               {...register('lastName', { required: 'Last name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
@@ -324,6 +333,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <input
                 id="phone"
                 type="phone"
+                disabled={isSubmitting}
                 autoComplete="tel"
                 {...register('phone', {
                   required: isPhoneRequired
@@ -360,6 +370,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <input
                 id="email"
                 type="email"
+                disabled={isSubmitting}
                 autoComplete="email"
                 {...register('email', {
                   required: isEmailRequired ? 'Email is required' : false,
@@ -395,6 +406,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="age"
               type="number"
+              disabled={isSubmitting}
               min="1"
               max="100"
               {...register('age', { valueAsNumber: true })}
@@ -417,7 +429,8 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="border-border bg-input focus:border-primary focus:ring-primary/20 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors focus:ring-2 focus:outline-none"
+                  disabled={isSubmitting}
+                  className="border-border bg-input focus:border-primary focus:ring-primary/20 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span
                     className={
@@ -481,6 +494,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <textarea
               id="message"
               rows={5}
+              disabled={isSubmitting}
               {...register('message')}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full resize-none rounded-lg border py-3 pr-10 pl-4 transition-colors focus:ring-2 focus:outline-none"
               placeholder="Ask something if you want to..."
@@ -488,6 +502,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             {watch('message') && (
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => setValue('message', '')}
                 className="text-muted-foreground hover:primary/40 hover:bg-primary/20 focus:ring-primary/20 absolute top-3 right-3 rounded-full p-1 transition-colors focus:ring-2 focus:outline-none"
                 title="Clear message"
@@ -509,6 +524,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
+                disabled={isSubmitting}
                 value="whatsapp"
                 {...register('contactMethod', {
                   required: 'Please select at least one contact method',
@@ -521,6 +537,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
+                disabled={isSubmitting}
                 value="call"
                 {...register('contactMethod')}
                 className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
@@ -531,6 +548,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
+                disabled={isSubmitting}
                 value="mail"
                 {...register('contactMethod')}
                 className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"

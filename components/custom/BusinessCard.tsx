@@ -75,7 +75,11 @@ export default function BusinessCard({
           </Link>
         )}
         {website && (
-          <Link href={`https://${website}`} target="_blank">
+          <Link
+            href={`https://${website}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div className="flex items-center gap-3">
               <Globe size={14} className="shrink-0 text-[#52c77d]" />
               <span>{website}</span>
@@ -86,6 +90,7 @@ export default function BusinessCard({
           <Link
             href={`https://www.google.com/maps/dir//39,+Mahatma+Gandhi+Rd,+Haridevpur,+Paschim+Putiary,+Kolkata,+West+Bengal+700082/@22.4814643,88.3380689,19z/data=!4m5!4m4!1m0!1m2!1m1!1s0x3a027091f2ff6159:0xb27ac9c8999c622c`}
             target="_blank"
+            rel="noopener noreferrer"
           >
             <div className="flex items-center gap-3">
               <MapPin size={14} className="shrink-0 text-[#52c77d]" />

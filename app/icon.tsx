@@ -1,4 +1,5 @@
 import Navansh from '@/components/icons/Navansh'
+import { sharedIconOptions } from '@/lib/icon-shared'
 import { ImageResponse } from 'next/og'
 
 // Image metadata
@@ -14,14 +15,8 @@ export default function Icon() {
     // ImageResponse JSX element
     <div
       style={{
+        ...sharedIconOptions.style,
         border: '1px solid #409e54', // var(--primary)
-        borderRadius: '15%',
-        background: '#c4dbc7ee', // var(--muted)
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
       <Navansh hideTitle height={18} />

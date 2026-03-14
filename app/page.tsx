@@ -8,7 +8,7 @@ import {
   Users,
 } from 'lucide-react'
 import Link from 'next/link'
-import { CalculatorCarousel } from './enquire/EnquireContent'
+import { CalculatorCarousel } from '@/components/custom/CalculatorCarousel'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { BentoServices } from '@/components/landing/BentoServices'
 import { RefractiveContainer } from '@/components/landing/RefractiveContainer'

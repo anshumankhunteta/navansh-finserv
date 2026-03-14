@@ -38,6 +38,13 @@ async function getCountryFromIP(): Promise<string | null> {
 // Helper: Get client IP address
 async function getClientIP(): Promise<string> {
   const headersList = await headers()
+
+  // Prioritize Vercel's trusted headers
+  const vercelForwardedFor = headersList.get('x-vercel-forwarded-for')
+  if (vercelForwardedFor) {
+    return vercelForwardedFor.split(',')[0].trim()
+  }
+
   const forwardedFor = headersList.get('x-forwarded-for')
   const realIp = headersList.get('x-real-ip')
 
@@ -65,11 +72,11 @@ function getCountryFlag(countryCode: string): string {
 
 // Helper: Sanitize text input to prevent XSS and injection
 function sanitizeText(text: string): string {
-  // Strip HTML tags using regex
-  let cleaned = text.replace(/<[^>]*>/g, '')
-
-  // Remove any remaining HTML entities
-  cleaned = cleaned.replace(/&[a-zA-Z0-9#]+;/g, '')
+  // Strip dangerous HTML/Script tags while preserving valid user characters
+  let cleaned = text.replace(
+    /<(script|iframe|object|embed|form|style)[^>]*>/gi,
+    ''
+  )
 
   // Normalize multiple spaces to single space
   cleaned = cleaned.replace(/\s+/g, ' ')
@@ -405,7 +412,7 @@ export async function submitEnquiry(
       }
 
       const payload = {
-        // 🔔 IMPORTANT: This is the only place @everyone works
+        // 🔔 Ping everyone
         content: '@everyone',
         embeds: [
           {
@@ -494,23 +501,28 @@ export async function submitEnquiry(
         ],
       }
 
-      // Send to Discord
-      await fetch(discordWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-
+      // Send to Discord safely and parse the response for potential fallback
       try {
-        await fetch(discordWebhookUrl, {
+        const response = await fetch(discordWebhookUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         })
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
       } catch (discordError) {
-        console.error('Discord webhook error:', discordError)
-        // Don't fail the entire request if Discord fails
+        // [Task 6] Fallback mechanism: trigger an alerting format or log
+        console.error(
+          'CRITICAL ALERT: Discord webhook failed. Lead saved to database but sales was not notified!',
+          {
+            email: validatedData.email,
+            phone: validatedData.phone,
+            error: discordError,
+          }
+        )
+        // TODO: Implement a secondary fallback such as Email via AWS SES or Resend here.
       }
     }
 

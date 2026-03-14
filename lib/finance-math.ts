@@ -121,7 +121,7 @@ export function calcSWPDepletion(
     return {
       lastingMonths: maxMonths,
       totalWithdrawn: monthlyWithdrawal * maxMonths,
-      totalGains: monthlyWithdrawal * maxMonths - corpus + corpus, // simplified
+      totalGains: monthlyWithdrawal * maxMonths - corpus,
     }
   }
 
@@ -145,7 +145,8 @@ export function calcSWPDepletion(
 /**
  * Human Life Value (HLV)
  * HLV = (Annual Income − Annual Personal Expenses) × Years Until Retirement + Liabilities
- * Liabilities are outstanding loans that become the family's burden.
+ * Note: Liabilities are simply added to the final amount (simplified raw-addition approach)
+ * rather than calculating the exact present value.
  */
 export function calcHLV(
   monthlyIncome: number,
