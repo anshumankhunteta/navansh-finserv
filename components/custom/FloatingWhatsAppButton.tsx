@@ -98,6 +98,7 @@ export function FloatingWhatsAppButton() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <Link
         href={whatsappLink}

@@ -22,10 +22,6 @@ CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
 -- Enable Row Level Security (RLS)
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 
--- Create policy that allows anyone to insert (for public form submissions)
-CREATE POLICY "allow_public_inserts" ON leads
-  FOR INSERT
-  WITH CHECK (true);
 
 -- Rate limiting table for IP-based spam prevention
 CREATE TABLE IF NOT EXISTS rate_limit_log (

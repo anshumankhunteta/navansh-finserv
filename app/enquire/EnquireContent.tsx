@@ -12,9 +12,6 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
-// Re-export CalculatorCarousel from here as requested
-export { CalculatorCarousel } from '@/components/custom/CalculatorCarousel'
-
 // ── Service → Calculator mapping ──
 const SERVICE_CALC_MAP: Record<string, CalcKey[]> = {
   'mutual-funds': ['sip', 'swp'],

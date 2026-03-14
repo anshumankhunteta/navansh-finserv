@@ -21,7 +21,3 @@ graph LR
 - **Hydration guard**: `if (!mounted) return null` prevents SSR/sessionStorage mismatch
 - **Share button**: Icon-only when next to Consult, full-width when Consult is hidden (preview mode)
 - **URL format**: `?calc=sip&amt=15000&rate=12&yrs=15` — compact and human-readable
-
-## Verification
-
-- `npx next build` → exit code 0, all 14 routes generated

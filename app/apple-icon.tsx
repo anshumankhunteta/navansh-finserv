@@ -1,4 +1,5 @@
 import Navansh from '@/components/icons/Navansh'
+import { sharedIconOptions } from '@/lib/icon-shared'
 import { ImageResponse } from 'next/og'
 
 // Image metadata
@@ -13,14 +14,8 @@ export default function AppleIcon() {
   return new ImageResponse(
     <div
       style={{
+        ...sharedIconOptions.style,
         border: '2px solid #409e54', // var(--primary)
-        borderRadius: '15%',
-        background: '#c4dbc7ee', // var(--muted)
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
       <Navansh hideTitle height={100} />

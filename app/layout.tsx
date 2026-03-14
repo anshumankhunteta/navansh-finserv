@@ -131,7 +131,6 @@ export default function RootLayout({
                   '39, Mahatma Gandhi Road, Haridevpur, Tollygunge',
               },
               telephone: `+91-7980659845`,
-              priceRange: '$$',
               areaServed: {
                 '@type': 'Country',
                 name: 'India',
@@ -164,7 +163,8 @@ export default function RootLayout({
             <Navbar />
             <FloatingWhatsAppButton />
             <main className="min-h-screen">
-              <div //bg pattern
+              {/* bg pattern */}
+              <div
                 className="fixed inset-0 -z-10"
                 style={{
                   backgroundImage: `
