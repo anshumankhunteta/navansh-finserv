@@ -513,16 +513,18 @@ export async function submitEnquiry(
           throw new Error(`HTTP error! status: ${response.status}`)
         }
       } catch (discordError) {
-        // [Task 6] Fallback mechanism: trigger an alerting format or log
         console.error(
           'CRITICAL ALERT: Discord webhook failed. Lead saved to database but sales was not notified!',
           {
-            email: validatedData.email,
-            phone: validatedData.phone,
+            firstName: validatedData.firstName,
+            timestamp: new Date().toISOString(),
+            hasEmail: !!validatedData.email,
+            hasPhone: !!validatedData.phone,
             error: discordError,
           }
         )
-        // TODO: Implement a secondary fallback such as Email via AWS SES or Resend here.
+        // TODO: Implement a secondary fallback (Email via AWS SES or Resend)
+        // The lead is already saved to DB, so fallback can query by timestamp/name
       }
     }
 
