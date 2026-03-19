@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false, // Security: Hide X-Powered-By header
   compress: true, // Enable gzip compression
+  experimental: {
+    staleTimes: {
+      dynamic: 30, // Cache dynamic routes in router cache for 30s
+    },
+  },
   async redirects() {
     return [
       {

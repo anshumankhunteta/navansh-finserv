@@ -4,7 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import { FloatingWhatsAppButton } from '@/components/custom/FloatingWhatsAppButton'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
@@ -100,6 +100,10 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#409e54',
 }
 
 export default function RootLayout({
