@@ -202,8 +202,6 @@ const enquirySchema = z
     }
   )
 
-type EnquiryFormData = z.infer<typeof enquirySchema>
-
 export type FormState = {
   success: boolean
   message: string
@@ -220,11 +218,26 @@ export type FormState = {
 }
 
 export async function submitEnquiry(
-  formData: EnquiryFormData
+  _prevState: FormState | null,
+  formData: FormData
 ): Promise<FormState> {
   try {
-    // 1. Validate the form data (with sanitization via transforms)
-    const validatedData = enquirySchema.parse(formData)
+    // 1. Parse raw FormData into typed object, then validate with Zod
+    const rawData = {
+      firstName: formData.get('firstName') as string,
+      lastName: formData.get('lastName') as string,
+      phone: (formData.get('phone') as string) || '',
+      email: (formData.get('email') as string) || '',
+      message: (formData.get('message') as string) || '',
+      age: formData.get('age') ? Number(formData.get('age')) : undefined,
+      gender: (formData.get('gender') as string) || '',
+      contactMethod: formData.getAll('contactMethod') as (
+        | 'whatsapp'
+        | 'call'
+        | 'mail'
+      )[],
+    }
+    const validatedData = enquirySchema.parse(rawData)
 
     // 2. Get client IP, country, and persona for analytics
     const clientIP = await getClientIP()

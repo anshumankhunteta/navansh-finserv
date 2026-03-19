@@ -1,6 +1,6 @@
 'use client'
 
-import { submitEnquiry, type FormState } from '@/app/enquire/actions'
+import { submitEnquiry } from '@/app/enquire/actions'
 import confetti from 'canvas-confetti'
 import {
   CheckCircle2,
@@ -11,7 +11,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { startTransition, useActionState, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '../ui/button'
 import {
@@ -37,8 +37,10 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ externalMessage }: ContactFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formState, setFormState] = useState<FormState | null>(null)
+  const [actionState, formAction, isPending] = useActionState(
+    submitEnquiry,
+    null
+  )
   const [showSuccessCard, setShowSuccessCard] = useState(false)
   const [countdown, setCountdown] = useState(60) // 60 seconds = 1 minute rate limit
   const [confettiCount, setConfettiCount] = useState(0)
@@ -138,15 +140,11 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
     return true
   }
 
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true)
-    setFormState(null)
+  // React to server action state changes
+  useEffect(() => {
+    if (!actionState) return
 
-    const result = await submitEnquiry(data)
-    setFormState(result)
-    setIsSubmitting(false)
-
-    if (result.success) {
+    if (actionState.success) {
       // Trigger confetti animation safely
       try {
         confetti({
@@ -166,7 +164,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
       setShowSuccessCard(true)
       setCountdown(60)
     }
-  }
+  }, [actionState, reset])
 
   // Handle confetti button click
   const triggerConfetti = () => {
@@ -257,7 +255,19 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
       <p className="text-muted-foreground mb-6 text-center text-sm">
         We&apos;ll personally review it and get back to you.
       </p>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        action={formAction}
+        onSubmit={(e) => {
+          // Capture form ref before handleSubmit's async boundary
+          const form = e.currentTarget
+          // react-hook-form calls preventDefault — so we manually dispatch
+          handleSubmit(() => {
+            // Client validation passed — dispatch inside a transition
+            startTransition(() => formAction(new FormData(form)))
+          })(e)
+        }}
+        className="space-y-6"
+      >
         {/* Row 1: First Name & Last Name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -270,7 +280,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="firstName"
               type="text"
-              disabled={isSubmitting}
+              disabled={isPending}
               autoComplete="given-name"
               {...register('firstName', { required: 'First name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
@@ -283,9 +293,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 {errors.firstName.message}
               </p>
             )}
-            {formState?.errors?.firstName && (
+            {actionState?.errors?.firstName && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.firstName[0]}
+                {actionState.errors.firstName[0]}
               </p>
             )}
           </div>
@@ -300,7 +310,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="lastName"
               type="text"
-              disabled={isSubmitting}
+              disabled={isPending}
               autoComplete="family-name"
               {...register('lastName', { required: 'Last name is required' })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
@@ -313,9 +323,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 {errors.lastName.message}
               </p>
             )}
-            {formState?.errors?.lastName && (
+            {actionState?.errors?.lastName && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.lastName[0]}
+                {actionState.errors.lastName[0]}
               </p>
             )}
           </div>
@@ -333,7 +343,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <input
                 id="phone"
                 type="phone"
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="tel"
                 {...register('phone', {
                   required: isPhoneRequired
@@ -351,9 +361,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 {errors.phone.message}
               </p>
             )}
-            {formState?.errors?.phone && (
+            {actionState?.errors?.phone && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.phone[0]}
+                {actionState.errors.phone[0]}
               </p>
             )}
           </div>
@@ -370,7 +380,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <input
                 id="email"
                 type="email"
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="email"
                 {...register('email', {
                   required: isEmailRequired ? 'Email is required' : false,
@@ -388,9 +398,9 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 {errors.email.message}
               </p>
             )}
-            {formState?.errors?.email && (
+            {actionState?.errors?.email && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.email[0]}
+                {actionState.errors.email[0]}
               </p>
             )}
           </div>
@@ -406,16 +416,16 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <input
               id="age"
               type="number"
-              disabled={isSubmitting}
+              disabled={isPending}
               min="1"
               max="100"
               {...register('age', { valueAsNumber: true })}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
               placeholder="e.g. 67"
             />
-            {formState?.errors?.age && (
+            {actionState?.errors?.age && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.age[0]}
+                {actionState.errors.age[0]}
               </p>
             )}
           </div>
@@ -429,7 +439,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  disabled={isSubmitting}
+                  disabled={isPending}
                   className="border-border bg-input focus:border-primary focus:ring-primary/20 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span
@@ -477,9 +487,11 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            {formState?.errors?.gender && (
+            {/* Hidden input to sync DropdownMenu value with native FormData */}
+            <input type="hidden" name="gender" value={watch('gender') || ''} />
+            {actionState?.errors?.gender && (
               <p className="text-destructive mt-1 text-sm">
-                {formState.errors.gender[0]}
+                {actionState.errors.gender[0]}
               </p>
             )}
           </div>
@@ -494,7 +506,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <textarea
               id="message"
               rows={5}
-              disabled={isSubmitting}
+              disabled={isPending}
               {...register('message')}
               className="border-border bg-input focus:border-primary focus:ring-primary/20 w-full resize-none rounded-lg border py-3 pr-10 pl-4 transition-colors focus:ring-2 focus:outline-none"
               placeholder="Ask something if you want to..."
@@ -502,7 +514,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             {watch('message') && (
               <button
                 type="button"
-                disabled={isSubmitting}
+                disabled={isPending}
                 onClick={() => setValue('message', '')}
                 className="text-muted-foreground hover:primary/40 hover:bg-primary/20 focus:ring-primary/20 absolute top-3 right-3 rounded-full p-1 transition-colors focus:ring-2 focus:outline-none"
                 title="Clear message"
@@ -524,7 +536,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
-                disabled={isSubmitting}
+                disabled={isPending}
                 value="whatsapp"
                 {...register('contactMethod', {
                   required: 'Please select at least one contact method',
@@ -537,7 +549,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
-                disabled={isSubmitting}
+                disabled={isPending}
                 value="call"
                 {...register('contactMethod')}
                 className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
@@ -548,7 +560,7 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
             <label className="border-border bg-card hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/50 flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 transition-all">
               <input
                 type="checkbox"
-                disabled={isSubmitting}
+                disabled={isPending}
                 value="mail"
                 {...register('contactMethod')}
                 className="border-border text-primary focus:ring-primary/20 h-4 w-4 rounded focus:ring-2"
@@ -561,36 +573,50 @@ export function ContactForm({ externalMessage }: ContactFormProps) {
               {errors.contactMethod.message}
             </p>
           )}
-          {formState?.errors?.contactMethod && (
+          {actionState?.errors?.contactMethod && (
             <p className="text-destructive mt-2 text-sm">
-              {formState.errors.contactMethod[0]}
+              {actionState.errors.contactMethod[0]}
             </p>
           )}
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting || !isFormValid()}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary/20 w-full rounded-lg px-6 py-3 font-semibold transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              Submitting...
-            </span>
-          ) : (
-            'Submit'
-          )}
-        </button>
+        <SubmitButton disabled={!isFormValid()} isPending={isPending} />
 
         {/* Error Messages Only (Success is handled by success card) */}
-        {formState && !formState.success && (
+        {actionState && !actionState.success && (
           <div className="border-destructive/20 bg-destructive/5 text-destructive rounded-lg border p-4">
-            <p className="text-sm font-medium">{formState.message}</p>
+            <p className="text-sm font-medium">{actionState.message}</p>
           </div>
         )}
       </form>
     </div>
+  )
+}
+
+// Extracted submit button — accepts isPending explicitly since
+// useFormStatus doesn't reflect programmatic formAction() calls.
+function SubmitButton({
+  disabled,
+  isPending,
+}: {
+  disabled: boolean
+  isPending: boolean
+}) {
+  return (
+    <button
+      type="submit"
+      disabled={isPending || disabled}
+      className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary/20 w-full rounded-lg px-6 py-3 font-semibold transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {isPending ? (
+        <span className="flex items-center justify-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Submitting...
+        </span>
+      ) : (
+        'Submit'
+      )}
+    </button>
   )
 }
