@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export function Instagram(props: SVGProps<SVGSVGElement>) {
+export default function Instagram(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       role="img"

@@ -1,9 +1,8 @@
-import Link from 'next/link'
-import Navansh from '../icons/Navansh'
 import { Mail } from 'lucide-react'
-import { Discord } from '../icons/Discord'
-import { Github } from '../icons/Github'
-import { Instagram } from '../icons/Instagram'
+import Link from 'next/link'
+import Discord from '../icons/Discord'
+import Instagram from '../icons/Instagram'
+import Navansh from '../icons/Navansh'
 import Whatsapp from '../icons/Whatsapp'
 
 export default function Footer() {
@@ -32,9 +31,6 @@ export default function Footer() {
               Securing Families & Futures with Two Decades of Experience
             </p>
             <br />
-            <p className="text-secondary-foreground/80 mt-6 mb-2 text-sm">
-              Need Support?
-            </p>
             <div className="flex gap-3">
               <Link href="mailto:admin@navansh.in" aria-label="Mail">
                 <Mail className="text-secondary-foreground h-5 w-5" />

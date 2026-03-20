@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export function Github(props: SVGProps<SVGSVGElement>) {
+export default function Github(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       role="img"
