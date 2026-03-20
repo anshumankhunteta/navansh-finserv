@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export function Discord(props: SVGProps<SVGSVGElement>) {
+export default function Discord(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       role="img"

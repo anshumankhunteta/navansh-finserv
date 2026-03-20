@@ -1,5 +1,9 @@
-import { ContactInfo } from '@/components/custom/ContactInfo'
+import Discord from '@/components/icons/Discord'
+import Instagram from '@/components/icons/Instagram'
+import Navansh from '@/components/icons/Navansh'
+import Whatsapp from '@/components/icons/Whatsapp'
 import { Button } from '@/components/ui/button'
+import { Mail, MapPin } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -18,34 +22,86 @@ export const metadata: Metadata = {
   },
 }
 
+interface ContactInfoItem {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  details: string
+  link: string
+}
+
 export default function ContactPage() {
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || ''
+  const contactPhone = process.env.NEXT_PUBLIC_PHONE_NUMBER || ''
+
+  const contactInfo: ContactInfoItem[] = [
+    contactEmail && {
+      icon: Mail,
+      title: 'Send us an Email',
+      details: contactEmail,
+      link: `mailto:${contactEmail}`,
+    },
+    {
+      icon: Instagram,
+      title: 'Follow us on Instagram',
+      details: '@navansh_finserv',
+      link: `https://instagram.com/navansh_finserv`,
+    },
+    contactPhone && {
+      icon: Whatsapp,
+      title: 'Send a message on Whatsapp',
+      details: contactPhone,
+      link: `https://wa.me/${contactPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello')}`,
+    },
+  ].filter(Boolean) as ContactInfoItem[]
+
   return (
     <div className="flex flex-col">
-      {/* Header */}
-      <section className="py-8 md:py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-3xl font-bold md:text-5xl">
-              Get in <span className="text-primary">Touch</span>
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Learn More about us and find out Where to reach out.
-            </p>
+      <div className="bg-card/75 border-border/50 w-full border p-6 md:p-8 dark:bg-black/30">
+        <div className="container mx-auto">
+          <div className="bg-secondary mx-auto flex h-[120px] w-[120px] items-center justify-center rounded-full">
+            <Navansh
+              height={50}
+              style={
+                { '--primary-foreground': '#eeeeee' } as React.CSSProperties
+              }
+            />
           </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="mx-4 py-12 md:mx-auto">
-        {/* Layout */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* Contact Info */}
-          <ContactInfo />
-
-          {/* Google Maps */}
-          <div className="bg-card border-border/50 overflow-hidden rounded-2xl border">
-            <div className="border-border/50 border-b p-4">
-              <h3 className="text-xl font-bold">Our Location</h3>
+          <h2 className="mb-8 text-center text-2xl font-bold tracking-widest">
+            <span className="text-primary">NAVANSH</span> FINSERV
+          </h2>
+          <div className="mb-6 space-y-6">
+            {contactInfo.map((info) => (
+              <Link
+                href={info.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={info.title}
+                className="border-border/50 bg-card flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
+              >
+                <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
+                  <info.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium">{info.title}</h3>
+                  <p className="text-muted-foreground text-sm">
+                    {info.details}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          {/* Google Maps Embed*/}
+          <div className="bg-card border-border/50 overflow-hidden rounded-xl border md:mx-auto md:w-[50%]">
+            <div className="border-border/50 flex items-center gap-4 border-b p-3">
+              <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
+                <MapPin className="text-primary h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-medium">Our Location</h3>
+                <p className="text-muted-foreground text-sm">
+                  Reach out to us at our office
+                </p>
+              </div>
             </div>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d460.82518860936966!2d88.33799571472095!3d22.481604322024946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a027091f2ff6159%3A0xb27ac9c8999c622c!2s39%2C%20Mahatma%20Gandhi%20Rd%2C%20Haridevpur%2C%20Paschim%20Putiary%2C%20Kolkata%2C%20West%20Bengal%20700082!5e0!3m2!1sen!2sin!4v1770227001040!5m2!1sen!2sin"
@@ -56,12 +112,26 @@ export default function ContactPage() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Navansh Finserv Location"
-              className="w-full"
             />
           </div>
+          <Link
+            href="https://discord.gg/YuPpRjzYtA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border/50 bg-card mt-6 mb-24 flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
+          >
+            <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
+              <Discord className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-medium">Need Dev Support?</h3>
+              <p className="text-muted-foreground text-sm">
+                Join our Discord Community
+              </p>
+            </div>
+          </Link>
         </div>
-      </section>
-
+      </div>
       {/* Schedule Consultation Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
