@@ -86,7 +86,7 @@ export default function Navbar() {
     >
       <div className="max-w-10xl container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-baseline gap-2">
+        <Link href="/" className="flex w-xs items-baseline justify-start gap-2">
           <Navansh height={24} />
           <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
             Navansh{' '}
@@ -108,7 +108,7 @@ export default function Navbar() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden w-xs items-center justify-end gap-3 md:flex">
           <ThemeToggle />
           <Button asChild className="font-semibold">
             <Link href="/enquire">Enquire Now</Link>
@@ -135,16 +135,17 @@ export default function Navbar() {
               </SheetDescription>
 
               {/* Header Section */}
-              <div className="p-6 pb-4">
+              <div className="mt-6 p-6 pb-4">
                 <SheetClose asChild>
                   <Link href="/" className="group flex items-center gap-3">
-                    <Navansh height={52} />
+                    <Navansh height={45} />
                     <div>
-                      <span className="block text-lg font-bold">
+                      <span className="block text-xl font-bold">
                         Navansh <span className="text-primary">Finserv</span>
                       </span>
-                      <span className="text-muted-foreground text-xs">
-                        Your Financial Partner
+                      <span className="text-foreground text-xs">
+                        Gain <span className="italic">Absolute</span> Financial{' '}
+                        <span className="text-primary italic">Clarity</span>
                       </span>
                     </div>
                   </Link>
@@ -153,16 +154,16 @@ export default function Navbar() {
 
               {/* Navigation Links */}
               <nav className="flex-1 overflow-auto py-4">
-                <div className="border-primary/50 border-t">
+                <div className="mt-4">
                   {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
                       <SheetClose asChild key={link.href}>
                         <Link
                           href={link.href}
-                          className="hover:text-primary group border-primary/50 active:bg-primary/30 flex items-center gap-4 border-b px-4 py-3 transition-all"
+                          className="hover:text-primary group border-primary/30 dark:border-border/80 bg-card/40 active:bg-primary/30 m-2 flex items-center gap-4 rounded-xl border px-4 py-3 transition-all dark:bg-black/20"
                         >
-                          <div className="bg-background group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
+                          <div className="bg-primary/10 group-hover:bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
                             <Icon className="text-primary group-hover:text-primary h-5 w-5 transition-colors" />
                           </div>
                           <span className="text-base font-semibold">
