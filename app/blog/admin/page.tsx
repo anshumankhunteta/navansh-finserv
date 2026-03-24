@@ -3,9 +3,23 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PostRow } from './actions'
 import { AdminPostActions } from '@/components/custom/blog/AdminPostActions'
+import { redirect } from 'next/navigation'
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Optionally verify admin role
+  // const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  // if (profile?.role !== 'admin') {
+  //   redirect('/unauthorized')
+  // }
 
   const { data: posts, error } = await supabase
     .from('posts')
@@ -63,7 +77,7 @@ export default async function AdminDashboardPage() {
                   )}
                 </td>
                 <td className="px-6 py-4">
-                  {new Date(post.created_at).toLocaleDateString()}
+                  {new Date(post.created_at).toLocaleDateString('en-US')}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <AdminPostActions

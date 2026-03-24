@@ -70,9 +70,14 @@ const RenderInline = ({ content }: RenderInlineProps) => {
           }
 
           if (inline.type === 'link' && inline.href) {
+            const isValidUrl =
+              /^https?:\/\//i.test(inline.href) ||
+              inline.href.startsWith('/') ||
+              inline.href.startsWith('#')
+            const safeHref = isValidUrl ? inline.href : '#'
             el = (
               <a
-                href={inline.href}
+                href={safeHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary font-medium hover:underline"
@@ -164,14 +169,16 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
               className="my-4 ml-6 list-outside list-decimal space-y-2"
               key={`ol-${index}`}
             >
-              {groupOrBlock.items?.map((item: BlockNoteNode) => (
-                <li key={item.id}>
-                  <RenderInline content={item.content} />
-                  {item.children && item.children.length > 0 && (
-                    <CustomRenderer blocks={item.children} />
-                  )}
-                </li>
-              ))}
+              {groupOrBlock.items?.map(
+                (item: BlockNoteNode, itemIndex: number) => (
+                  <li key={item.id ?? `item-${itemIndex}`}>
+                    <RenderInline content={item.content} />
+                    {item.children && item.children.length > 0 && (
+                      <CustomRenderer blocks={item.children} />
+                    )}
+                  </li>
+                )
+              )}
             </ol>
           )
         }
@@ -289,12 +296,16 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
             return (
               <figure key={id} className={`my-5 flex flex-col ${alignClass}`}>
                 <div style={widthObj} className="relative flex flex-col">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={props?.url}
-                    alt={props?.caption || props?.alt || ''}
-                    className="w-full overflow-hidden object-cover"
-                  />
+                  {props?.url && (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={props?.url}
+                        alt={props?.caption || props?.alt || ''}
+                        className="w-full overflow-hidden object-cover"
+                      />
+                    </>
+                  )}
                   {(props?.caption || props?.alt) && (
                     <figcaption className="bg-secondary/50 text-muted-foreground mt-2 w-full rounded-lg p-2 text-center text-sm">
                       {props.caption || props.alt}

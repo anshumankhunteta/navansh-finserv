@@ -8,7 +8,7 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/gif',
 ]
 
-export function validateImage(file: File) {
+export async function validateImage(file: File) {
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
     throw new Error(
       `Invalid file type: ${file.type}. Allowed types: ${ALLOWED_IMAGE_TYPES.join(', ')}`
@@ -19,10 +19,27 @@ export function validateImage(file: File) {
       `File too large: ${(file.size / (1024 * 1024)).toFixed(2)}MB. Max size: 5MB`
     )
   }
+
+  // Magic bytes check
+  const buffer = await file.slice(0, 4).arrayBuffer()
+  const bytes = new Uint8Array(buffer)
+  const hex = Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase()
+
+  const isJpeg = hex.startsWith('FFD8FF')
+  const isPng = hex === '89504E47'
+  const isGif = hex.startsWith('47494638')
+  const isWebp = hex === '52494646'
+
+  if (!isJpeg && !isPng && !isGif && !isWebp) {
+    throw new Error('Invalid file content: Signature mismatch')
+  }
 }
 
 export async function uploadBlogImage(file: File): Promise<string> {
-  validateImage(file)
+  await validateImage(file)
   const supabase = await createClient()
 
   // Sanitize filename to prevent path traversal and unsafe characters

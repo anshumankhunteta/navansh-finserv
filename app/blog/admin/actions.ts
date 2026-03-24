@@ -45,15 +45,33 @@ export async function logoutAction() {
 }
 
 export async function createPost(formData: FormData): Promise<string> {
+  // Verify user is authenticated and authorized
+  const authClient = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser()
+  if (authError || !user) {
+    throw new Error('Unauthorized')
+  }
+
   const supabase = createServiceClient()
-  const title = formData.get('title') as string
-  const slug = formData.get('slug') as string
-  const excerpt = formData.get('excerpt') as string
-  const coverImageUrl = formData.get('cover_image_url') as string
-  const contentStr = formData.get('content') as string
+  const title = formData.get('title')
+  const slug = formData.get('slug')
+  const excerpt = formData.get('excerpt')
+  const coverImageUrl = formData.get('cover_image_url')
+  const contentStr = formData.get('content')
+
+  if (typeof title !== 'string' || !title.trim()) {
+    throw new Error('Title is required')
+  }
+  if (typeof slug !== 'string' || !slug.trim()) {
+    throw new Error('Slug is required')
+  }
+
   let content = {}
   try {
-    content = JSON.parse(contentStr || '{}')
+    content = JSON.parse(typeof contentStr === 'string' ? contentStr : '{}')
   } catch (e) {
     throw new Error('Failed to Create Post. Invalid content format', {
       cause: e,
@@ -115,7 +133,18 @@ export async function updatePost(
   if (formData.has('published')) {
     const published = formData.get('published') === 'true'
     updates.published = published
-    updates.published_at = published ? new Date().toISOString() : null
+    // Only set published_at when first publishing, not on every toggle
+    if (published) {
+      // Fetch current post to check if it was previously published
+      const { data: existingPost } = await supabase
+        .from('posts')
+        .select('published_at')
+        .eq('id', id)
+        .single()
+      if (!existingPost?.published_at) {
+        updates.published_at = new Date().toISOString()
+      }
+    }
   }
 
   const { error } = await supabase.from('posts').update(updates).eq('id', id)
@@ -130,7 +159,28 @@ export async function updatePost(
 }
 
 export async function deletePost(id: string): Promise<void> {
+  const authClient = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser()
+  if (authError || !user) throw new Error('Unauthorized')
+
   const supabase = createServiceClient()
+
+  // Grab the post cover image specifically so we can delete from the bucket
+  const { data: post } = await supabase
+    .from('posts')
+    .select('cover_image_url')
+    .eq('id', id)
+    .single()
+  if (post?.cover_image_url) {
+    const urlParts = post.cover_image_url.split('/')
+    const filename = urlParts[urlParts.length - 1]
+    if (filename) {
+      await supabase.storage.from('blog-images').remove([filename])
+    }
+  }
   const { error } = await supabase.from('posts').delete().eq('id', id)
 
   if (error) {
@@ -145,6 +195,13 @@ export async function togglePublished(
   id: string,
   isPublished: boolean
 ): Promise<void> {
+  const authClient = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser()
+  if (authError || !user) throw new Error('Unauthorized')
+
   const supabase = createServiceClient()
   const updates = {
     published: isPublished,
@@ -161,12 +218,21 @@ export async function togglePublished(
   revalidatePath('/blog/admin')
 }
 
-export async function uploadBlogImageAction(formData: FormData) {
+export async function uploadBlogImageAction(
+  formData: FormData
+): Promise<string> {
+  const authClient = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser()
+  if (authError || !user) throw new Error('Unauthorized')
+
   const file = formData.get('file') as File
   if (!file) throw new Error('No file provided')
 
   // Explicit entry point validation
-  validateImage(file)
+  await validateImage(file)
 
   return uploadBlogImage(file)
 }

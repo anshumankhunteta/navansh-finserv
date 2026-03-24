@@ -95,9 +95,9 @@ export function TableOfContents() {
                     }}
                     className={`hover:text-foreground block w-full py-2.5 pr-2 text-left text-sm transition-colors ${
                       isActive
-                        ? 'text-foreground pl-4 font-semibold'
-                        : 'text-muted-foreground pl-4'
-                    } ${heading.level === 3 ? 'pl-8' : ''}`}
+                        ? 'text-foreground font-semibold'
+                        : 'text-muted-foreground'
+                    } ${heading.level === 3 ? 'pl-8' : 'pl-4'}`}
                   >
                     <span className="line-clamp-2">{heading.text}</span>
                   </button>

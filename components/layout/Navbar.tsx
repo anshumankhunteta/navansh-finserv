@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sheet'
 import {
   ArrowRight,
+  Book,
   Briefcase,
   Home,
   Mail,
@@ -54,6 +55,12 @@ const navLinks = [
     label: 'Contact',
     icon: Mail,
     description: 'Get in touch',
+  },
+  {
+    href: '/blog',
+    label: 'Blog',
+    icon: Book,
+    description: 'Read our articles',
   },
 ]
 

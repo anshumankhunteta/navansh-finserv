@@ -4,7 +4,7 @@ import { TableOfContents } from '@/components/custom/blog/TableOfContents'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Edit } from 'lucide-react'
 
 // Basic reading time estimate
 function getReadingTime(text: string) {
@@ -22,15 +22,15 @@ export async function generateMetadata({
   const supabase = await createClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   let query = supabase
     .from('posts')
     .select('title, excerpt, cover_image_url')
     .eq('slug', resolvedParams.slug)
 
-  if (!session) {
+  if (!user) {
     query = query.eq('published', true)
   }
 
@@ -60,13 +60,13 @@ export default async function BlogPostPage({
   const supabase = await createClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   let query = supabase.from('posts').select('*').eq('slug', resolvedParams.slug)
 
   // Apply published filter only if no admin session exists
-  if (!session) {
+  if (!user) {
     query = query.eq('published', true)
   }
 
@@ -92,14 +92,22 @@ export default async function BlogPostPage({
     <div className="bg-background container mx-auto px-4 py-24 md:my-12 md:p-20">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
         <aside className="sticky top-24 hidden max-h-[500px] space-y-10 overflow-y-hidden lg:col-span-3 lg:block">
-          {session ? (
-            <Link
-              href={`/blog/admin/${post.id}/edit`}
-              className="group text-muted-foreground hover:text-foreground mb-8 inline-flex items-center text-sm font-medium transition-colors"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Editor
-            </Link>
+          {user ? (
+            <>
+              <Link
+                href={`/blog`}
+                className="group text-muted-foreground hover:text-foreground mb-8 inline-flex items-center text-sm font-medium transition-colors"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Blog
+              </Link>
+              <Link
+                href={`/blog/admin/${post.id}/edit`}
+                className="group text-muted-foreground hover:text-foreground mb-8 inline-flex items-center text-sm font-medium transition-colors"
+              >
+                <Edit className="ml-5 h-4 w-4" />
+              </Link>
+            </>
           ) : (
             <Link
               href="/blog"
@@ -116,7 +124,7 @@ export default async function BlogPostPage({
         <article className="lg:col-span-9">
           {/* Mobile Back Button (since sidebar is hidden on small screens) */}
           <div className="mb-8 block lg:hidden">
-            {session ? (
+            {user ? (
               <Link
                 href={`/blog/admin/${post.id}/edit`}
                 className="group text-muted-foreground hover:text-foreground inline-flex items-center text-sm font-medium transition-colors"
