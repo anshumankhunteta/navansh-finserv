@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="border-border mx-auto mt-20 max-w-sm rounded-xl border bg-white p-6 shadow-sm">
+    <div className="border-border bg-card mx-auto mt-20 max-w-sm rounded-xl border p-6 shadow-sm">
       <div className="mb-6">
         <h1 className="text-foreground text-2xl font-bold">Admin Login</h1>
         <p className="text-muted-foreground text-sm">

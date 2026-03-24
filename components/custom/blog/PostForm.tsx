@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { SlugInput } from './SlugInput'
 import { BlockNoteEditor } from './BlockNoteEditor'
 import { createPost, updatePost, type PostRow } from '@/app/blog/admin/actions'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { PartialBlock } from '@blocknote/core'
 
@@ -105,12 +105,10 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
         </h1>
         <div className="flex items-center gap-3">
           {post?.slug && (
-            <Button
-              asChild
-              variant="ghost"
-              className="text-muted-foreground hover:text-primary"
-            >
-              <Link href={`/blog/${post.slug}`}>Preview</Link>
+            <Button asChild variant="ghost" className="text-muted-foreground">
+              <Link href={`/blog/${post.slug}`}>
+                <Eye />
+              </Link>
             </Button>
           )}
           <Button

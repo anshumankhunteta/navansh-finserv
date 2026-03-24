@@ -5,7 +5,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false, // Security: Hide X-Powered-By header
   compress: true, // Enable gzip compression
   images: {
-    domains: ['lnwdmhdvvnzjfbfgcdxw.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lnwdmhdvvnzjfbfgcdxw.supabase.co',
+      },
+    ],
   },
   experimental: {
     staleTimes: {

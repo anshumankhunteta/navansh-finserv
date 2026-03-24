@@ -15,7 +15,7 @@ export default async function AdminLayout({
 
   return (
     <AuthGuard hasSession={!!user}>
-      <div className="bg-background min-h-screen">
+      <div className="bg-muted min-h-screen">
         <header className="border-border bg-card sticky top-0 z-10 flex h-14 items-center justify-between border-b px-6">
           <Link
             href="/blog/admin"
