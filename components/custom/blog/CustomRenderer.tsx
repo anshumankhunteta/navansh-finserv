@@ -147,7 +147,7 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
         if (groupOrBlock.type === 'ul') {
           return (
             <ul
-              className="my-4 ml-6 list-outside list-disc space-y-2"
+              className="my-4 ml-6 w-full list-disc space-y-2 wrap-break-word"
               key={`ul-${index}`}
             >
               {groupOrBlock.items?.map(
@@ -166,7 +166,7 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
         if (groupOrBlock.type === 'ol') {
           return (
             <ol
-              className="my-4 ml-6 list-outside list-decimal space-y-2"
+              className="my-4 ml-6 list-decimal space-y-2 wrap-break-word"
               key={`ol-${index}`}
             >
               {groupOrBlock.items?.map(

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,11 +20,17 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
   const [coverImageUrl, setCoverImageUrl] = useState(
     post?.cover_image_url || ''
   )
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
   const [content, setContent] = useState<PartialBlock[] | undefined>(
     (post?.content as PartialBlock[]) || undefined
   )
 
   const [loading, setLoading] = useState<false | 'draft' | 'publish'>(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSave = async (
     publishStatus: boolean,
@@ -46,7 +52,14 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
     formData.append('title', title)
     formData.append('slug', slug)
     formData.append('excerpt', excerpt)
-    formData.append('cover_image_url', coverImageUrl)
+
+    if (coverImageFile) {
+      formData.append('cover_image_file', coverImageFile)
+    } else if (coverImageUrl === '') {
+      formData.append('cover_image_url', '')
+    } else {
+      formData.append('cover_image_url', coverImageUrl)
+    }
     formData.append('content', JSON.stringify(content ?? []))
     formData.append('published', publishStatus ? 'true' : 'false')
 
@@ -68,9 +81,8 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
 
   // Figure out the most recent valid date
   const lastSavedDate = post?.published_at || post?.created_at
-  const formattedDate = lastSavedDate
-    ? new Date(lastSavedDate).toLocaleString()
-    : null
+  const formattedDate =
+    mounted && lastSavedDate ? new Date(lastSavedDate).toLocaleString() : null
 
   return (
     <div className="mx-auto">
@@ -121,7 +133,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
         <div className="space-y-6 lg:col-span-2">
           <div className="border-border bg-card space-y-2 rounded-xl border p-6 shadow-sm">
             <Label htmlFor="title" className="text-foreground">
-              Title
+              Title ({title.length}/120)
             </Label>
             <Input
               id="title"
@@ -129,6 +141,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Your catchy title..."
               className="text-base"
+              maxLength={120}
             />
           </div>
 
@@ -144,25 +157,46 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
         </div>
 
         <div className="border-border bg-card h-fit space-y-6 rounded-xl border p-6 shadow-sm">
-          <SlugInput title={title} value={slug} onChange={setSlug} />
           <div className="mb-6 space-y-2">
             <Label htmlFor="coverImage" className="text-foreground">
-              Cover Image URL
+              Cover Image
             </Label>
             <Input
               id="coverImage"
-              value={coverImageUrl}
-              onChange={(e) => setCoverImageUrl(e.target.value)}
-              placeholder="https://.../image.jpg"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  setCoverImageFile(file)
+                  setCoverImageUrl(URL.createObjectURL(file))
+                }
+              }}
             />
             {coverImageUrl && (
               <div className="border-border bg-muted/50 relative mt-2 aspect-[16/9] w-full overflow-hidden rounded-md border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={coverImageUrl}
-                  alt="Cover"
+                  alt="Cover Preview"
                   className="h-full w-full object-cover"
                 />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2 h-8"
+                  onClick={() => {
+                    setCoverImageFile(null)
+                    setCoverImageUrl('')
+                    const input = document.getElementById(
+                      'coverImage'
+                    ) as HTMLInputElement
+                    if (input) input.value = ''
+                  }}
+                >
+                  Remove
+                </Button>
               </div>
             )}
           </div>
@@ -178,6 +212,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
               placeholder="A short summary of the content..."
               className="border-border text-foreground placeholder:text-muted-foreground w-full resize-none rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300"
             />
+            <SlugInput title={title} value={slug} onChange={setSlug} />
           </div>
         </div>
       </div>

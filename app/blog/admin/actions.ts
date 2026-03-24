@@ -59,7 +59,15 @@ export async function createPost(formData: FormData): Promise<string> {
   const title = formData.get('title')
   const slug = formData.get('slug')
   const excerpt = formData.get('excerpt')
-  const coverImageUrl = formData.get('cover_image_url')
+
+  let coverImageUrl = formData.get('cover_image_url') as string | null
+  const coverImageFile = formData.get('cover_image_file') as File | null
+  if (coverImageFile && coverImageFile.size > 0) {
+    coverImageUrl = await uploadBlogImage(coverImageFile)
+  } else if (coverImageUrl === '') {
+    coverImageUrl = null
+  }
+
   const contentStr = formData.get('content')
 
   if (typeof title !== 'string' || !title.trim()) {
@@ -112,7 +120,15 @@ export async function updatePost(
   const title = formData.get('title') as string
   const slug = formData.get('slug') as string
   const excerpt = formData.get('excerpt') as string
-  const coverImageUrl = formData.get('cover_image_url') as string
+
+  let coverImageUrl = formData.get('cover_image_url') as string | null
+  const coverImageFile = formData.get('cover_image_file') as File | null
+  if (coverImageFile && coverImageFile.size > 0) {
+    coverImageUrl = await uploadBlogImage(coverImageFile)
+  } else if (coverImageUrl === '') {
+    coverImageUrl = null
+  }
+
   const contentStr = formData.get('content') as string
 
   let content = {}

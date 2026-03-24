@@ -12,7 +12,6 @@ interface SlugInputProps {
 
 export function SlugInput({ title, value = '', onChange }: SlugInputProps) {
   const [internalSlug, setInternalSlug] = useState(value)
-  const [isManual, setIsManual] = useState(!!value)
   const [prevValue, setPrevValue] = useState(value)
 
   // Sync when external value changes (e.g., form reset).
@@ -21,12 +20,9 @@ export function SlugInput({ title, value = '', onChange }: SlugInputProps) {
   if (value !== prevValue) {
     setPrevValue(value)
     setInternalSlug(value)
-    setIsManual(!!value)
   }
 
   useEffect(() => {
-    if (isManual) return
-
     const generated = title
       .toLowerCase()
       .trim()
@@ -42,10 +38,9 @@ export function SlugInput({ title, value = '', onChange }: SlugInputProps) {
     }, 400)
 
     return () => clearTimeout(timeoutId)
-  }, [title, isManual, internalSlug, onChange])
+  }, [title, internalSlug, onChange])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsManual(true)
     const newSlug = e.target.value
     setInternalSlug(newSlug)
     onChange(newSlug)
@@ -62,8 +57,7 @@ export function SlugInput({ title, value = '', onChange }: SlugInputProps) {
         type="text"
         value={internalSlug}
         onChange={handleChange}
-        placeholder="auto-generated-slug"
-        className="font-mono text-sm"
+        placeholder="auto-generated-url-name"
       />
     </div>
   )

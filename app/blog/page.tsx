@@ -21,18 +21,18 @@ export default async function BlogPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-24 md:py-32">
+    <div className="container mx-auto mt-5 px-4 pb-24 md:pb-32">
       <div className="mb-12 max-w-2xl">
         <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
           Our Blog
         </h1>
         <p className="text-muted-foreground text-lg">
-          Insights, news, and guides for navigating your financial journey.
+          Interesting Blogs and Articles.
         </p>
       </div>
 
       {!posts || posts.length === 0 ? (
-        <div className="border-border bg-muted/50 flex min-h-[40vh] w-full flex-col items-center justify-center rounded-2xl border border-dashed">
+        <div className="border-border bg-muted/50 flex min-h-[50vh] w-full flex-col items-center justify-center rounded-2xl border border-dashed">
           <p className="text-muted-foreground">No posts yet.</p>
         </div>
       ) : (
@@ -49,6 +49,10 @@ export default async function BlogPage() {
           ))}
         </div>
       )}
+      <p className="text-muted-foreground mt-5 text-sm">
+        Our Website is made with the help of AI, but these Blogs are completely
+        written and formatted by Humans. So please take your time to read!
+      </p>
     </div>
   )
 }

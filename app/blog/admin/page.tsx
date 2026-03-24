@@ -15,12 +15,6 @@ export default async function AdminDashboardPage() {
     redirect('/login')
   }
 
-  // Optionally verify admin role
-  // const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  // if (profile?.role !== 'admin') {
-  //   redirect('/unauthorized')
-  // }
-
   const { data: posts, error } = await supabase
     .from('posts')
     .select('*')

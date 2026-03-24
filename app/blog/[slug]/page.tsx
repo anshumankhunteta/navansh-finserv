@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Edit } from 'lucide-react'
+import Image from 'next/image'
 
 // Basic reading time estimate
 function getReadingTime(text: string) {
@@ -144,12 +145,27 @@ export default async function BlogPostPage({
           </div>
 
           <header className="mb-12">
-            <h1
-              id={post.id}
-              className="text-foreground mb-6 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
-            >
-              {post.title} {post.published ? '' : '(Draft)'}
-            </h1>
+            {post.cover_image_url ? (
+              <div
+                className="tooltip mb-8 overflow-hidden rounded-2xl"
+                title={post.title}
+              >
+                <Image
+                  src={post.cover_image_url}
+                  alt={post.title}
+                  width={1280}
+                  height={720}
+                  className="object-cover object-center"
+                />
+              </div>
+            ) : (
+              <h1
+                id={post.id}
+                className="text-foreground mb-6 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+              >
+                {post.title} {post.published ? '' : '(Draft)'}
+              </h1>
+            )}
             <div className="text-muted-foreground flex items-center space-x-4 text-sm">
               <time dateTime={post.published_at || undefined}>
                 {formattedDate}
@@ -158,17 +174,6 @@ export default async function BlogPostPage({
               <span>{readingTime} min read</span>
             </div>
           </header>
-
-          {post.cover_image_url && (
-            <div className="bg-secondary mb-12 overflow-hidden rounded-2xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={post.cover_image_url}
-                alt={post.title}
-                className="max-h-[60vh] w-full object-cover object-center"
-              />
-            </div>
-          )}
 
           {post.excerpt && (
             <div className="text-foreground mb-12 text-xl leading-relaxed font-medium">

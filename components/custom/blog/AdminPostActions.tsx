@@ -49,7 +49,7 @@ export function AdminPostActions({
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-primary h-8 w-8"
+          className="text-muted-foreground hover:text-foreground h-8 w-8"
           title="Preview Post"
         >
           <Eye className="h-4 w-4" />

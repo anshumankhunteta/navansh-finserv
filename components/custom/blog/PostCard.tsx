@@ -49,9 +49,11 @@ export function PostCard({
           <div className="text-muted-foreground mb-2 text-sm">
             {formattedDate}
           </div>
-          <h3 className="text-foreground mb-3 text-xl leading-tight font-semibold group-hover:text-blue-600">
-            {title}
-          </h3>
+          <div className="tooltip" title={title}>
+            <h3 className="text-foreground mb-3 line-clamp-2 text-xl leading-tight font-semibold group-hover:text-blue-600">
+              {title}
+            </h3>
+          </div>
           {excerpt && (
             <p className="text-muted-foreground mb-6 line-clamp-3 text-sm">
               {excerpt}

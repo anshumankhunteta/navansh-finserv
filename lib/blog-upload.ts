@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 export const ALLOWED_IMAGE_TYPES = [
@@ -40,7 +40,7 @@ export async function validateImage(file: File) {
 
 export async function uploadBlogImage(file: File): Promise<string> {
   await validateImage(file)
-  const supabase = await createClient()
+  const supabase = createServiceClient()
 
   // Sanitize filename to prevent path traversal and unsafe characters
   const extMatch = file.name.match(/\.[0-9a-z]+$/i)
