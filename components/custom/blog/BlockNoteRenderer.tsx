@@ -35,6 +35,7 @@ function InnerRenderer({
 export function BlockNoteRenderer({ content }: BlockNoteRendererProps) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const contentKey = JSON.stringify(content)
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -45,7 +46,11 @@ export function BlockNoteRenderer({ content }: BlockNoteRendererProps) {
 
   return (
     <div className="blocknote-reader w-full bg-transparent">
-      <InnerRenderer content={content} resolvedTheme={resolvedTheme} />
+      <InnerRenderer
+        key={contentKey}
+        content={content}
+        resolvedTheme={resolvedTheme}
+      />
     </div>
   )
 }

@@ -65,7 +65,11 @@ export function AdminPostActions({
         {published ? 'Unpublish' : 'Publish'}
       </Button>
 
-      <Link href={`/blog/admin/${id}/edit`}>
+      <Link
+        href={`/blog/admin/${id}/edit`}
+        className={loading ? 'pointer-events-none' : ''}
+        aria-disabled={loading}
+      >
         <Button
           variant="ghost"
           size="icon"

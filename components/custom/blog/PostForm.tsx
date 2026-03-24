@@ -47,7 +47,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
     formData.append('slug', slug)
     formData.append('excerpt', excerpt)
     formData.append('cover_image_url', coverImageUrl)
-    formData.append('content', JSON.stringify(content))
+    formData.append('content', JSON.stringify(content ?? []))
     formData.append('published', publishStatus ? 'true' : 'false')
 
     try {
@@ -62,9 +62,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
       const e = err as Error
       alert(e.message || 'Failed to save post')
     } finally {
-      if (post?.id) {
-        setLoading(false)
-      }
+      setLoading(false)
     }
   }
 

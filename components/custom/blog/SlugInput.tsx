@@ -13,15 +13,16 @@ interface SlugInputProps {
 export function SlugInput({ title, value = '', onChange }: SlugInputProps) {
   const [internalSlug, setInternalSlug] = useState(value)
   const [isManual, setIsManual] = useState(!!value)
+  const [prevValue, setPrevValue] = useState(value)
 
-  useEffect(() => {
-    // If we have an incoming value on mount that differs, set it
-    if (value && !internalSlug) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setInternalSlug(value)
-      setIsManual(true)
-    }
-  }, [value, internalSlug])
+  // Sync when external value changes (e.g., form reset).
+  // According to React docs, adjusting state while rendering is explicitly preferred here
+  // over using an effect to avoid an entire secondary render cycle triggering a flash.
+  if (value !== prevValue) {
+    setPrevValue(value)
+    setInternalSlug(value)
+    setIsManual(!!value)
+  }
 
   useEffect(() => {
     if (isManual) return

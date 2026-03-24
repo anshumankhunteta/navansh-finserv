@@ -18,11 +18,16 @@ export function PostCard({
 }: PostCardProps) {
   // Format date as "12 March 2025"
   const formattedDate = publishedAt
-    ? new Date(publishedAt).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
+    ? (() => {
+        const date = new Date(publishedAt)
+        return isNaN(date.getTime())
+          ? ''
+          : date.toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+      })()
     : ''
 
   return (
@@ -33,7 +38,8 @@ export function PostCard({
             <Image
               src={coverImage}
               alt={title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         ) : (

@@ -10,11 +10,11 @@ export default async function AdminLayout({
 }) {
   const supabase = await createClient()
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   return (
-    <AuthGuard hasSession={!!session}>
+    <AuthGuard hasSession={!!user}>
       <div className="bg-background min-h-screen">
         <header className="border-border bg-card sticky top-0 z-10 flex h-14 items-center justify-between border-b px-6">
           <Link
@@ -23,7 +23,7 @@ export default async function AdminLayout({
           >
             Blog Admin
           </Link>
-          {session && <SignOutButton />}
+          {user && <SignOutButton />}
         </header>
         <main className="p-6">{children}</main>
       </div>

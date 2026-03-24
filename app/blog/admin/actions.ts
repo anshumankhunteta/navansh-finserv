@@ -1,8 +1,8 @@
 'use server'
 
-import { createServiceClient, createClient } from '@/lib/supabase/server'
+import { uploadBlogImage, validateImage } from '@/lib/blog-upload'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { uploadBlogImage } from '@/lib/blog-upload'
 
 export type PostRow = {
   id: string
@@ -18,8 +18,13 @@ export type PostRow = {
 }
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const email = formData.get('email')
+  const password = formData.get('password')
+
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    throw new Error('Email and password are required')
+  }
+
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -49,8 +54,10 @@ export async function createPost(formData: FormData): Promise<string> {
   let content = {}
   try {
     content = JSON.parse(contentStr || '{}')
-  } catch {
-    console.error('Failed to parse content JSON')
+  } catch (e) {
+    throw new Error('Failed to Create Post. Invalid content format', {
+      cause: e,
+    })
   }
   const published = formData.get('published') === 'true'
 
@@ -94,7 +101,7 @@ export async function updatePost(
   try {
     content = JSON.parse(contentStr || '{}')
   } catch {
-    console.error('Failed to parse content JSON')
+    throw new Error('Failed to Update Post. Invalid content format')
   }
 
   const updates: Partial<PostRow> = {
@@ -157,5 +164,9 @@ export async function togglePublished(
 export async function uploadBlogImageAction(formData: FormData) {
   const file = formData.get('file') as File
   if (!file) throw new Error('No file provided')
+
+  // Explicit entry point validation
+  validateImage(file)
+
   return uploadBlogImage(file)
 }

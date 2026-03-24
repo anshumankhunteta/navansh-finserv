@@ -20,11 +20,21 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params
   const supabase = await createClient()
-  const { data: post } = await supabase
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  let query = supabase
     .from('posts')
     .select('title, excerpt, cover_image_url')
     .eq('slug', resolvedParams.slug)
-    .single()
+
+  if (!session) {
+    query = query.eq('published', true)
+  }
+
+  const { data: post } = await query.single()
 
   if (!post) {
     return { title: 'Post Not Found | Navansh Finserv' }
@@ -77,7 +87,6 @@ export default async function BlogPostPage({
         year: 'numeric',
       })
     : ''
-  console.log(post.content)
 
   return (
     <div className="bg-background container mx-auto px-4 py-24 md:my-12 md:p-20">

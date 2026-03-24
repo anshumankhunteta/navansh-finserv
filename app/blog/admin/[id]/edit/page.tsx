@@ -10,6 +10,14 @@ export default async function EditPostPage({
   const resolvedParams = await params
   const supabase = await createClient()
 
+  // Verify authentication
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    notFound()
+  }
+
   // Fetch the post
   const { data: post, error } = await supabase
     .from('posts')

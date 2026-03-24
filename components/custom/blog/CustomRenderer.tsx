@@ -44,7 +44,7 @@ const RenderInline = ({ content }: RenderInlineProps) => {
     <>
       {content.map((inline, index) => {
         if (inline.type === 'text' || inline.type === 'link') {
-          let el = <>{inline.text}</>
+          let el = <>{inline.text ?? ''}</>
 
           if (inline.styles) {
             const bgColor = inline.styles.backgroundColor
@@ -145,14 +145,16 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
               className="my-4 ml-6 list-outside list-disc space-y-2"
               key={`ul-${index}`}
             >
-              {groupOrBlock.items?.map((item: BlockNoteNode) => (
-                <li key={item.id}>
-                  <RenderInline content={item.content} />
-                  {item.children && item.children.length > 0 && (
-                    <CustomRenderer blocks={item.children} />
-                  )}
-                </li>
-              ))}
+              {groupOrBlock.items?.map(
+                (item: BlockNoteNode, itemIndex: number) => (
+                  <li key={item.id ?? `item-${itemIndex}`}>
+                    <RenderInline content={item.content} />
+                    {item.children && item.children.length > 0 && (
+                      <CustomRenderer blocks={item.children} />
+                    )}
+                  </li>
+                )
+              )}
             </ul>
           )
         }
@@ -240,7 +242,16 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
             if (level === 1) className = 'text-4xl mt-8 mb-5 font-bold'
             if (level === 2) className = 'text-3xl mt-6 mb-4 font-bold'
             if (level === 3) className = 'text-2xl mt-5 mb-3 font-bold'
-            const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3'
+            if (level === 4) className = 'text-xl mt-4 mb-2 font-bold'
+            if (level === 5) className = 'text-lg mt-3 mb-2 font-semibold'
+            if (level === 6) className = 'text-base mt-3 mb-2 font-semibold'
+            const HeadingTag = `h${level}` as
+              | 'h1'
+              | 'h2'
+              | 'h3'
+              | 'h4'
+              | 'h5'
+              | 'h6'
             return (
               <HeadingTag className={className} key={id}>
                 <RenderInline content={content} />

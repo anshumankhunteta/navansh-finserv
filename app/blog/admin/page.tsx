@@ -14,6 +14,13 @@ export default async function AdminDashboardPage() {
 
   if (error) {
     console.error('Error fetching posts:', error)
+    return (
+      <div className="border-border bg-card mx-auto max-w-6xl rounded-xl border p-6 shadow-sm">
+        <p className="text-destructive">
+          Failed to load posts. Please try again later.
+        </p>
+      </div>
+    )
   }
 
   return (
@@ -27,7 +34,7 @@ export default async function AdminDashboardPage() {
 
       <div className="overflow-x-auto">
         <table className="text-muted-foreground w-full text-left text-sm">
-          <thead className="bg-muted/50 text-muted-foreground bg-muted/50 text-xs tracking-wider uppercase">
+          <thead className="bg-muted/50 text-muted-foreground text-xs tracking-wider uppercase">
             <tr>
               <th className="px-6 py-4 font-medium">Title</th>
               <th className="px-6 py-4 font-medium">Status</th>

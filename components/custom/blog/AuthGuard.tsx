@@ -19,5 +19,9 @@ export function AuthGuard({
     }
   }, [hasSession, pathname, router])
 
+  if (!hasSession && pathname !== '/blog/admin/login') {
+    return null // or a loading spinner
+  }
+
   return <>{children}</>
 }

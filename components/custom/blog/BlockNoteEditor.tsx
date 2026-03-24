@@ -24,9 +24,15 @@ function InnerEditor({
 }) {
   const editor = useCreateBlockNote({
     uploadFile: async (file: File) => {
-      const formData = new FormData()
-      formData.append('file', file)
-      return uploadBlogImageAction(formData)
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        return await uploadBlogImageAction(formData)
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : 'Upload failed'
+        alert(msg)
+        throw error
+      }
     },
     initialContent:
       Array.isArray(initialContent) && initialContent.length > 0
