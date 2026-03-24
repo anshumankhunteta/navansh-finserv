@@ -111,11 +111,11 @@ export function BentoServices() {
                           strokeLinejoin="round"
                         />
                         <path
-                          d="M0,120 L0,100 Q 20,95 40,98 T 80,80 T 120,85 T 160,50 T 180,55 T 200,40 T 220,30 T 240,15 L280,15 L280,120 Z"
+                          d="M0,120 L0,100 C 30,95 60,80 100,85 S 160,40 190,50 S 250,15 280,15 L280,120 Z"
                           fill="url(#portfolioGradient)"
                         />
                         <path
-                          d="M0,100 Q 20,95 40,98 T 80,80 T 120,85 T 160,50 T 180,55 T 200,40 T 220,30 T 240,15 L280,15"
+                          d="M0,100 C 30,95 60,80 100,85 S 160,40 190,50 S 250,15 280,15"
                           stroke="var(--color-primary)"
                           strokeWidth="2.5"
                           strokeLinecap="round"
