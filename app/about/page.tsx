@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
+import { Target, Users2, Briefcase } from 'lucide-react'
+import { AnimatedCounter } from '@/components/custom/AnimatedCounter'
 
 export const metadata: Metadata = {
   title: 'Our Story',
@@ -100,15 +102,73 @@ export default function AboutPage() {
                     width={720}
                   />
                   <div className="mt-4 flex flex-col items-start md:pl-4">
-                    <p className="text-primary text-xl leading-relaxed font-bold">
+                    <p className="text-primary text-2xl leading-relaxed font-bold">
                       Milee Khunteta
                     </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Founder and Director
+                    <p className="text-muted-foreground text-md leading-relaxed font-semibold">
+                      Founder
                     </p>
                   </div>
                 </RefractiveContainer>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            <RefractiveContainer className="text-center">
+              <h2 className="mb-4 text-3xl font-bold">
+                Let&apos;s Talk <span className="text-primary">Numbers</span>
+              </h2>
+              <p className="text-muted-foreground mb-12 text-lg">
+                Our Founder has gained the trust of countless clients and
+                advisors over so many years of working in Sales.
+              </p>
+            </RefractiveContainer>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <RefractiveContainer delay={0.1}>
+                <div className="bg-card border-border flex h-full flex-col items-center justify-center rounded-lg border p-6 text-center shadow-sm">
+                  <div className="bg-primary/10 text-primary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl">
+                    <Briefcase className="h-8 w-8" />
+                  </div>
+                  <div className="text-foreground mb-2 text-4xl font-bold">
+                    <AnimatedCounter prefix="₹" value={8} suffix="Cr+" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">
+                    Average Business p.a.
+                  </div>
+                </div>
+              </RefractiveContainer>
+              <RefractiveContainer delay={0.2}>
+                <div className="bg-card border-border flex h-full flex-col items-center justify-center rounded-lg border p-6 text-center shadow-sm">
+                  <div className="bg-primary/10 text-primary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl">
+                    <Users2 className="h-8 w-8" />
+                  </div>
+                  <div className="text-foreground mb-2 text-4xl font-bold">
+                    <AnimatedCounter value={500} suffix="+" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">
+                    Clients Managed
+                  </div>
+                </div>
+              </RefractiveContainer>
+              <RefractiveContainer delay={0.3}>
+                <div className="bg-card border-border flex h-full flex-col items-center justify-center rounded-lg border p-6 text-center shadow-sm">
+                  <div className="bg-primary/10 text-primary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl">
+                    <Target className="h-8 w-8" />
+                  </div>
+                  <div className="text-foreground mb-2 text-4xl font-bold">
+                    <AnimatedCounter prefix="₹" value={150} suffix="Cr+" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">
+                    Total AUM
+                  </div>
+                </div>
+              </RefractiveContainer>
             </div>
           </div>
         </div>
