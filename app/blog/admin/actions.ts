@@ -207,6 +207,52 @@ export async function deletePost(id: string): Promise<void> {
   revalidatePath('/blog/admin')
 }
 
+export async function duplicatePost(id: string): Promise<string> {
+  const authClient = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser()
+  if (authError || !user) throw new Error('Unauthorized')
+
+  const supabase = createServiceClient()
+
+  // Fetch original post
+  const { data: originalPost, error: fetchError } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !originalPost) throw new Error('Post not found')
+
+  const newTitle = `Copy of ${originalPost.title}`
+  const newSlug = `${originalPost.slug}-copy-${Date.now()}`
+
+  const { data: newPost, error: insertError } = await supabase
+    .from('posts')
+    .insert([
+      {
+        title: newTitle,
+        slug: newSlug,
+        excerpt: originalPost.excerpt,
+        content: originalPost.content,
+        cover_image_url: null, // Intentional: avoid shared image deletion bugs
+        published: false,
+        published_at: null,
+      },
+    ])
+    .select('id')
+    .single()
+
+  if (insertError) throw new Error(insertError.message)
+
+  revalidatePath('/blog')
+  revalidatePath('/blog/admin')
+
+  return newPost.id
+}
+
 export async function togglePublished(
   id: string,
   isPublished: boolean
