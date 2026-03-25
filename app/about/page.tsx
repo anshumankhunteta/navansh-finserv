@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -37,37 +38,69 @@ export default function AboutPage() {
       {/* Founder's Story */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto">
             <div className="prose prose-lg max-w-none">
-              <h2 className="text-foreground mb-6 text-2xl font-bold md:whitespace-nowrap">
-                From Sales Manager to{' '}
-                <span className="text-primary">Firm Owner</span>
-              </h2>
-              <div className="space-y-6">
-                <p className="text-lg leading-relaxed">
-                  Navansh Finserv is founded by a veteran single mother with
-                  over 2 decades of experience in financial services, sales and
-                  customer relationship management. Having navigated the
-                  challenges of building financial security from scratch for her
-                  own family, raising two sons all by herself, our founder
-                  brings a unique blend of professional expertise and personal
-                  understanding to every client interaction.
-                </p>
-                <p className="text-lg leading-relaxed">
-                  <em className="text-foreground font-medium">
-                    &quot;I&apos;ve lived through the sleepless nights worrying
-                    about tomorrow. When you&apos;re building security from
-                    scratch, you learn what really matters. That&apos;s the
-                    experience I bring to every family I work with.&quot;
-                  </em>
-                </p>
-                <p className="text-lg leading-relaxed">
-                  This philosophy drives everything we do at Navansh Finserv. We
-                  don&apos;t just sell policies, we build lasting relationships
-                  based on trust, transparency, and genuine care. Our approach
-                  is motherly protection meets professional excellence ensuring
-                  your financial future is secure.
-                </p>
+              <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+                <div className="space-y-6 md:col-span-2">
+                  <h2 className="text-foreground mb-6 text-3xl font-bold md:whitespace-nowrap">
+                    From Sales Manager to{' '}
+                    <span className="text-primary">Firm Owner</span>
+                  </h2>
+                  <p className="text-lg leading-relaxed">
+                    Navansh Finserv is founded by a veteran single mother with
+                    over 2 decades of experience in financial services, sales
+                    and customer relationship management. Having navigated the
+                    challenges of building financial security from scratch for
+                    her own family, raising two sons all by herself, our founder
+                    brings a unique blend of professional expertise and personal
+                    understanding to every client interaction.
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    <em className="text-foreground font-medium">
+                      &quot;I&apos;ve lived through the sleepless nights
+                      worrying about tomorrow. When you&apos;re building
+                      security from scratch, you learn what really matters.
+                      That&apos;s the experience I bring to every family I work
+                      with.&quot;
+                    </em>
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    This philosophy drives everything we do at Navansh Finserv.
+                    We don&apos;t just sell policies, we believe in building
+                    lasting relationships based on trust, transparency, and
+                    genuine care. Our approach is motherly protection meets
+                    professionalism and precision ensuring your financial
+                    clarity is impeccable.
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    <span className="italic">Money attracts Money.</span> We
+                    believe in the power of compounding and investment
+                    instruments. This mindset comes from years of earning,
+                    saving, investing (repeat) not only from Personal Results
+                    and Experience but from our Clients and their Family&apos;s
+                    Growth as well. People don&apos;t truly understand the power
+                    of these financial instruments until they see numbers and
+                    actual portfolio growth.
+                  </p>
+                </div>
+                {/* Founder Image */}
+                <div className="flex w-full flex-col items-center p-3 md:items-start">
+                  <Image
+                    className="drop-shadow-muted-foreground w-70 object-contain drop-shadow-md sepia-50 md:w-90 dark:drop-shadow-none"
+                    src="https://lnwdmhdvvnzjfbfgcdxw.supabase.co/storage/v1/object/public/cdn/Founderimage_passport.png"
+                    alt="Milee Khunteta"
+                    height={720}
+                    width={720}
+                  />
+                  <div className="mt-4 flex flex-col items-start md:pl-4">
+                    <p className="text-primary text-xl leading-relaxed font-bold">
+                      Milee Khunteta
+                    </p>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Founder and Director
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
