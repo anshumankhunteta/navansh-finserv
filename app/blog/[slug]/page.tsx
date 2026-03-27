@@ -14,6 +14,8 @@ function getReadingTime(text: string) {
   return Math.max(1, Math.ceil(words / wordsPerMinute))
 }
 
+export const revalidate = 3600
+
 export async function generateMetadata({
   params,
 }: {
@@ -61,8 +63,9 @@ export default async function BlogPostPage({
   const supabase = await createClient()
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
+  const user = session?.user
 
   let query = supabase.from('posts').select('*').eq('slug', resolvedParams.slug)
 
@@ -155,6 +158,7 @@ export default async function BlogPostPage({
                   alt={post.title}
                   width={1280}
                   height={720}
+                  priority={true}
                   className="object-cover object-center"
                 />
               </div>

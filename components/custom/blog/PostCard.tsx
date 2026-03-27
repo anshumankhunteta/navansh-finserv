@@ -7,6 +7,7 @@ interface PostCardProps {
   coverImage?: string | null
   publishedAt?: string | null
   slug: string
+  priority?: boolean
 }
 
 export function PostCard({
@@ -15,6 +16,7 @@ export function PostCard({
   coverImage,
   publishedAt,
   slug,
+  priority = false,
 }: PostCardProps) {
   // Format date as "12 March 2025"
   const formattedDate = publishedAt
@@ -39,6 +41,8 @@ export function PostCard({
               src={coverImage}
               alt={title}
               fill
+              priority={priority}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>

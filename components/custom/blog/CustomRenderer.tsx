@@ -259,8 +259,15 @@ export function CustomRenderer({ blocks }: CustomRendererProps) {
               | 'h4'
               | 'h5'
               | 'h6'
+
+            // Server-side generation of heading ID to avoid layout shifts in TableOfContents
+            const textContent = content?.map((c) => c.text || '').join('') || ''
+            const htmlId =
+              id ||
+              `heading-${index}-${textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+
             return (
-              <HeadingTag className={className} key={id}>
+              <HeadingTag className={className} key={id} id={htmlId}>
                 <RenderInline content={content} />
                 {renderChildren}
               </HeadingTag>
