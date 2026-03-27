@@ -1,6 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import { PostCard } from '@/components/custom/blog/PostCard'
 import { Metadata } from 'next'
+
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Blog | Navansh Finserv',
@@ -8,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogPage() {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data: posts, error } = await supabase
     .from('posts')
@@ -37,7 +39,7 @@ export default async function BlogPage() {
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
+          {posts.map((post, index: number) => (
             <PostCard
               key={post.id}
               title={post.title}
@@ -45,6 +47,7 @@ export default async function BlogPage() {
               coverImage={post.cover_image_url}
               publishedAt={post.published_at}
               slug={post.slug}
+              priority={index <= 2}
             />
           ))}
         </div>

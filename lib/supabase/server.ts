@@ -22,6 +22,19 @@ export function createServiceClient() {
   )
 }
 
+// For truly public data fetching that can be statically cached (e.g., ISR)
+export function createPublicClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  )
+}
+
 // For regular server components with RLS
 export async function createClient() {
   const cookieStore = await cookies()
