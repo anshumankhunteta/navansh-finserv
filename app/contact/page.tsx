@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Mail, MapPin } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -58,83 +59,94 @@ export default function ContactPage() {
     <div className="flex flex-col">
       <div className="bg-card/75 border-border/50 w-full border p-6 md:p-8 dark:bg-black/30">
         <div className="container mx-auto">
-          <div className="bg-secondary mx-auto flex h-[120px] w-[120px] items-center justify-center rounded-full">
-            <Navansh
-              height={50}
-              style={
-                { '--primary-foreground': '#eeeeee' } as React.CSSProperties
-              }
-            />
-          </div>
-          <h2 className="mb-8 text-center text-2xl font-bold tracking-widest">
-            <span className="text-primary">NAVANSH</span> FINSERV
-          </h2>
+          <RefractiveContainer>
+            <div className="bg-secondary mx-auto flex h-[120px] w-[120px] items-center justify-center rounded-full">
+              <Navansh
+                height={50}
+                style={
+                  { '--primary-foreground': '#eeeeee' } as React.CSSProperties
+                }
+              />
+            </div>
+            <h2 className="mb-8 text-center text-2xl font-bold tracking-widest">
+              <span className="text-primary">NAVANSH</span> FINSERV
+            </h2>
+          </RefractiveContainer>
+
           <div className="mb-6 space-y-6">
-            {contactInfo.map((info) => (
-              <Link
-                href={info.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                key={info.title}
-                className="border-border/50 bg-card flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
-              >
-                <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
-                  <info.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-medium">{info.title}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {info.details}
-                  </p>
-                </div>
-              </Link>
+            {contactInfo.map((info, i) => (
+              <RefractiveContainer key={info.title} delay={0.1 * (i + 1)}>
+                <Link
+                  href={info.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border/50 bg-card flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
+                >
+                  <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
+                    <info.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{info.title}</h3>
+                    <p className="text-muted-foreground text-sm">
+                      {info.details}
+                    </p>
+                  </div>
+                </Link>
+              </RefractiveContainer>
             ))}
           </div>
           {/* Google Maps Embed*/}
-          <div className="bg-card border-border/50 overflow-hidden rounded-xl border md:mx-auto md:w-[50%]">
-            <div className="border-border/50 flex items-center gap-4 border-b p-3">
+          <RefractiveContainer delay={0.4}>
+            <div className="bg-card border-border/50 overflow-hidden rounded-xl border md:mx-auto md:w-[50%]">
+              <div className="border-border/50 flex items-center gap-4 border-b p-3">
+                <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
+                  <MapPin className="text-primary h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Our Location</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Reach out to us at our office
+                  </p>
+                </div>
+              </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d460.82518860936966!2d88.33799571472095!3d22.481604322024946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a027091f2ff6159%3A0xb27ac9c8999c622c!2s39%2C%20Mahatma%20Gandhi%20Rd%2C%20Haridevpur%2C%20Paschim%20Putiary%2C%20Kolkata%2C%20West%20Bengal%20700082!5e0!3m2!1sen!2sin!4v1770227001040!5m2!1sen!2sin"
+                width="100%"
+                height="300"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Navansh Finserv Location"
+              />
+            </div>
+          </RefractiveContainer>
+          <RefractiveContainer delay={0.5}>
+            <Link
+              href="https://discord.gg/YuPpRjzYtA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-border/50 bg-card mt-6 mb-24 flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
+            >
               <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
-                <MapPin className="text-primary h-5 w-5" />
+                <Discord className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-medium">Our Location</h3>
+                <h3 className="font-medium">Need Dev Support?</h3>
                 <p className="text-muted-foreground text-sm">
-                  Reach out to us at our office
+                  Join our Discord Community
                 </p>
               </div>
-            </div>
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d460.82518860936966!2d88.33799571472095!3d22.481604322024946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a027091f2ff6159%3A0xb27ac9c8999c622c!2s39%2C%20Mahatma%20Gandhi%20Rd%2C%20Haridevpur%2C%20Paschim%20Putiary%2C%20Kolkata%2C%20West%20Bengal%20700082!5e0!3m2!1sen!2sin!4v1770227001040!5m2!1sen!2sin"
-              width="100%"
-              height="300"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Navansh Finserv Location"
-            />
-          </div>
-          <Link
-            href="https://discord.gg/YuPpRjzYtA"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border-border/50 bg-card mt-6 mb-24 flex items-start gap-4 rounded-xl border p-3 md:mx-auto md:w-[50%]"
-          >
-            <div className="bg-primary/10 text-primary fill-primary shrink-0 rounded-lg p-3">
-              <Discord className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-medium">Need Dev Support?</h3>
-              <p className="text-muted-foreground text-sm">
-                Join our Discord Community
-              </p>
-            </div>
-          </Link>
+            </Link>
+          </RefractiveContainer>
         </div>
       </div>
       {/* Schedule Consultation Section */}
       <section className="py-16">
-        <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
+        <RefractiveContainer
+          delay={0.2}
+          className="container mx-auto px-4 text-center sm:px-6 lg:px-8"
+        >
           <h2 className="text-primary mb-4 text-3xl font-bold">
             Get a Free Consultation
           </h2>
@@ -144,7 +156,7 @@ export default function ContactPage() {
           <Button asChild variant={'default'} className="px-8 py-6 text-lg">
             <Link href="/enquire">Get a Quote</Link>
           </Button>
-        </div>
+        </RefractiveContainer>
       </section>
     </div>
   )
