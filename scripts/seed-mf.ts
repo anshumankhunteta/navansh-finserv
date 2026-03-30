@@ -270,7 +270,7 @@ async function upsertSchemeNames(
       .upsert(rows, { onConflict: 'scheme_code', ignoreDuplicates: false })
 
     if (error) console.error('   ❌ Upsert error:', error.message)
-    upserted += batch.length
+    else upserted += batch.length
   }
   console.log(`   → ${upserted} scheme names upserted\n`)
 }

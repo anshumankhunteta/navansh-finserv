@@ -26,6 +26,16 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
     }, 300)
   }
 
+  // Cleanup pending debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+        debounceRef.current = null
+      }
+    }
+  }, [])
+
   function handleClear() {
     setLocal('')
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -48,6 +58,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       />
       {local && (
         <button
+          type="button"
           onClick={handleClear}
           className="text-muted-foreground hover:bg-accent/20 hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-0.5 transition-colors"
           aria-label="Clear search"

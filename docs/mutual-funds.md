@@ -22,7 +22,7 @@
 
 ### What is the Mutual Fund Screener?
 
-The Mutual Fund Screener at `/mutual-funds` lets you explore, compare, and analyse mutual funds from curated Asset Management Companies (AMCs). It is designed for retail investors who want performance data without needing a paid DEMAT platform.
+The Mutual Fund Screener at `/mf` lets you explore, compare, and analyse mutual funds from curated Asset Management Companies (AMCs). It is designed for retail investors who want performance data without needing a paid DEMAT platform.
 
 ### Features
 
@@ -33,6 +33,7 @@ The Mutual Fund Screener at `/mutual-funds` lets you explore, compare, and analy
 | **Fund House filter** | Multi-select by AMC (e.g. HDFC, SBI, Motilal Oswal) |
 | **Sortable columns** | Sort by Scheme Name, 1Y / 3Y / 5Y CAGR returns, or current NAV |
 | **NAV chart modal** | Click any scheme row to open a full NAV history chart |
+| **Scheme detail page** | Navigate to `/mf/[schemeCode]` for a dedicated stat + chart page |
 | **Time range tabs** | Chart supports 1M / 3M / 6M / 1Y / 3Y / All views |
 | **Pagination** | 50 schemes per page, navigable |
 
@@ -110,26 +111,44 @@ seed-mf.ts
 
 ### Phase 2: Backfill (one-time after seed)
 
-Fetches the **complete daily NAV history** for every scheme and stores all data points. This powers the chart.
+Fetches the **complete daily NAV history** for every scheme, calculates returns from the full dataset, then stores a **downsampled** subset of ≤ 1,000 points per scheme. This powers the chart while staying within Supabase's PostgREST default row limit.
 
 ```
 backfill-returns.ts
   1. Load all scheme_codes from mf_schemes
   2. Fetch /mf/{schemeCode} for each (concurrency 5 — responses are 100KB–2MB)
-  3. Parse ALL NAV data points (not just key snapshots)
-  4. Upsert all rows into mf_nav in batches of 500
-  5. Calculate CAGR returns (1Y, 3Y, 5Y) from the full dataset
-  6. Update mf_schemes.return_1y/3y/5y
+  3. Check latest NAV date (data[0].date) — if older than STALE_MONTHS (default 6),
+     delete from mf_nav + mf_schemes and skip (dead fund pruning)
+  4. Parse ALL NAV data points into memory
+  5. Calculate CAGR returns (1Y, 3Y, 5Y) from the FULL dataset
+  6. Downsample to ≤ MAX_STORED_POINTS (default 1,000):
+       • Last RECENT_YEARS_DAILY years (default 2) → keep every trading day
+       • Older data → keep the last point of each calendar month
+       • Safety trim if monthly + daily still exceeds 1,000
+  7. Replace mf_nav rows (DELETE + INSERT) with the downsampled set
+  8. Update mf_schemes.return_1y/3y/5y
 ```
 
-> **Storage estimate** (40 bytes/row):
-> | Schemes | Avg rows/scheme | Total rows | Est. size (with indexes) |
-> |---------|----------------|------------|--------------------------|
-> | 500 | ~3,000 | ~1.5M | ~90–120 MB |
-> | 1,000 | ~3,000 | ~3M | ~180–240 MB |
-> | 2,000 | ~3,000 | ~6M | ~360–480 MB |
+> **Why downsampling?** Supabase's PostgREST anon key enforces a hard 1,000-row default limit on SELECT queries. Without downsampling a 13-year-old fund would have ~3,000 rows and the history API would silently return only the oldest 1,000, making the chart appear to end in 2017 even though data exists through today.
+
+#### Downsampling strategy
+
+| Portion | Resolution | Approx. points |
+|---------|-----------|----------------|
+| Last 2 years | Daily (every trading day) | ~500 |
+| Before that | Last point of each calendar month | ~120–456 depending on fund age |
+| **Total** | | **≤ 1,000** |
+
+Returns are always calculated from the **raw full history** before downsampling, so CAGR accuracy is not affected.
+
+> **Storage estimate** post-downsampling (40 bytes/row):
+> | Schemes | Rows/scheme (max) | Total rows | Est. size (with indexes) |
+> |---------|-------------------|------------|--------------------------|
+> | 350 | ≤ 1,000 | ~210K | ~8–16 MB |
+> | 500 | ≤ 1,000 | ~500K | ~20–24 MB |
+> | 1,000 | ≤ 1,000 | ~1M | ~40–48 MB |
 >
-> Supabase Free tier = 500 MB database. Safe up to ~1,000 schemes.
+> Supabase Free tier = 500 MB database. Safe up to **5,000+ schemes** with downsampling.
 
 ### Phase 3: Daily Sync (automated cron)
 
@@ -138,12 +157,14 @@ Fetches only the **latest** NAV for all schemes and recalculates returns.
 ```
 POST /api/mf/sync
   1. Auth check: x-cron-secret header must match CRON_SECRET env var
-  2. Fetch /mf/{schemeCode}/latest for all schemes (concurrency 20)
-  3. Upsert 1 new row per scheme into mf_nav
-  4. For each scheme, query its full mf_nav history
-  5. Recalculate CAGR returns using binary search lookup
-  6. Update mf_schemes.return_1y/3y/5y
-  7. Return JSON summary: { updated, failed, duration_ms }
+     (returns 503 if CRON_SECRET env var is not set)
+  2. Fetch /mf/{schemeCode}/latest for all schemes (concurrency 20, 10s timeout)
+  3. Check latest NAV date — if older than STALE_MONTHS (default 6),
+     delete from mf_nav + mf_schemes (dead fund pruning)
+  4. Upsert 1 new row per active scheme into mf_nav
+  5. Fetch ALL mf_nav rows once, group in-memory by scheme_code
+  6. Recalculate CAGR returns for all schemes in a single batch upsert
+  7. Return JSON summary: { updated, failed, pruned, duration_ms }
 ```
 
 ---
@@ -200,8 +221,8 @@ After editing, run:
 # Seed new AMC schemes (uses ignoreDuplicates — safe to re-run)
 npm run seed:mf
 
-# Backfill NAV history for newly added schemes only
-# (existing rows are skipped via ignoreDuplicates: true)
+# Backfill NAV history for all schemes
+# (existing rows are replaced via DELETE + INSERT — idempotent and safe to re-run)
 npm run backfill:returns
 ```
 
@@ -223,7 +244,7 @@ Then re-run the seed and backfill scripts.
 | Command | Script | What it does |
 |---------|--------|-------------|
 | `npm run seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV |
-| `npm run backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history for all schemes, stores every data point, calculates CAGR returns |
+| `npm run backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
 
 ### `npm run seed:mf`
 
@@ -253,20 +274,28 @@ Then re-run the seed and backfill scripts.
 ### `npm run backfill:returns`
 
 ```
-🚀  Starting full NAV history backfill…
-   → 502 schemes to backfill
+🚀  Starting full NAV history backfill (with downsampling)…
 
-   → 50 / 502 schemes (10%) — 147,823 NAV rows stored
-   → 100 / 502 schemes (20%) — 295,412 NAV rows stored
+   Config: max 1000 pts/scheme | daily last 2y | monthly before that
+
+   → 347 schemes to backfill
+
+   → 50 / 347 schemes (14%) — 36,377 rows stored
+   → 100 / 347 schemes (29%) — 69,735 rows stored
    ...
 
-✅  Backfill complete in 743.2s
-   NAV rows stored:    1,506,000 (~57.5 MB estimated)
-   Returns calculated: 498
-   Fetch errors:       4
+✅  Backfill complete in 240.8s
+   Schemes processed:  347
+   Raw data points:    975,889
+   Stored (sampled):   210,298 (~8.0 MB, 78% reduction)
+   Returns calculated: 337
+   Dead funds pruned:  0
+   Fetch errors:       0
 ```
 
-> Fetch errors are normal — some schemes are historical/inactive and their API endpoint returns empty data.
+> Fetch errors are normal — some schemes are historical/inactive and their API endpoint returns empty data. Dead funds (latest NAV older than 6 months) are pruned automatically and are NOT counted as errors.
+>
+> The **78% reduction** in stored rows vs raw data points is typical. Returns are calculated from the full raw dataset before downsampling, so accuracy is not affected.
 
 ---
 
@@ -346,7 +375,7 @@ curl -X POST \
   http://localhost:3000/api/mf/sync
 
 # Expected response:
-# {"updated":502,"failed":0,"duration_ms":34821}
+# {"updated":478,"failed":0,"pruned":24,"duration_ms":34821}
 ```
 
 ---
@@ -355,15 +384,16 @@ curl -X POST \
 
 ```
 app/
-  mutual-funds/
+  mf/
     page.tsx                  # Server Component — queries, paginates, joins NAV
     [schemeCode]/
-      page.tsx                # Detail page — scheme metadata + static chart
+      page.tsx                # Detail page — scheme metadata + stat cards + chart
+      NAVChartWrapper.tsx     # Client wrapper that passes history to NAVChart
     schema.sql                # Database schema (apply once in Supabase)
   api/
     mf/
       sync/
-        route.ts              # POST — daily cron handler
+        route.ts              # POST — daily cron handler (pruning + returns recalc)
       [schemeCode]/
         history/
           route.ts            # GET — returns full NAV history from DB
@@ -383,7 +413,7 @@ lib/
 
 scripts/
   seed-mf.ts                  # AMC-based scheme discovery + initial NAV seed
-  backfill-returns.ts         # Full NAV history backfill + CAGR calculation
+  backfill-returns.ts         # Full NAV history backfill + downsampling + pruning + CAGR
 
 docs/
   mutual-funds.md             # ← This file
@@ -473,13 +503,15 @@ x-cron-secret: <value of CRON_SECRET env var>
 **Response:**
 ```json
 {
-  "updated": 502,
+  "updated": 478,
   "failed": 3,
+  "pruned": 24,
   "duration_ms": 34821
 }
 ```
 
 Returns `401 Unauthorized` if the secret is missing or incorrect.
+Returns `503 Service Unavailable` if `CRON_SECRET` env var is not set on the server.
 
 ---
 
@@ -491,6 +523,12 @@ Returns `401 Unauthorized` if the secret is missing or incorrect.
 
 - **Inactive/historical schemes return empty data** — some schemes are delisted or merged. Their `/mf/{code}` endpoint returns `status: "ERROR"` or empty `data`. These are counted as fetch errors in the backfill summary and safely skipped.
 
+- **Dead fund pruning** — both the backfill script and the daily sync check the latest NAV date before upserting. A fund whose most recent NAV is older than **6 months** (`STALE_MONTHS` constant in both files) is treated as dead: its rows are deleted from `mf_nav` and `mf_schemes` and the fund is skipped. Adjust `STALE_MONTHS` in `scripts/backfill-returns.ts` and `app/api/mf/sync/route.ts` to change the threshold. Pruned funds appear in the summary output and the sync JSON response (`pruned` field).
+
+- **Returns recalculation uses a single bulk query** — the sync route fetches all `mf_nav` rows in one query, groups them in-memory by `scheme_code`, and upserts all computed returns in a single batch. This avoids an N+1 query pattern (one query per scheme).
+
+- **PostgREST 1,000-row limit & NAV downsampling** — Supabase's PostgREST API enforces a default 1,000-row cap on SELECT queries for the anon key. Without mitigation, a 13-year-old fund with ~3,000 NAV rows would return only the oldest 1,000 (ascending sort), making the chart appear to stop at 2017. The backfill script solves this by storing ≤ `MAX_STORED_POINTS` (default 1,000) rows per scheme using a density-weighted strategy: daily resolution for the last `RECENT_YEARS_DAILY` years (default 2), and one point per calendar month for older data. CAGR calculations always use the full raw dataset before downsampling. The script uses **DELETE + INSERT** (not upsert) so stale rows from previous runs are fully replaced on each re-run.
+
 - **5Y return requires 5 years of data** — the CAGR calculation uses a ±5 day tolerance window when looking for the NAV closest to the target date. If a scheme is less than 5 years old, `return_5y` will be `null`.
 
-- **Supabase Free tier row limit** — the `mf_nav` table can grow large. With 1,000+ schemes, monitor your Supabase dashboard under Database → Size. Upgrade to Pro tier (8 GB) before hitting the 500 MB limit.
+- **Supabase Free tier storage** — with downsampling, `mf_nav` stays small (~8 MB for 350 schemes, ~40 MB for 1,000). The 500 MB Free tier limit is unlikely to be hit for typical AMC lists.

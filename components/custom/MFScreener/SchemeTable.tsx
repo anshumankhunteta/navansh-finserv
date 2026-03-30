@@ -50,10 +50,15 @@ function categoryBadge(category: string | null): {
       label: 'Hybrid',
       className: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
     }
-  if (lower.includes('commodity') || lower.includes('other'))
+  if (lower.includes('commodity'))
     return {
       label: 'Commodity',
       className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
+    }
+  if (lower.includes('other'))
+    return {
+      label: 'Other',
+      className: 'bg-muted text-muted-foreground',
     }
   return {
     label: category.slice(0, 12),
@@ -121,11 +126,7 @@ export function SchemeTable({
   }
 
   return (
-    <div
-      ref={scrollRef}
-      className="overflow-y-auto"
-      style={{ height: 'calc(100vh - 220px)' }}
-    >
+    <div ref={scrollRef} className="overflow-y-auto">
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -151,6 +152,8 @@ export function SchemeTable({
               }}
             >
               <button
+                type="button"
+                aria-label={`Open scheme ${scheme.scheme_name}`}
                 onClick={() => onSchemeClick?.(scheme)}
                 className="group hover:bg-accent/10 flex h-full w-full items-center gap-4 px-4 text-left transition-colors"
               >
@@ -215,7 +218,7 @@ export function SchemeTable({
                 {/* NAV (desktop) */}
                 <div
                   className={cn(
-                    'text-foreground hidden text-sm tabular-nums md:block',
+                    'text-foreground text-sm tabular-nums',
                     COLUMNS[4].className
                   )}
                 >

@@ -34,6 +34,8 @@ const ROUTE_TITLES: Record<string, string> = {
   '/enquire': 'Enquire',
   '/privacy': 'Privacy',
   '/milee': 'Milee',
+  '/mf': 'Funds',
+  '/blog': 'Articles',
 }
 
 const navLinks = [

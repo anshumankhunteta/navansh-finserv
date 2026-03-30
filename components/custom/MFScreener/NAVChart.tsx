@@ -83,15 +83,28 @@ export function NAVChart({
   // Fetch data if not provided
   useEffect(() => {
     if (initialData) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true)
-    fetch(`/api/mf/${scheme.scheme_code}/history`)
-      .then((r) => r.json())
-      .then((data: { history: MFNav[] }) => {
+    const controller = new AbortController()
+
+    const loadData = async () => {
+       
+      setLoading(true)
+      try {
+        const r = await fetch(`/api/mf/${scheme.scheme_code}/history`, {
+          signal: controller.signal,
+        })
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        const data = (await r.json()) as { history: MFNav[] }
         setHistory(data.history ?? [])
-      })
-      .catch(() => setHistory([]))
-      .finally(() => setLoading(false))
+      } catch (err: unknown) {
+        if ((err as { name?: string }).name === 'AbortError') return
+        setHistory([])
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
+    }
+
+    loadData()
+    return () => controller.abort()
   }, [scheme.scheme_code, initialData])
 
   // Close on Escape
@@ -179,7 +192,7 @@ export function NAVChart({
           <h3 className="text-foreground truncate text-lg font-bold">
             {scheme.scheme_name}
           </h3>
-          <Link href={`/mutual-funds/${scheme.scheme_code}`}>View Details</Link>
+          <Link href={`/mf/${scheme.scheme_code}`}>View Details</Link>
           <div className="mt-1 flex flex-wrap items-center gap-3 text-sm">
             {latestNav !== null && (
               <span className="text-foreground font-semibold">
@@ -208,6 +221,8 @@ export function NAVChart({
         </div>
         {isModal && (
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             className="text-muted-foreground hover:bg-accent/20 hover:text-foreground rounded-lg p-1.5 transition-colors"
           >

@@ -28,13 +28,13 @@ const COLUMNS: SortColumn[] = [
     label: '3Y Return',
     key: 'return_3y',
     sortable: true,
-    className: 'w-24 text-right',
+    className: 'w-24 text-right hidden md:block',
   },
   {
     label: '5Y Return',
     key: 'return_5y',
     sortable: true,
-    className: 'w-24 text-right',
+    className: 'w-24 text-right hidden md:block',
   },
   { label: 'NAV', key: 'nav', sortable: false, className: 'w-24 text-right' },
 ]
@@ -68,7 +68,7 @@ export function SortControls({ currentSort, onSortChange }: SortControlsProps) {
   }
 
   return (
-    <div className="border-border bg-muted/30 hidden border-b px-4 py-3 md:flex md:items-center md:gap-4">
+    <div className="border-border bg-muted/30 flex items-center gap-4 border-b px-4 py-3">
       {COLUMNS.map((col) => (
         <div
           key={col.key}

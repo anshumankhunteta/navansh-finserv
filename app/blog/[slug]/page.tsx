@@ -6,6 +6,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Edit } from 'lucide-react'
 import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
 // Basic reading time estimate
 function getReadingTime(text: string) {
@@ -190,6 +191,19 @@ export default async function BlogPostPage({
           </div>
         </article>
       </div>
+      <section className="py-16">
+        <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="text-primary mb-4 text-3xl font-bold">
+            Get a Free Consultation
+          </h2>
+          <p className="text-muted-foreground mx-auto mb-6 max-w-2xl text-lg">
+            We would love to help you with your financial planning needs.
+          </p>
+          <Button asChild variant={'default'} className="px-8 py-6 text-lg">
+            <Link href="/enquire">Get a Quote</Link>
+          </Button>
+        </div>
+      </section>
     </div>
   )
 }

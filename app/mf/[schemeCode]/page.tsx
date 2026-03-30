@@ -83,7 +83,7 @@ export default async function SchemeDetailPage({
     <section className="mx-auto max-w-5xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
       {/* Back link */}
       <Link
-        href="/mutual-funds"
+        href="/mf"
         className="text-muted-foreground hover:text-primary mb-6 inline-flex items-center gap-1.5 text-sm transition-colors"
       >
         <ArrowLeft className="size-4" />

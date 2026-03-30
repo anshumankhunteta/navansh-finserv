@@ -48,7 +48,8 @@ TypeScript | React 19 / Next.js 16.1.7+ (App Router) | TailwindCSS 4 | Supabase 
 - Landing Page: High-conversion hero, bento-grid services, animated calculator preview — `app/page.tsx`
 - Financial Calculators: SIP, FD, SWP, HLV, Education, Mediclaim calculators with URL-sharing capabilities — `lib/calculator-store.ts` & `components/custom/calculators`
 - Contact/Enquiry Flow: Rate-limited server action submissions with confetti success state — `components/custom/ContactForm.tsx` & `app/enquire`
-- Blog/CMS: Admin dashboard with native image upload and Supabase auth guard — `app/blog/admin`
+- Blog/CMS: Blogs and Articles Page. Admin dashboard with native image upload and Supabase auth guard — `app/blog/admin`
+- Mutual Fund Screener: Full-featured fund discovery tool at `/mf` with search, category/AMC filters, virtualized table, NAV chart modal, and scheme detail pages (`/mf/[schemeCode]`). Data pipeline: `seed-mf.ts` (discovery) → `backfill-returns.ts` (full history + pruning) → `/api/mf/sync` (daily cron). Schema in `app/mf/schema.sql`; shared types + CAGR logic in `lib/mf-utils.ts`.
 
 ## Gotchas & Non-obvious Rules
 - Zustand `persist` uses `sessionStorage`. Client components reading the store MUST call `useHydrateStore()` first to avoid SSR hydration mismatch.
@@ -56,6 +57,8 @@ TypeScript | React 19 / Next.js 16.1.7+ (App Router) | TailwindCSS 4 | Supabase 
 - Calculator sharing works by encoding the entire calculator state into URL search params (e.g. `?calc=sip&amt=10000`), handled uniquely by functions in `calculator-store.ts`.
 - The success confetti effect in `ContactForm.tsx` has a strict 10-use limit per session tracked in `sessionStorage` (`confettiCount`).
 - Always use `lib/supabase/server.ts` for database access in Server Components/Actions, never the standard `@supabase/supabase-js` client directly.
+- **MF dead-fund pruning**: Both `backfill-returns.ts` and `/api/mf/sync` check the latest NAV date from the API response (`data.data[0].date`). If it is older than `STALE_MONTHS` (default 6, defined at the top of each file), the fund is deleted from `mf_nav` and `mf_schemes` before any upserts. Adjust the constant in both files to change the threshold.
+- **MF sync avoids N+1**: The sync route fetches all `mf_nav` rows in a single query, groups them in-memory by `scheme_code` with a `Map`, calculates CAGR for each group via `calculateReturns()`, then performs a single batched upsert back to `mf_schemes`. Never add per-scheme queries inside the recalculation loop.
 
 ---
 

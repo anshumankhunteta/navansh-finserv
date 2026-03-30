@@ -65,7 +65,7 @@ export function MFScreener({
       }
 
       startTransition(() => {
-        router.replace(`/mutual-funds?${params.toString()}`, { scroll: false })
+        router.replace(`/mf?${params.toString()}`, { scroll: false })
       })
     },
     [router, searchParams, startTransition]

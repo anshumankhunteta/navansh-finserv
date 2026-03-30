@@ -33,8 +33,9 @@ export async function GET(
     .order('nav_date', { ascending: true })
 
   if (historyErr) {
+    console.error('[mf/history] Failed to fetch NAV history:', historyErr)
     return NextResponse.json(
-      { error: 'Failed to fetch history', detail: historyErr.message },
+      { error: 'Failed to fetch history' },
       { status: 500 }
     )
   }

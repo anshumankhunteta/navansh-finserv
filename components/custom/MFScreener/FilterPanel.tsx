@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -41,7 +41,7 @@ export function FilterPanel({
   const hasActiveFilters =
     currentFilters.category !== 'all' ||
     selectedAmcs.length > 0 ||
-    currentFilters.q !== ''
+    !!currentFilters.q
 
   function toggleAmc(amc: string) {
     const current = new Set(selectedAmcs)
@@ -59,6 +59,26 @@ export function FilterPanel({
         a.toLowerCase().includes(amcSearch.toLowerCase())
       )
     : availableAmcs
+
+  // Click-outside: close the AMC dropdown
+  const amcDropdownRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!amcOpen) return
+    function handleOutsideClick(e: MouseEvent | TouchEvent) {
+      if (
+        amcDropdownRef.current &&
+        !amcDropdownRef.current.contains(e.target as Node)
+      ) {
+        setAmcOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    document.addEventListener('touchstart', handleOutsideClick)
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick)
+      document.removeEventListener('touchstart', handleOutsideClick)
+    }
+  }, [amcOpen])
 
   // Shared filter content for both desktop and mobile
   const filterContent = (
@@ -92,7 +112,7 @@ export function FilterPanel({
       </div>
 
       {/* AMC multi-select */}
-      <div className="relative">
+      <div className="relative" ref={amcDropdownRef}>
         <label className="text-muted-foreground mb-2 block text-xs font-semibold tracking-wider uppercase">
           Fund House (AMC)
         </label>
@@ -119,7 +139,12 @@ export function FilterPanel({
 
         {/* Dropdown trigger */}
         <button
+          type="button"
+          id="amc-dropdown-trigger"
           onClick={() => setAmcOpen(!amcOpen)}
+          aria-haspopup="listbox"
+          aria-expanded={amcOpen}
+          aria-controls="amc-dropdown-panel"
           className="border-border bg-card text-foreground hover:border-primary/40 flex w-full items-center justify-between rounded-lg border px-3 py-2 text-sm transition-colors"
         >
           <span className="text-muted-foreground">
@@ -147,7 +172,11 @@ export function FilterPanel({
 
         {/* Dropdown panel */}
         {amcOpen && (
-          <div className="border-border bg-card absolute z-30 mt-1 w-full rounded-lg border p-2 shadow-xl">
+          <div
+            id="amc-dropdown-panel"
+            role="listbox"
+            className="border-border bg-card absolute z-30 mt-1 w-full rounded-lg border p-2 shadow-xl"
+          >
             <input
               type="text"
               placeholder="Search AMCs…"
@@ -208,7 +237,8 @@ export function FilterPanel({
               {hasActiveFilters && (
                 <span className="bg-primary flex size-5 items-center justify-center rounded-full text-[10px] text-white">
                   {(currentFilters.category !== 'all' ? 1 : 0) +
-                    selectedAmcs.length}
+                    selectedAmcs.length +
+                    (currentFilters.q?.trim() ? 1 : 0)}
                 </span>
               )}
             </Button>
