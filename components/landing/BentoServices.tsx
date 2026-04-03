@@ -1,6 +1,7 @@
 'use client'
 
-import { LazyMotion, domAnimation, m } from 'motion/react'
+import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
+import { cn } from '@/lib/utils'
 import {
   Car,
   Heart,
@@ -9,10 +10,8 @@ import {
   TrendingUp,
   Wallet,
 } from 'lucide-react'
-import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
+import { LazyMotion, domAnimation, m } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { Button } from '../ui/button'
-import { cn } from '@/lib/utils'
 
 export function BentoServices() {
   const router = useRouter()
@@ -276,6 +275,18 @@ function BentoCard({
     <m.div
       whileHover={{ y: -5 }}
       whileTap={{ scale: 0.98 }}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onClick()
+              }
+            }
+          : undefined
+      }
       className={cn(
         'group bg-card border-border/50 hover:shadow-primary/10 relative flex h-full w-full flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-shadow duration-500 hover:shadow-2xl',
         onClick ? 'cursor-pointer' : ''

@@ -175,7 +175,7 @@ export function FilterPanel({
           <div
             id="amc-dropdown-panel"
             role="listbox"
-            className="border-border bg-card absolute z-50 mt-1 w-full rounded-lg border p-2 shadow-xl"
+            className="border-border bg-card relative z-50 mt-1 w-full rounded-lg border p-2 shadow-xl md:absolute"
           >
             <input
               type="text"

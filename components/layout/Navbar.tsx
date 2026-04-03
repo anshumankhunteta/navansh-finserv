@@ -191,7 +191,7 @@ export default function Navbar() {
                   {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
-                      <SheetClose asChild key={link.href}>
+                      <SheetClose key={link.href} asChild>
                         <Link
                           href={link.href}
                           className="hover:text-primary group border-primary/30 dark:border-border/80 bg-card/40 active:bg-primary/30 m-2 flex items-center gap-4 rounded-xl border px-4 py-3 transition-all dark:bg-black/20"
@@ -203,6 +203,14 @@ export default function Navbar() {
                             {link.label}
                           </span>
                           <ArrowRight className="text-primary ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                          <span
+                            className={cn(
+                              'bg-primary animate-pulse px-1 py-[2px] text-center text-[8px] uppercase',
+                              link.new ? 'block' : 'hidden'
+                            )}
+                          >
+                            New
+                          </span>
                         </Link>
                       </SheetClose>
                     )

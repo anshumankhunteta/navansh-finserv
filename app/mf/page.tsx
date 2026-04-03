@@ -122,9 +122,9 @@ export default async function MutualFundsPage({
     <section className="mx-auto max-w-7xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
-          Mutual Fund Screener
+          Mutual Fund Finder
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-muted-foreground mt-2 text-sm md:text-base">
           Explore and compare mutual funds across categories, AMCs, and
           performance.
         </p>
