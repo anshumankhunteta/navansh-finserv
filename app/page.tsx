@@ -149,7 +149,7 @@ export default function HomePage() {
                     <HeadphonesIcon className="h-7 w-7" />
                   </div>
                   <h3 className="mb-3 text-2xl font-bold tracking-tight">
-                    Decade-Scale Support
+                    Lifetime Support
                   </h3>
                   <p className="text-muted-foreground">
                     Securing your wealth is an ongoing journey. We provide

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createPublicClient } from '@/lib/supabase/server'
 import { CustomRenderer } from '@/components/custom/blog/CustomRenderer'
 import { TableOfContents } from '@/components/custom/blog/TableOfContents'
 import { notFound } from 'next/navigation'
@@ -6,6 +6,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Edit } from 'lucide-react'
 import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
 // Basic reading time estimate
 function getReadingTime(text: string) {
@@ -16,28 +17,46 @@ function getReadingTime(text: string) {
 
 export const revalidate = 3600
 
+// ── Shared data fetcher (called once per request, result cached by Next.js) ──
+// generateMetadata and the page function both call this — React's cache()
+// deduplicates the fetch so the DB is only hit once per render.
+import { cache } from 'react'
+
+const getPost = cache(async (slug: string, isAdmin: boolean) => {
+  const supabase = createPublicClient()
+  let query = supabase.from('posts').select('*').eq('slug', slug)
+  if (!isAdmin) {
+    query = query.eq('published', true)
+  }
+  const { data, error } = await query.single()
+  if (error || !data) return null
+  return data
+})
+
+// Determine if the current visitor is an authenticated admin.
+// Uses createClient (SSR cookie client). The middleware.ts handles token
+// refresh centrally, so this call is safe and never triggers refresh errors.
+const getIsAdmin = cache(async () => {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.getUser()
+    if (error || !data.user) return false
+    return true
+  } catch {
+    return false
+  }
+})
+
+// ────────────────────────────────────────────────────────────────────────────
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const resolvedParams = await params
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  let query = supabase
-    .from('posts')
-    .select('title, excerpt, cover_image_url')
-    .eq('slug', resolvedParams.slug)
-
-  if (!user) {
-    query = query.eq('published', true)
-  }
-
-  const { data: post } = await query.single()
+  const { slug } = await params
+  const isAdmin = await getIsAdmin()
+  const post = await getPost(slug, isAdmin)
 
   if (!post) {
     return { title: 'Post Not Found | Navansh Finserv' }
@@ -59,28 +78,16 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  const resolvedParams = await params
-  const supabase = await createClient()
+  const { slug } = await params
+  const isAdmin = await getIsAdmin()
+  // React cache() ensures this is NOT a second DB call — same request reuses
+  // the result already fetched in generateMetadata.
+  const post = await getPost(slug, isAdmin)
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  const user = session?.user
-
-  let query = supabase.from('posts').select('*').eq('slug', resolvedParams.slug)
-
-  // Apply published filter only if no admin session exists
-  if (!user) {
-    query = query.eq('published', true)
-  }
-
-  const { data: post, error } = await query.single()
-
-  if (error || !post) {
+  if (!post) {
     notFound()
   }
 
-  // Very naive text extraction from JSON document structure
   const rawText = JSON.stringify(post.content) || ''
   const readingTime = getReadingTime(rawText.replace(/["'{}[\]:]/g, ' '))
 
@@ -96,7 +103,7 @@ export default async function BlogPostPage({
     <div className="bg-background container mx-auto px-4 py-24 md:my-12 md:p-20">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
         <aside className="sticky top-24 hidden max-h-[500px] space-y-10 overflow-y-hidden lg:col-span-3 lg:block">
-          {user ? (
+          {isAdmin ? (
             <>
               <Link
                 href={`/blog`}
@@ -128,7 +135,7 @@ export default async function BlogPostPage({
         <article className="lg:col-span-9">
           {/* Mobile Back Button (since sidebar is hidden on small screens) */}
           <div className="mb-8 block lg:hidden">
-            {user ? (
+            {isAdmin ? (
               <Link
                 href={`/blog/admin/${post.id}/edit`}
                 className="group text-muted-foreground hover:text-foreground inline-flex items-center text-sm font-medium transition-colors"
@@ -190,6 +197,19 @@ export default async function BlogPostPage({
           </div>
         </article>
       </div>
+      <section className="py-16">
+        <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="text-primary mb-4 text-3xl font-bold">
+            Get a Free Consultation
+          </h2>
+          <p className="text-muted-foreground mx-auto mb-6 max-w-2xl text-lg">
+            We would love to help you with your financial planning needs.
+          </p>
+          <Button asChild variant={'default'} className="px-8 py-6 text-lg">
+            <Link href="/enquire">Get a Quote</Link>
+          </Button>
+        </div>
+      </section>
     </div>
   )
 }

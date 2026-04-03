@@ -17,6 +17,7 @@ import {
   Home,
   Mail,
   Menu,
+  TrendingUp,
   Users,
   UserSearch,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 import Navansh from '../icons/Navansh'
+import { cn } from '@/lib/utils'
 
 // ── Route → Display Title ──
 const ROUTE_TITLES: Record<string, string> = {
@@ -34,16 +36,23 @@ const ROUTE_TITLES: Record<string, string> = {
   '/enquire': 'Enquire',
   '/privacy': 'Privacy',
   '/milee': 'Milee',
+  '/mf': 'Funds',
+  '/blog': 'Articles',
 }
 
 const navLinks = [
-  { href: '/', label: 'Home', icon: Home, description: 'Back to homepage' },
   {
-    href: '/services',
-    label: 'Services',
-    icon: Briefcase,
-    description: 'Explore our offerings',
+    href: '/',
+    label: 'Home',
+    icon: Home,
+    description: 'Back to homepage',
   },
+  // {
+  //   href: '/services',
+  //   label: 'Services',
+  //   icon: Briefcase,
+  //   description: 'Explore our offerings',
+  // },
   {
     href: '/about',
     label: 'About',
@@ -61,6 +70,14 @@ const navLinks = [
     label: 'Blog',
     icon: Book,
     description: 'Read our articles',
+    new: true,
+  },
+  {
+    href: '/mf',
+    label: 'Funds',
+    icon: TrendingUp,
+    description: 'Explore our offerings',
+    new: true,
   },
 ]
 
@@ -104,13 +121,22 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-foreground/80 hover:text-primary text-sm font-medium transition-colors"
-            >
-              {link.label}
-            </Link>
+            <div key={link.href} className="relative">
+              <span
+                className={cn(
+                  'whitespace-no-wrap bg-primary absolute top-2 left-3 origin-bottom-left translate-x-1/3 -translate-y-full transform animate-pulse px-1 py-[2px] text-center text-[8px] uppercase',
+                  link.new ? 'block' : 'hidden'
+                )}
+              >
+                New
+              </span>
+              <Link
+                href={link.href}
+                className="text-foreground/80 hover:text-primary text-sm font-medium transition-colors"
+              >
+                {link.label}
+              </Link>
+            </div>
           ))}
         </nav>
 
@@ -165,7 +191,7 @@ export default function Navbar() {
                   {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
-                      <SheetClose asChild key={link.href}>
+                      <SheetClose key={link.href} asChild>
                         <Link
                           href={link.href}
                           className="hover:text-primary group border-primary/30 dark:border-border/80 bg-card/40 active:bg-primary/30 m-2 flex items-center gap-4 rounded-xl border px-4 py-3 transition-all dark:bg-black/20"
@@ -177,6 +203,14 @@ export default function Navbar() {
                             {link.label}
                           </span>
                           <ArrowRight className="text-primary ml-auto h-4 w-4 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                          <span
+                            className={cn(
+                              'bg-primary animate-pulse px-1 py-[2px] text-center text-[8px] uppercase',
+                              link.new ? 'block' : 'hidden'
+                            )}
+                          >
+                            New
+                          </span>
                         </Link>
                       </SheetClose>
                     )
