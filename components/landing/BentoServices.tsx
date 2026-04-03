@@ -10,8 +10,12 @@ import {
   Wallet,
 } from 'lucide-react'
 import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
+import { useRouter } from 'next/navigation'
+import { Button } from '../ui/button'
+import { cn } from '@/lib/utils'
 
 export function BentoServices() {
+  const router = useRouter()
   return (
     <section className="relative z-10 py-20">
       <LazyMotion features={domAnimation}>
@@ -35,6 +39,7 @@ export function BentoServices() {
               className="md:col-span-2 lg:col-span-2 lg:row-span-2"
             >
               <BentoCard
+                onClick={() => router.push('/mf')}
                 title="Mutual Funds & SIPs"
                 subtitle="Expert portfolio management for long-term wealth creation"
                 icon={TrendingUp}
@@ -257,6 +262,7 @@ function BentoCard({
   subtitle,
   icon: Icon,
   content,
+  onClick,
 }: {
   title: string
   subtitle: string
@@ -264,15 +270,20 @@ function BentoCard({
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
   >
   content?: React.ReactNode
+  onClick?: () => void
 }) {
   return (
     <m.div
       whileHover={{ y: -5 }}
       whileTap={{ scale: 0.98 }}
-      className="group bg-card border-border/50 hover:shadow-primary/10 relative flex h-full w-full flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-shadow duration-500 hover:shadow-2xl"
+      className={cn(
+        'group bg-card border-border/50 hover:shadow-primary/10 relative flex h-full w-full flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-shadow duration-500 hover:shadow-2xl',
+        onClick ? 'cursor-pointer' : ''
+      )}
+      onClick={onClick}
     >
       {/* Frosted glass internal flare */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-10 dark:from-white/5" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-10" />
 
       {/* Spotlight effect */}
       <div className="bg-primary/20 pointer-events-none absolute -top-24 -left-24 h-48 w-48 rounded-full opacity-0 blur-[50px] transition-opacity duration-700 group-hover:opacity-100" />

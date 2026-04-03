@@ -14,8 +14,8 @@ export interface MFScheme {
   return_3y: number | null
   return_5y: number | null
   updated_at: string
-  /** Latest NAV — joined from mf_nav, not stored on mf_schemes */
-  latest_nav?: number | null
+  /** Latest NAV — denormalized from mf_nav, updated during sync */
+  latest_nav: number | null
 }
 
 /** Row shape for the `mf_nav` table. */

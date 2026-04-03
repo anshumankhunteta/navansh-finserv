@@ -15,7 +15,7 @@ type ValidSortColumn =
   | 'return_1y'
   | 'return_3y'
   | 'return_5y'
-  | 'nav'
+  | 'latest_nav'
 
 interface PageSearchParams {
   category?: string
@@ -36,17 +36,20 @@ function parseSortParam(sort?: string): {
     'return_1y',
     'return_3y',
     'return_5y',
-    'nav',
+    'latest_nav',
   ]
 
   const match = sort.match(/^(\w+)_(asc|desc)$/)
   if (!match) return { column: 'return_1y', ascending: false }
 
-  const col = match[1] as ValidSortColumn
-  if (!validColumns.includes(col))
+  // Map legacy 'nav' sort key to 'latest_nav'
+  let col = match[1] as string
+  if (col === 'nav') col = 'latest_nav'
+
+  if (!validColumns.includes(col as ValidSortColumn))
     return { column: 'return_1y', ascending: false }
 
-  return { column: col, ascending: match[2] === 'asc' }
+  return { column: col as ValidSortColumn, ascending: match[2] === 'asc' }
 }
 
 export default async function MutualFundsPage({
@@ -60,7 +63,8 @@ export default async function MutualFundsPage({
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
   const { column: sortColumn, ascending: sortAsc } = parseSortParam(params.sort)
 
-  // Build query
+  // Build main schemes query — latest_nav is now a column on mf_schemes,
+  // so no separate mf_nav join required.
   let query = supabase.from('mf_schemes').select('*', { count: 'exact' })
 
   // Category filter
@@ -95,45 +99,22 @@ export default async function MutualFundsPage({
   const to = from + ITEMS_PER_PAGE - 1
   query = query.range(from, to)
 
-  const { data: schemes, count } = await query
+  // ── Run BOTH queries in parallel ───────────────────────────────
+  const [schemesResult, amcResult] = await Promise.all([
+    query,
+    supabase
+      .from('mf_schemes')
+      .select('fund_house')
+      .not('fund_house', 'is', null)
+      .order('fund_house', { ascending: true }),
+  ])
 
-  // Join latest NAV from mf_nav for each scheme in the result set
-  const schemesWithNav = schemes ?? []
-  if (schemesWithNav.length > 0) {
-    const codes = schemesWithNav.map((s) => s.scheme_code)
-    const { data: navData } = await supabase
-      .from('mf_nav')
-      .select('scheme_code, nav')
-      .in('scheme_code', codes)
-      .order('nav_date', { ascending: false })
+  const { data: schemes, count } = schemesResult
 
-    // Build a map of scheme_code → latest NAV (first row per scheme since sorted desc)
-    const latestNavMap = new Map<number, number>()
-    if (navData) {
-      for (const row of navData) {
-        if (!latestNavMap.has(row.scheme_code)) {
-          latestNavMap.set(row.scheme_code, row.nav)
-        }
-      }
-    }
-
-    // Merge into scheme data
-    for (const scheme of schemesWithNav) {
-      ;(scheme as Record<string, unknown>).latest_nav =
-        latestNavMap.get(scheme.scheme_code) ?? null
-    }
-  }
-
-  // Fetch distinct fund houses for the AMC dropdown
-  const { data: amcData } = await supabase
-    .from('mf_schemes')
-    .select('fund_house')
-    .not('fund_house', 'is', null)
-    .order('fund_house', { ascending: true })
-
+  // De-duplicate AMCs in-memory
   const uniqueAmcs = [
     ...new Set(
-      (amcData ?? []).map((r) => r.fund_house as string).filter(Boolean)
+      (amcResult.data ?? []).map((r) => r.fund_house as string).filter(Boolean)
     ),
   ]
 
@@ -150,7 +131,7 @@ export default async function MutualFundsPage({
       </div>
 
       <MFScreener
-        initialData={schemesWithNav}
+        initialData={schemes ?? []}
         totalCount={count ?? 0}
         currentFilters={{
           category: params.category ?? 'all',

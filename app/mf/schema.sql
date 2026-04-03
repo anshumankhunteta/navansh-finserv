@@ -14,6 +14,7 @@ CREATE TABLE mf_schemes (
   return_1y      numeric,
   return_3y      numeric,
   return_5y      numeric,
+  latest_nav     numeric,           -- Denormalized latest NAV for fast reads
   updated_at     timestamptz DEFAULT now()
 );
 
@@ -45,3 +46,9 @@ CREATE POLICY "Public can view all schemes"
 CREATE POLICY "Public can view all NAVs"
   ON mf_nav FOR SELECT
   USING (true);
+
+-- ============================================================
+-- Migration: Add latest_nav to existing table
+-- Run this on existing databases:
+-- ALTER TABLE mf_schemes ADD COLUMN IF NOT EXISTS latest_nav numeric;
+-- ============================================================

@@ -107,17 +107,20 @@ export function MFScreener({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-2">
           <button
             onClick={() =>
               updateParams({ page: Math.max(1, currentFilters.page - 1) })
             }
             disabled={currentFilters.page <= 1}
-            className="border-border bg-card text-foreground hover:bg-accent/20 rounded-lg border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="border-border bg-card text-foreground hover:bg-accent/20 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:px-4 sm:py-2"
           >
-            Previous
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
           </button>
-          <div className="flex items-center gap-1.5">
+
+          {/* Desktop Pagination */}
+          <div className="hidden items-center gap-1.5 sm:flex">
             {generatePageNumbers(currentFilters.page, totalPages).map((p, i) =>
               p === '...' ? (
                 <span
@@ -141,6 +144,34 @@ export function MFScreener({
               )
             )}
           </div>
+
+          {/* Mobile Pagination */}
+          <div className="flex items-center gap-1 sm:hidden">
+            {generateMobilePageNumbers(currentFilters.page, totalPages).map(
+              (p, i) =>
+                p === '...' ? (
+                  <span
+                    key={`ellipsis-mob-${i}`}
+                    className="text-muted-foreground px-1 text-sm"
+                  >
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={`mob-${p}`}
+                    onClick={() => updateParams({ page: p as number })}
+                    className={`min-w-[28px] rounded-lg px-2 py-1.5 text-sm font-medium transition-colors ${
+                      p === currentFilters.page
+                        ? 'bg-primary text-white shadow-md'
+                        : 'border-border bg-card text-foreground hover:bg-accent/20 border'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+            )}
+          </div>
+
           <button
             onClick={() =>
               updateParams({
@@ -148,7 +179,7 @@ export function MFScreener({
               })
             }
             disabled={currentFilters.page >= totalPages}
-            className="border-border bg-card text-foreground hover:bg-accent/20 rounded-lg border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="border-border bg-card text-foreground hover:bg-accent/20 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:px-4 sm:py-2"
           >
             Next
           </button>
@@ -167,7 +198,18 @@ export function MFScreener({
   )
 }
 
-/** Generate a compact page number list with ellipsis. */
+/** Generate a highly compact page number list for mobile */
+function generateMobilePageNumbers(
+  current: number,
+  total: number
+): (number | '...')[] {
+  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
+  if (current <= 2) return [1, 2, 3, '...', total]
+  if (current >= total - 1) return [1, '...', total - 2, total - 1, total]
+  return [1, '...', current, '...', total]
+}
+
+/** Generate a compact page number list for desktop with ellipsis. */
 function generatePageNumbers(
   current: number,
   total: number

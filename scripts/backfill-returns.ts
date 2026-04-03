@@ -406,13 +406,17 @@ async function main() {
       const inserted = await replaceNavRows(schemeCode, sampledRows)
       totalNavRows += inserted
 
-      // ── Step 4: Update CAGR returns on mf_schemes ────────────────
+      // ── Step 4: Update CAGR returns + latest_nav on mf_schemes ───
+      const latestNavValue =
+        fullNavRows.length > 0 ? fullNavRows[fullNavRows.length - 1].nav : null
+
       const { error: updateErr } = await supabase
         .from('mf_schemes')
         .update({
           return_1y: returns.return_1y,
           return_3y: returns.return_3y,
           return_5y: returns.return_5y,
+          latest_nav: latestNavValue,
           updated_at: new Date().toISOString(),
         })
         .eq('scheme_code', schemeCode)

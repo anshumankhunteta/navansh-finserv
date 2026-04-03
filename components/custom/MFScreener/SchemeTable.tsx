@@ -70,18 +70,32 @@ function categoryBadge(category: string | null): {
 
 function SkeletonRow() {
   return (
-    <div className="border-border flex animate-pulse items-center gap-4 border-b px-4 py-4">
-      <div className="flex-1 space-y-2">
+    <div className="border-border flex h-[56px] w-full animate-pulse items-center gap-4 border-b px-4">
+      {/* Scheme Name */}
+      <div className={cn('flex flex-col gap-2', COLUMNS[0].className)}>
         <div className="bg-muted h-4 w-3/4 rounded" />
         <div className="bg-muted h-3 w-1/3 rounded" />
       </div>
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="hidden w-24 md:block">
-          <div className="bg-muted ml-auto h-4 w-16 rounded" />
-        </div>
-      ))}
-      <div className="hidden w-24 md:block">
-        <div className="bg-muted ml-auto h-4 w-14 rounded" />
+
+      {/* Desktop returns */}
+      <div className={cn('hidden md:block', COLUMNS[1].className)}>
+        <div className="bg-muted ml-auto h-4 w-10 rounded" />
+      </div>
+      <div className={cn('hidden md:block', COLUMNS[2].className)}>
+        <div className="bg-muted ml-auto h-4 w-10 rounded" />
+      </div>
+      <div className={cn('hidden md:block', COLUMNS[3].className)}>
+        <div className="bg-muted ml-auto h-4 w-10 rounded" />
+      </div>
+
+      {/* Mobile returns */}
+      <div className="flex items-center gap-3 md:hidden">
+        <div className="bg-muted h-3 w-10 rounded" />
+      </div>
+
+      {/* NAV */}
+      <div className={COLUMNS[4].className}>
+        <div className="bg-muted ml-auto h-4 w-12 rounded" />
       </div>
     </div>
   )
@@ -115,7 +129,7 @@ export function SchemeTable({
 
   if (data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex h-[280px] flex-col items-center justify-center py-16 text-center">
         <div className="mb-3 text-4xl">🔍</div>
         <p className="text-foreground text-lg font-medium">No schemes found</p>
         <p className="text-muted-foreground mt-1 text-sm">
@@ -126,7 +140,11 @@ export function SchemeTable({
   }
 
   return (
-    <div ref={scrollRef} className="overflow-y-auto">
+    <div
+      ref={scrollRef}
+      className="overflow-y-auto"
+      style={{ height: '280px' }}
+    >
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,

@@ -116,6 +116,7 @@ export async function POST(request: Request) {
       scheme_type: string
       scheme_category: string
       isin_growth: string
+      latest_nav: number | null
     }[] = []
 
     for (let i = 0; i < results.length; i++) {
@@ -149,7 +150,9 @@ export async function POST(request: Request) {
         continue
       }
 
-      // Update scheme metadata
+      const latestNavValue = parseFloat(latestNavPoint.nav)
+
+      // Update scheme metadata (including denormalized latest_nav)
       metaUpdates.push({
         scheme_code: meta.scheme_code,
         scheme_name: meta.scheme_name,
@@ -157,6 +160,7 @@ export async function POST(request: Request) {
         scheme_type: meta.scheme_type,
         scheme_category: meta.scheme_category,
         isin_growth: meta.isin_growth,
+        latest_nav: isNaN(latestNavValue) ? null : latestNavValue,
       })
 
       const isoDate = parseMfApiDate(latestNavPoint.date)
