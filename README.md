@@ -1,130 +1,69 @@
 # Navansh Finserv
 
-A performance and UX-focused, SEO-optimized lead generation website for a financial services firm. Built with a modern, minimal design language and engineered for conversion, speed, and long-term maintainability.
-
-**Live:** [navansh.in](https://navansh.in)
-
----
+A high-performance lead-generation platform and financial tools portal. Engineered to capture client intents, handle complex client-side financial computations, and maintain a synchronized mutual fund database with zero manual intervention.
 
 ## Tech Stack
-
-| Layer         | Technology                                 |
-| ------------- | ------------------------------------------ |
-| Framework     | Next.js 16 (App Router, React 19)          |
-| Language      | TypeScript 5                               |
-| Styling       | Tailwind CSS 4                             |
-| Components    | Shadcn UI, Radix UI primitives             |
-| Icons         | Lucide React                               |
-| Forms         | React Hook Form + Zod 4 validation         |
-| Database      | Supabase (PostgreSQL)                      |
-| Notifications | Discord Webhook (real-time lead alerts)    |
-| Analytics     | Vercel Analytics, Vercel Speed Insights    |
-| Theming       | next-themes (light / dark / system)        |
-| Font          | Inter (Google Fonts, `font-display: swap`) |
-| Hosting       | Vercel                                     |
-
----
-
-## Key Features
-
-### Lead Generation Pipeline
-
-- Server-side enquiry form powered by React Hook Form and Zod schema validation with input sanitization (HTML stripping, whitespace normalization).
-- Leads are persisted to a Supabase `leads` table and simultaneously dispatched as rich Discord embed notifications with one-click action links (WhatsApp, call, email).
-- Multi-tier rate limiting on form submissions: per-minute, per-hour, and per-day thresholds enforced via a dedicated `rate_limit_log` table.
-- Duplicate lead detection using case-insensitive name and demographic matching.
-- IP-based geolocation using Vercel headers (production) with a fallback API for local development; country data is stored alongside each lead.
-- Confetti animation on successful submission for user delight.
-
-### Persona Tracking Middleware
-
-- Edge middleware intercepts incoming requests and reads `?service=` or `?utm_campaign=` query parameters.
-- Parameters are mapped to human-readable persona names (e.g., `mutual-funds` maps to `Investor`, `health-mediclaim` maps to `Family Protector`).
-- Persona history is stored as a comma-separated cookie (`navansh_persona`) with a rolling window of the five most recent interests and a 30-day expiry.
-- Persona data is attached to every lead submission and surfaced in Discord notifications for immediate sales context.
-
-### Interactive Financial Calculators
-
-- **SIP Calculator** -- Systematic Investment Plan projections with configurable monthly investment, expected return rate, and tenure.
-- **FD Calculator** -- Fixed Deposit maturity value estimator with compounding frequency options.
-- **SWP Calculator** -- Systematic Withdrawal Plan simulator for retirement income modelling.
-- **HLV Calculator** -- Human Life Value estimator to determine appropriate life insurance coverage.
-- **Mediclaim Estimator** -- Health insurance coverage calculator based on family size, age, and city tier.
-- **Education Inflation Calculator** -- Future cost of education projector accounting for inflation rates.
-
-### Comprehensive SEO
-
-- Per-page `<title>`, `<meta description>`, canonical URLs, and OpenGraph / Twitter Card metadata.
-- Structured data via JSON-LD (`FinancialService` schema) injected in the root layout.
-- Dynamic `sitemap.ts` and `robots.ts` generated at build time.
-- Extensive keyword targeting for location-specific and service-specific search queries.
-
-### Digital Business Card
-
-- Downloadable and shareable digital business card page (`/milee`, also accessible via `/card` and `/businesscard` rewrites).
-- Card-to-image export using `html-to-image` for PNG downloads.
-
-### UI and UX
-
-- Light, dark, and system-preference theme support via `next-themes`.
-- Floating WhatsApp call-to-action button on all pages for instant contact.
-- Responsive layout across mobile, tablet, and desktop breakpoints.
-- Hover animations and interactive card transitions throughout.
-- Custom 404 page.
-
-### Performance and Security
-
-- Gzip compression enabled at the framework level.
-- `X-Powered-By` header suppressed for security.
-- React Strict Mode enabled.
-- `httpOnly: false` on persona cookies to allow optional client-side reads; all form inputs are sanitized server-side.
-
-### Code Quality
-
-- ESLint 9 with `eslint-config-next` and `eslint-config-prettier`.
-- Prettier with Tailwind CSS class sorting plugin.
-- Husky pre-commit hooks running lint-staged checks (Prettier + ESLint) on every commit.
-
----
-
-## Pages
-
-| Route       | Description                                           |
-| ----------- | ----------------------------------------------------- |
-| `/`         | Home -- hero, service offerings, value props          |
-| `/about`    | Founder story, company values                         |
-| `/services` | Full service catalog with per-service details         |
-| `/enquire`  | Lead capture form (also available at `/quote`)        |
-| `/contact`  | Contact information, embedded Google Maps             |
-| `/privacy`  | Privacy policy                                        |
-| `/milee`    | Digital business card (also `/card`, `/businesscard`) |
-
----
-
-## Directory structure:
+- **Framework**: Next.js 16.1 (App Router) + React 19
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4 + Shadcn UI / Radix UI Primitives
+- **State Management**: Zustand (Persisted via `sessionStorage`)
+- **Database & Auth**: Supabase (PostgreSQL, Auth, Storage)
+- **Forms**: React Hook Form + Zod
+- **Editor**: BlockNote (Internal Blog CMS)
+- **Charts / UI**: Recharts, Framer Motion, Embla Carousel
 
 ```
-└── navansh-finserv
+Directory structure:
+└── anshumankhunteta-navansh-finserv/
     ├── README.md
     ├── components.json
     ├── eslint.config.mjs
     ├── next.config.ts
     ├── package.json
     ├── postcss.config.mjs
+    ├── proxy.ts
     ├── tsconfig.json
+    ├── vercel.json
     ├── .lintstagedrc.json
     ├── .prettierignore
     ├── .prettierrc
     ├── app/
+    │   ├── apple-icon.tsx
+    │   ├── CalculatorStateManagement.md.resolved
     │   ├── globals.css
+    │   ├── icon.tsx
     │   ├── layout.tsx
     │   ├── manifest.ts
     │   ├── not-found.tsx
+    │   ├── opengraph-image.tsx
     │   ├── page.tsx
     │   ├── robots.ts
     │   ├── sitemap.ts
     │   ├── about/
     │   │   └── page.tsx
+    │   ├── api/
+    │   │   └── mf/
+    │   │       ├── [schemeCode]/
+    │   │       │   └── history/
+    │   │       │       └── route.ts
+    │   │       └── sync/
+    │   │           └── route.ts
+    │   ├── blog/
+    │   │   ├── page.tsx
+    │   │   ├── schema.sql
+    │   │   ├── [slug]/
+    │   │   │   └── page.tsx
+    │   │   └── admin/
+    │   │       ├── actions.ts
+    │   │       ├── layout.tsx
+    │   │       ├── page.tsx
+    │   │       ├── [id]/
+    │   │       │   └── edit/
+    │   │       │       └── page.tsx
+    │   │       ├── login/
+    │   │       │   └── page.tsx
+    │   │       └── new/
+    │   │           └── page.tsx
     │   ├── contact/
     │   │   └── page.tsx
     │   ├── enquire/
@@ -132,6 +71,13 @@ A performance and UX-focused, SEO-optimized lead generation website for a financ
     │   │   ├── EnquireContent.tsx
     │   │   ├── page.tsx
     │   │   └── schema.sql
+    │   ├── mf/
+    │   │   ├── loading.tsx
+    │   │   ├── page.tsx
+    │   │   ├── schema.sql
+    │   │   └── [schemeCode]/
+    │   │       ├── NAVChartWrapper.tsx
+    │   │       └── page.tsx
     │   ├── milee/
     │   │   ├── DownloadCardButton.tsx
     │   │   └── page.tsx
@@ -143,77 +89,142 @@ A performance and UX-focused, SEO-optimized lead generation website for a financ
     │   ├── custom/
     │   │   ├── BackButton.tsx
     │   │   ├── BusinessCard.tsx
+    │   │   ├── CalculatorCarousel.tsx
     │   │   ├── ContactForm.tsx
-    │   │   ├── ContactInfo.tsx
     │   │   ├── FloatingWhatsAppButton.tsx
     │   │   ├── ThemeProvider.tsx
     │   │   ├── ThemeToggle.tsx
-    │   │   └── calculators/
-    │   │       ├── EducationInflationCalculator.tsx
-    │   │       ├── FDCalculator.tsx
-    │   │       ├── HLVCalculator.tsx
-    │   │       ├── MediclaimEstimator.tsx
-    │   │       ├── SIPCalculator.tsx
-    │   │       └── SWPCalculator.tsx
+    │   │   ├── blog/
+    │   │   │   ├── AdminPostActions.tsx
+    │   │   │   ├── AuthGuard.tsx
+    │   │   │   ├── BlockNoteEditor.tsx
+    │   │   │   ├── BlockNoteRenderer.tsx
+    │   │   │   ├── CustomRenderer.tsx
+    │   │   │   ├── PostCard.tsx
+    │   │   │   ├── PostForm.tsx
+    │   │   │   ├── SignOutButton.tsx
+    │   │   │   ├── SlugInput.tsx
+    │   │   │   └── TableOfContents.tsx
+    │   │   ├── calculators/
+    │   │   │   ├── CalculatorActionButtons.tsx
+    │   │   │   ├── EducationInflationCalculator.tsx
+    │   │   │   ├── FDCalculator.tsx
+    │   │   │   ├── HLVCalculator.tsx
+    │   │   │   ├── MediclaimEstimator.tsx
+    │   │   │   ├── SIPCalculator.tsx
+    │   │   │   └── SWPCalculator.tsx
+    │   │   └── MFScreener/
+    │   │       ├── FilterPanel.tsx
+    │   │       ├── MFScreener.tsx
+    │   │       ├── NAVChart.tsx
+    │   │       ├── SchemeTable.tsx
+    │   │       ├── SearchBar.tsx
+    │   │       └── SortControls.tsx
     │   ├── icons/
+    │   │   ├── Discord.tsx
+    │   │   ├── Github.tsx
+    │   │   ├── Instagram.tsx
     │   │   ├── Navansh.tsx
     │   │   └── Whatsapp.tsx
+    │   ├── landing/
+    │   │   ├── AuraBackground.tsx
+    │   │   ├── BentoServices.tsx
+    │   │   ├── HeroSection.tsx
+    │   │   └── RefractiveContainer.tsx
     │   ├── layout/
     │   │   ├── Footer.tsx
     │   │   └── Navbar.tsx
+    │   ├── providers/
+    │   │   └── SmoothScrollProvider.tsx
     │   └── ui/
+    │       ├── alert-dialog.tsx
     │       ├── button.tsx
     │       ├── carousel.tsx
     │       ├── dropdown-menu.tsx
+    │       ├── input.tsx
+    │       ├── label.tsx
     │       ├── sheet.tsx
     │       └── slider.tsx
+    ├── docs/
+    │   └── mutual-funds.md
     ├── lib/
+    │   ├── blog-upload.ts
+    │   ├── calculator-store.ts
     │   ├── finance-math.ts
+    │   ├── icon-shared.ts
+    │   ├── mf-utils.ts
     │   ├── utils.ts
     │   └── supabase/
     │       └── server.ts
+    ├── scripts/
+    │   ├── backfill-returns.ts
+    │   └── seed-mf.ts
+    ├── .agents/
+    │   └── rules/
+    │       └── navansh-context.md
+    ├── .github/
+    │   └── workflows/
+    │       └── mf-sync.yml
     └── .husky/
         └── pre-commit
-
 ```
+
+## Core Architecture & Features
+
+### 1. Lead Generation & Rate Limiting
+- **Enquiry Pipeline**: Server actions handle form submissions natively (`app/enquire/actions.ts`), paired with Zod validation. 
+- **Spam Prevention**: Multi-tier rate limiting (1 min, 1 hr, 24 hr thresholds) enforced via a Supabase `rate_limit_log` table. Captures client IPs and geolocation (`x-vercel-ip-country`). Identifies and blocks duplicate submissions within 48 hours.
+- **Alerts**: Dispatches rich Discord webhook notifications on successful lead captures, including UTM/Persona tracking (`navansh_persona` cookie).
+
+### 2. Financial Calculators
+- **Tools Available**: SIP, SWP, FD, HLV, Mediclaim, and Education Inflation.
+- **State Sync**: Uses Zustand with a custom hydration guard (`useHydrateStore`) to prevent Next.js SSR mismatches.
+- **Shareability**: Granular state management supports URL-based restoration (`?calc=sip&amt=...`), allowing agents and users to share pre-filled calculation states.
+
+### 3. Mutual Fund Screener & Cron Sync
+- **Screener UI**: Filters by AMCs, categories, and sorts by CAGR. Employs `@tanstack/react-virtual` to maintain 60fps scrolling on large scheme tables.
+- **Data Pipeline**: 
+  - Syncs daily from `mfapi.in` via a Vercel Cron Job (`POST /api/mf/sync`). Protected by `x-cron-secret`.
+  - Fetches metadata and NAV history, automatically prunes "dead" funds (no NAV updates >6 months), and recalculates 1Y/3Y/5Y CAGR in a single batch upsert to avoid N+1 queries.
+
+### 4. Blog CMS
+- **Custom Admin**: Authenticated via Supabase (`/blog/admin`). Uses RLS to ensure public users only query `published = true` rows.
+- **Editor**: Integrates `@blocknote/react` for block-based rich text editing, outputting JSON to the database.
+- **Storage**: Image uploads are piped directly to Supabase storage buckets, validated server-side.
+
+## Low-Level Architecture & Implementation
+
+### 1. Lead Intake & Rate Limiting Engine
+**Implementation:** Form submissions bypass standard API routes, using Next.js Server Actions (`app/enquire/actions.ts`) combined with Zod schemas for strict runtime type-safety and sanitization. 
+**Security & Anti-Spam:**
+Supabase `rate_limit_log` table acts as the gatekeeper. It tracks `x-vercel-ip-country` headers and client IPs to enforce multi-tier thresholds (1m, 1h, 24h). Duplicates within a 48-hour window are silently dropped.
+**Delivery Pipeline:**
+Successful leads trigger asynchronous Discord webhook payloads containing client data and `navansh_persona` cookie values for UTM attribution.
+
+
+### 2. Client-Side Computation (Calculators)
+**Implementation:**
+Six distinct calculators (SIP, SWP, FD, HLV, Mediclaim, Education) driven by a globally persisted Zustand store. State is cached in `sessionStorage`.
+**Hydration & SSR:**
+Utilizes a custom `useHydrateStore` hook to intentionally delay state injection until the component mounts, entirely bypassing Next.js hydration mismatch errors.
+**Deep Linking:**
+Calculators parse `window.location.search` (`?calc=sip&amt=...`) to dynamically seed the Zustand store, enabling instant state-sharing for agents.
+
+
+### 3. Mutual Fund Data Pipeline & DOM Recycling
+**Ingestion & Processing:**
+Automated via GitHub Actions cron (`00:30 UTC` / `08:50 UTC`) triggering `POST /api/mf/sync` route (secured by `x-cron-secret`). 
+**Performance Optimization:** The sync controller actively avoids N+1 database queries. It fetches all `mf_nav` rows simultaneously, constructs an in-memory `Map` keyed by `scheme_code`, computes the 1Y/3Y/5Y CAGR via `calculateReturns()`, and pushes a single batched upsert to the `mf_schemes` table.
+**UI Rendering:**
+The frontend utilizes `@tanstack/react-virtual` to recycle DOM nodes, allowing the screener to maintain 60fps scrolling while rendering thousands of scheme rows.
+
+
+### 4. Blog CMS Internal Abstraction
+**Implementation:**
+A bespoke admin interface (`/blog/admin`) secured by Supabase Auth. Content is authored via `@blocknote/react`, which serializes rich text into structured JSON rather than raw HTML.
+**Storage & Security:**
+Images are uploaded directly to Supabase storage buckets. PostgreSQL Row Level Security (RLS) is strictly configured: unauthenticated users can only `SELECT` rows where `published = true`.
 
 ---
 
-## Getting Started
-
-```bash
-# Clone the repo
-git clone https://github.com/anshumankhunteta/navansh-finserv.git
-cd navansh-finserv
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-
-# Production build
-npm run build
-npm start
-```
-
-### Environment Variables
-
-Create a `.env.local` file with the following keys:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-DISCORD_WEBHOOK_URL=
-```
-
----
-
-## Disclaimer
-
-Insurance is the subject matter of solicitation. Navansh Finserv IRDAI Registration is currently **in progress**.
-
----
-
-Developed and Maintained by **Anshuman Khunteta**
+#### Developed and Maintained by [Anshuman Khunteta](https://www.linkedin.com/in/anshumankhunteta/)

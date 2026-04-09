@@ -13,34 +13,29 @@ export function TableOfContents() {
   const [activeId, setActiveId] = useState<string>('')
 
   useEffect(() => {
-    // Wait for BlockNote to render
-    const timeoutId = setTimeout(() => {
-      const elements = Array.from(
-        document.querySelectorAll('.prose h1, .prose h2, .prose h3')
-      )
-
-      const newHeadings = elements.map((elem, index) => {
-        let id = elem.id
-        if (!id) {
-          id = `heading-${index}-${elem.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-          elem.id = id
-        }
-
-        return {
-          id,
-          text: elem.textContent || '',
-          level: Number(elem.tagName.substring(1)),
-        }
-      })
-
-      setHeadings(newHeadings)
-
-      if (newHeadings.length > 0) {
-        setActiveId(newHeadings[0].id)
+    const elements = Array.from(
+      document.querySelectorAll('.prose h1, .prose h2, .prose h3')
+    )
+    const newHeadings = elements.map((elem, index) => {
+      let id = elem.id
+      if (!id) {
+        id = `heading-${index}-${elem.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+        elem.id = id
       }
-    }, 800)
 
-    return () => clearTimeout(timeoutId)
+      return {
+        id,
+        text: elem.textContent || '',
+        level: Number(elem.tagName.substring(1)),
+      }
+    })
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHeadings(newHeadings)
+
+    if (newHeadings.length > 0) {
+      setActiveId(newHeadings[0].id)
+    }
   }, [])
 
   useEffect(() => {
