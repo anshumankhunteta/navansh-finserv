@@ -201,8 +201,6 @@ Supabase `rate_limit_log` table acts as the gatekeeper. It tracks `x-vercel-ip-c
 **Delivery Pipeline:**
 Successful leads trigger asynchronous Discord webhook payloads containing client data and `navansh_persona` cookie values for UTM attribution.
 
-> **Critical Architecture Review:** Relying purely on Discord webhooks for lead delivery is a single point of failure. If Discord's API rate-limits your server or goes down, leads vanish. 
-> *Tough Question:* Where is your Dead Letter Queue (DLQ)? Do you have a secondary Supabase table specifically holding "unnotified leads" that a cron job can retry later?
 
 ### 2. Client-Side Computation (Calculators)
 **Implementation:**
