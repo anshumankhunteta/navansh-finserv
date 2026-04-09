@@ -68,7 +68,6 @@ export async function generateMetadata({
     openGraph: {
       title: post.title,
       description: post.excerpt || 'Read this post on Navansh Finserv',
-      images: post.cover_image_url ? [post.cover_image_url] : [],
     },
   }
 }
