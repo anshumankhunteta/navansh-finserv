@@ -77,18 +77,18 @@ export default function Footer() {
             <ul className="grid grid-cols-6 gap-1 text-center md:grid-cols-1 md:text-left">
               <li>
                 <Link
-                  href="/"
+                  href="/blog"
                   className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
-                  Home
+                  Blog
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/mf"
                   className="text-secondary-foreground/80 hover:text-primary text-xs transition-colors"
                 >
-                  Services
+                  Funds
                 </Link>
               </li>
               <li>
