@@ -86,7 +86,6 @@ export function NAVChart({
     const controller = new AbortController()
 
     const loadData = async () => {
-       
       setLoading(true)
       try {
         const r = await fetch(`/api/mf/${scheme.scheme_code}/history`, {
