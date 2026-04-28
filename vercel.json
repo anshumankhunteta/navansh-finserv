@@ -3,6 +3,10 @@
     {
       "path": "/api/mf/sync",
       "schedule": "35 13 * * *"
+    },
+    {
+      "path": "/api/newsletter/generate",
+      "schedule": "30 2 * * 1"
     }
   ]
 }

@@ -14,12 +14,12 @@ export function AuthGuard({
   const router = useRouter()
 
   useEffect(() => {
-    if (!hasSession && pathname !== '/blog/admin/login') {
-      router.push('/blog/admin/login')
+    if (!hasSession && pathname !== '/admin/login') {
+      router.push('/admin/login')
     }
   }, [hasSession, pathname, router])
 
-  if (!hasSession && pathname !== '/blog/admin/login') {
+  if (!hasSession && pathname !== '/admin/login') {
     return null // or a loading spinner
   }
 

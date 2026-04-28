@@ -1,6 +1,6 @@
 'use client'
 
-import { logoutAction } from '@/app/blog/admin/actions'
+import { logoutAction } from '@/app/admin/blog/actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
@@ -9,7 +9,7 @@ export function SignOutButton() {
 
   const handleSignOut = async () => {
     await logoutAction()
-    router.push('/blog/admin/login')
+    router.push('/admin/login')
   }
 
   return (

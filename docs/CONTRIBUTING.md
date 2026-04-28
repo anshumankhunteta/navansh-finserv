@@ -105,9 +105,9 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ---
 
-### 4. Dev Environment Auth (/blog/admin)
+### 4. Dev Environment Auth (/admin/login)
 
-The credentials for logging into the dev environment blog admin page are:
+The credentials for logging into the dev environment unified admin dashboard are:
 
 ```
 Email: user@email.com
@@ -123,8 +123,9 @@ A quick orientation to help you find your way around:
 ```
 /
 ├── app/                  # Next.js App Router root (pages, APIs, layouts)
+│   ├── admin/            # Unified Admin Dashboard (Blog CMS & Newsletter)
 │   ├── api/              # API routes (including background cron jobs)
-│   ├── blog/             # Blog UI & CMS Admin dashboard
+│   ├── blog/             # Public Blog UI & post routing
 │   ├── enquire/          # Server Actions for Lead tracking & form submission
 │   └── mf/               # Mutual Fund Screener feature pages
 ├── components/           # UI and Feature components
@@ -154,6 +155,7 @@ Make sure your Supabase instance has the necessary schemas applied. Run the foll
 1. `app/mf/schema.sql`
 2. `app/blog/schema.sql`
 3. `app/enquire/schema.sql`
+4. `app/admin/schema.sql`
 
 > **Tip:** You can run these via the [Supabase Dashboard SQL Editor](https://supabase.com/dashboard) or using the Supabase CLI:
 > ```bash

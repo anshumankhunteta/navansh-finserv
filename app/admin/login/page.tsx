@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { loginAction } from '../actions'
+import { loginAction } from '@/app/admin/blog/actions'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
 
     try {
       await loginAction(formData)
-      router.push('/blog/admin')
+      router.push('/admin/blog')
       router.refresh() // Ensure server components re-run auth checks
     } catch (err: unknown) {
       const e = err as Error
