@@ -3,7 +3,7 @@
 import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
-import { uploadBlogImageAction } from '@/app/blog/admin/actions'
+import { uploadBlogImageAction } from '@/app/admin/blog/actions'
 import { PartialBlock } from '@blocknote/core'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'

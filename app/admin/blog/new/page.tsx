@@ -9,7 +9,7 @@ export default async function NewPostPage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/blog/admin/login')
+    redirect('/admin/login')
   }
 
   return <PostForm />

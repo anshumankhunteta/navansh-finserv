@@ -108,7 +108,7 @@ export async function createPost(formData: FormData): Promise<string> {
   }
 
   revalidatePath('/blog')
-  revalidatePath('/blog/admin')
+  revalidatePath('/admin/blog')
   return data.id
 }
 
@@ -170,7 +170,7 @@ export async function updatePost(
   }
 
   revalidatePath('/blog')
-  revalidatePath('/blog/admin')
+  revalidatePath('/admin/blog')
   revalidatePath(`/blog/${slug}`)
 }
 
@@ -204,7 +204,7 @@ export async function deletePost(id: string): Promise<void> {
   }
 
   revalidatePath('/blog')
-  revalidatePath('/blog/admin')
+  revalidatePath('/admin/blog')
 }
 
 export async function duplicatePost(id: string): Promise<string> {
@@ -248,7 +248,7 @@ export async function duplicatePost(id: string): Promise<string> {
   if (insertError) throw new Error(insertError.message)
 
   revalidatePath('/blog')
-  revalidatePath('/blog/admin')
+  revalidatePath('/admin/blog')
 
   return newPost.id
 }
@@ -277,7 +277,7 @@ export async function togglePublished(
   }
 
   revalidatePath('/blog')
-  revalidatePath('/blog/admin')
+  revalidatePath('/admin/blog')
 }
 
 export async function uploadBlogImageAction(

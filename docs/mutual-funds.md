@@ -1,4 +1,4 @@
-# Mutual Fund Screener — Feature Documentation
+# Mutual Fund Screener — Low-Level Design (LLD) and Feature documentation
 
 > Covers both **user-facing** functionality and **developer internals** including setup, data pipeline, and operations.
 

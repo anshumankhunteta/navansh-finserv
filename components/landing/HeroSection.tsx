@@ -1,9 +1,8 @@
 'use client'
 
 import { LazyMotion, domAnimation, m, type Variants } from 'motion/react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { AuraBackground } from '@/components/landing/AuraBackground'
+import { SubscribeInput } from '@/components/landing/SubscribeInput'
 
 export function HeroSection() {
   const containerVariants: Variants = {
@@ -65,18 +64,7 @@ export function HeroSection() {
               variants={itemVariants}
               className="will-change-[transform,opacity,filter]"
             >
-              <Button
-                asChild
-                size="lg"
-                className="group bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-foreground border-primary/50 text-md active:bg-primary/30 relative animate-pulse overflow-hidden rounded-full border-2 px-8 py-6 font-semibold backdrop-blur-md transition-all duration-300 active:animate-none sm:text-lg"
-              >
-                <Link href="/enquire">
-                  <span className="relative z-10 font-[family-name:var(--font-inter)] font-bold tracking-wider">
-                    GET A FREE PORTFOLIO REVIEW
-                  </span>
-                  <div className="bg-primary absolute inset-0 -z-0 -translate-x-full transition-transform duration-500 ease-in-out group-hover:translate-x-0" />
-                </Link>
-              </Button>
+              <SubscribeInput />
             </m.div>
           </m.div>
         </LazyMotion>
