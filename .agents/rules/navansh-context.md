@@ -60,6 +60,15 @@ TypeScript | React 19 / Next.js 16.1.7+ (App Router) | TailwindCSS 4 | Supabase 
 - **MF dead-fund pruning**: Both `backfill-returns.ts` and `/api/mf/sync` check the latest NAV date from the API response (`data.data[0].date`). If it is older than `STALE_MONTHS` (default 6, defined at the top of each file), the fund is deleted from `mf_nav` and `mf_schemes` before any upserts. Adjust the constant in both files to change the threshold.
 - **MF sync avoids N+1**: The sync route fetches all `mf_nav` rows in a single query, groups them in-memory by `scheme_code` with a `Map`, calculates CAGR for each group via `calculateReturns()`, then performs a single batched upsert back to `mf_schemes`. Never add per-scheme queries inside the recalculation loop.
 
+## Documentation Map
+- `docs/CONTRIBUTING.md`: Contributor onboarding, env setup, workflow, and links to feature docs
+- `docs/mutual-funds.md`: Mutual Fund Screener feature — data pipeline, scripts, schema, API routes
+- `docs/calculators.md`: Calculator suite — Zustand store, URL sharing, hydration, math utilities
+- `docs/blog-cms.md`: Blog CMS — admin auth, BlockNote editor, image upload, RLS policies
+- `docs/enquiry-system.md`: Enquiry/Lead capture — form validation, rate limiting, Discord webhooks
+
 ---
 
-> **AGENT INSTRUCTION**: Update this `Context.md` file **IF AND ONLY IF** you are implementing or modifying a new Pattern, Abstraction, Major Feature, or Gotcha. Do not update this file for minor bug fixes or localized component changes.
+> **AGENT INSTRUCTION — Context File**: Update this `navansh-context.md` file **IF AND ONLY IF** you are implementing or modifying a new Pattern, Abstraction, Major Feature, or Gotcha. Do not update this file for minor bug fixes or localized component changes.
+
+> **AGENT INSTRUCTION — Documentation**: When you create a new feature, add a new schema, add/change an API route, or modify an existing feature's architecture, you MUST update or create the corresponding documentation in `docs/`. Each major feature should have its own `docs/<feature-name>.md` file following the structure established in `docs/mutual-funds.md` (Overview → Architecture → Schema → File Structure → Gotchas). Also update `docs/CONTRIBUTING.md` if setup steps, env vars, or the schema list changes. Update the Documentation Map above when adding new doc files.
