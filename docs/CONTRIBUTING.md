@@ -145,6 +145,21 @@ Each feature directory under `app/` typically contains its own `schema.sql` for 
 
 ---
 
+## Feature Documentation
+
+Each major feature has its own detailed documentation in the `docs/` folder:
+
+| Feature | Doc | Covers |
+|---------|-----|--------|
+| Mutual Fund Screener | [mutual-funds.md](./mutual-funds.md) | Data pipeline, scripts, cron sync, schema, API routes |
+| Financial Calculators | [calculators.md](./calculators.md) | Zustand store, URL sharing, hydration, math utilities |
+| Blog CMS | [blog-cms.md](./blog-cms.md) | Admin auth, BlockNote editor, image uploads, RLS |
+| Enquiry System | [enquiry-system.md](./enquiry-system.md) | Rate limiting, duplicate detection, Discord webhooks |
+
+> **For agents**: The `navansh-context.md` file in `.agents/rules/` is the compact cheat-sheet automatically injected into AI conversations. The docs above are the detailed references.
+
+---
+
 ## Database Initialization & Seeding
 
 ### Applying Schemas
