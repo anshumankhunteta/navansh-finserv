@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SlugInput } from './SlugInput'
 import { BlockNoteEditor } from './BlockNoteEditor'
-import { createPost, updatePost, type PostRow } from '@/app/blog/admin/actions'
+import { createPost, updatePost, type PostRow } from '@/app/admin/blog/actions'
 import { ArrowLeft, Eye, Upload, ClipboardPaste, ImageIcon } from 'lucide-react'
 import {
   AlertDialog,
@@ -88,7 +88,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
         router.refresh()
       } else {
         const newId = await createPost(formData)
-        router.push(`/blog/admin/${newId}/edit`)
+        router.push(`/admin/blog/${newId}/edit`)
       }
     } catch (err: unknown) {
       const e = err as Error
@@ -123,7 +123,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
       <div className="mb-6 flex items-center justify-between">
         <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
           <Link
-            href="/blog/admin"
+            href="/admin/blog"
             onClick={handleBackClick}
             className="text-muted-foreground hover:text-foreground flex items-center text-sm font-medium transition-colors"
           >
@@ -142,7 +142,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
               <AlertDialogAction
                 onClick={() => {
                   handleSave(false, 'draft')
-                  redirect('/blog/admin')
+                  redirect('/admin/blog')
                 }}
               >
                 Save Changes and Leave
@@ -150,7 +150,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-red-500 hover:bg-red-600"
-                onClick={() => redirect('/blog/admin')}
+                onClick={() => redirect('/admin/blog')}
               >
                 Leave Page
               </AlertDialogAction>
@@ -358,7 +358,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
                           if (!foundImage) {
                             alert('No image found in clipboard')
                           }
-                        } catch (err) {
+                        } catch {
                           alert(
                             'Please press Ctrl+V (or Cmd+V) to paste from clipboard.'
                           )

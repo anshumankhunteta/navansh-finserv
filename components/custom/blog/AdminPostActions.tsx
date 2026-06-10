@@ -8,7 +8,7 @@ import {
   deletePost,
   togglePublished,
   duplicatePost,
-} from '@/app/blog/admin/actions'
+} from '@/app/admin/blog/actions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -62,7 +62,7 @@ export function AdminPostActions({
     setLoading(true)
     try {
       await duplicatePost(id)
-    } catch (e) {
+    } catch {
       alert('Failed to duplicate post.')
     } finally {
       setLoading(false)
@@ -111,7 +111,7 @@ export function AdminPostActions({
       </AlertDialog>
 
       <Link
-        href={`/blog/admin/${id}/edit`}
+        href={`/admin/blog/${id}/edit`}
         className={loading ? 'pointer-events-none' : ''}
         aria-disabled={loading}
       >

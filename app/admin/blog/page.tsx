@@ -14,7 +14,7 @@ export default async function AdminDashboardPage() {
   const user = session?.user
 
   if (!user) {
-    redirect('/blog/admin/login')
+    redirect('/admin/login')
   }
 
   const { data: posts, error } = await supabase
@@ -37,7 +37,7 @@ export default async function AdminDashboardPage() {
     <div className="border-border bg-card mx-auto max-w-6xl rounded-xl border shadow-sm">
       <div className="border-border flex items-center justify-between border-b p-6">
         <h1 className="text-foreground text-xl font-bold">All Posts</h1>
-        <Link href="/blog/admin/new">
+        <Link href="/admin/blog/new">
           <Button size="sm">New Post</Button>
         </Link>
       </div>

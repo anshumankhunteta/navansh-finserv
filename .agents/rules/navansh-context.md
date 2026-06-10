@@ -48,7 +48,8 @@ TypeScript | React 19 / Next.js 16.1.7+ (App Router) | TailwindCSS 4 | Supabase 
 - Landing Page: High-conversion hero, bento-grid services, animated calculator preview — `app/page.tsx`
 - Financial Calculators: SIP, FD, SWP, HLV, Education, Mediclaim calculators with URL-sharing capabilities — `lib/calculator-store.ts` & `components/custom/calculators`
 - Contact/Enquiry Flow: Rate-limited server action submissions with confetti success state — `components/custom/ContactForm.tsx` & `app/enquire`
-- Blog/CMS: Blogs and Articles Page. Admin dashboard with native image upload and Supabase auth guard — `app/blog/admin`
+- Admin Dashboard: Unified dashboard at `/admin` with tabs for Blog CMS (native image upload) and Newsletter Review. Protected by Supabase auth guard.
+- AI Newsletter: Automated weekly digest. Subscribers join via the Hero section. Vercel cron (`/api/newsletter/generate`) gathers news (`lib/newsletter-pulse.ts`), calls Gemini (`lib/newsletter-ai.ts`), and creates a draft. Admin approves to send via Resend (`emails/WeeklyDigest.tsx`).
 - Mutual Fund Screener: Full-featured fund discovery tool at `/mf` with search, category/AMC filters, virtualized table, NAV chart modal, and scheme detail pages (`/mf/[schemeCode]`). Data pipeline: `seed-mf.ts` (discovery) → `backfill-returns.ts` (full history + pruning) → `/api/mf/sync` (daily cron). Schema in `app/mf/schema.sql`; shared types + CAGR logic in `lib/mf-utils.ts`.
 
 ## Gotchas & Non-obvious Rules
