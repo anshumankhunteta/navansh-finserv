@@ -61,18 +61,15 @@ export function EnquireContent() {
       <div className="container mx-auto px-6 lg:px-8">
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <h1 className="mb-4 text-3xl font-bold md:text-4xl">
-                Navansh <span className="text-primary">Financial Suite</span>
-              </h1>
-              <p className="text-muted-foreground">
-                Explore our interactive calculators!
-              </p>
-            </div>
+            <div className="mx-auto max-w-3xl text-center"></div>
           </div>
         </section>
 
         <div className="mx-auto grid w-full grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-24">
+          {/* Contact Form */}
+          <div className="mx-auto w-full">
+            <ContactForm externalMessage={consultMessage} />
+          </div>
           {/* Calculator(s) */}
           <div className="mx-auto w-full pb-12">
             <CalculatorCarousel
@@ -82,17 +79,13 @@ export function EnquireContent() {
               initialCalcKey={initialCalcKey ?? undefined}
             />
           </div>
-          {/* Contact Form */}
-          <div className="mx-auto w-full">
-            <ContactForm externalMessage={consultMessage} />
-          </div>
         </div>
       </div>
       <section className="py-16">
         <div className="container mx-auto px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-primary mb-4 text-3xl font-bold">
-            <span className="text-primary-foreground">Want to</span> Contact us
-            Directly?
+            <span className="text-primary-foreground">Contact us </span>
+            Directly
           </h2>
           <p className="text-muted-foreground mx-auto mb-6 max-w-2xl text-lg">
             Don&apos;t want to share your data? Visit our contact page to get in

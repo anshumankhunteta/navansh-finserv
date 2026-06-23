@@ -67,7 +67,19 @@ export default function PrivacyPage() {
                   </li>
                   <li>Communication preferences and correspondence with us</li>
                   <li>Information submitted through our contact forms</li>
+                  <li>
+                    Information submitted through our enquiry and contact forms
+                  </li>
                 </ul>
+                <p className="text-muted-foreground mt-4 leading-relaxed">
+                  Financial calculator inputs (e.g. SIP amounts, ages, sum
+                  insured) are processed entirely in your browser and are{' '}
+                  <strong className="text-foreground">
+                    not transmitted to or stored on our servers
+                  </strong>
+                  . They are retained only in your browser&apos;s session
+                  storage for the duration of your visit.
+                </p>
               </div>
 
               <div>
@@ -80,12 +92,17 @@ export default function PrivacyPage() {
                 <ul className="text-muted-foreground list-disc space-y-2 pl-6">
                   <li>Provide, maintain, and improve our financial services</li>
                   <li>Process your requests and respond to your inquiries</li>
+                  <li>Process your requests and respond to your enquiries</li>
                   <li>Send you service-related communications and updates</li>
                   <li>
                     Comply with legal obligations and regulatory requirements
                   </li>
                   <li>
                     Provide personalized financial advice and recommendations
+                  </li>
+                  <li>
+                    Forward your enquiry details to our team via an internal
+                    notification system (Discord webhook) for prompt follow-up
                   </li>
                 </ul>
               </div>
@@ -125,7 +142,6 @@ export default function PrivacyPage() {
                   electronic storage is 100% secure.
                 </p>
               </div>
-
               <div>
                 <h2 className="text-foreground mb-4 text-xl font-bold">
                   6. Your Rights
@@ -143,19 +159,28 @@ export default function PrivacyPage() {
                   <li>Object to or restrict certain processing of your data</li>
                 </ul>
               </div>
-
               <div>
                 <h2 className="text-foreground mb-4 text-xl font-bold">
-                  7. Cookies and Tracking
+                  7. Cookies and Session Storage
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
                   We may use cookies and similar tracking technologies to
                   improve your browsing experience and analyze website traffic.
                   You can control cookie preferences through your browser
-                  settings.
+                  settings. We use browser{' '}
+                  <strong className="text-foreground">session storage</strong>{' '}
+                  (not persistent cookies) to temporarily retain your calculator
+                  preferences during a single browsing session. This data is
+                  automatically cleared when you close your browser tab. We also
+                  use essential authentication cookies issued by Supabase for
+                  secure admin access — these are HttpOnly and never exposed to
+                  client-side scripts. We do{' '}
+                  <strong className="text-foreground">not</strong> use
+                  third-party analytics cookies, advertising cookies, or any
+                  tracking pixels. No consent banner is required as we collect
+                  no non-essential cookies.
                 </p>
               </div>
-
               <div>
                 <h2 className="text-foreground mb-4 text-xl font-bold">
                   8. Compliance with Indian Laws
@@ -164,10 +189,18 @@ export default function PrivacyPage() {
                   This Privacy Policy complies with the Information Technology
                   Act, 2000 and the Information Technology (Reasonable Security
                   Practices and Procedures and Sensitive Personal Data or
-                  Information) Rules, 2011 of India.
+                  Information) Rules, 2011 of India. This Privacy Policy is
+                  framed in accordance with the{' '}
+                  <strong className="text-foreground">
+                    Digital Personal Data Protection (DPDP) Act, 2023
+                  </strong>
+                  , the Information Technology Act, 2000, and the Information
+                  Technology (Reasonable Security Practices and Procedures and
+                  Sensitive Personal Data or Information) Rules, 2011 of India.
+                  We are committed to processing your personal data lawfully,
+                  fairly, and transparently.
                 </p>
               </div>
-
               <div>
                 <h2 className="text-foreground mb-4 text-xl font-bold">
                   9. Changes to This Policy
@@ -178,7 +211,6 @@ export default function PrivacyPage() {
                   this page and updating the &quot;Last updated&quot; date.
                 </p>
               </div>
-
               <div>
                 <Link href="/contact">
                   <h2 className="text-foreground mb-4 text-xl font-bold">
@@ -188,7 +220,12 @@ export default function PrivacyPage() {
                 </Link>
                 <p className="text-muted-foreground leading-relaxed">
                   If you have any questions about this Privacy Policy or our
-                  data practices, please contact us.
+                  data practices, please contact us. data practices, please
+                  contact us. You may also review our{' '}
+                  <Link href="/terms" className="text-primary hover:underline">
+                    Terms of Service
+                  </Link>{' '}
+                  for information on the scope and limitations of our services.
                 </p>
               </div>
             </div>
