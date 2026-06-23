@@ -36,8 +36,8 @@ Before you begin, make sure you have access to the following:
 
 Before cloning the repo, ensure you have the following installed:
 
-- **Node.js** v18 or higher — [Download](https://nodejs.org/)
-- **npm** v9+ (bundled with Node.js)
+- **Node.js** v22.13 or higher — [Download](https://nodejs.org/)
+- **pnpm** v11+
 - **Git** — [Download](https://git-scm.com/)
 - Access to the **Supabase project** (see [Requesting Access](#requesting-access))
 
@@ -45,7 +45,7 @@ You can verify your Node version with:
 
 ```bash
 node -v
-npm -v
+pnpm -v
 ```
 
 ---
@@ -97,8 +97,8 @@ CRON_SECRET=anything-works-here
 ### 3. Install Dependencies & Run Locally
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
@@ -138,7 +138,7 @@ A quick orientation to help you find your way around:
 ├── supabase/             # Local Supabase Dev Environment & SQL Migrations
 ├── public/               # Static assets (images, fonts, metadata)
 ├── .env.local            # (create this file)
-└── package.json          # Core project dependencies and npm scripts
+└── package.json          # Core project dependencies and scripts
 ```
 
 Each feature directory under `app/` typically contains its own `schema.sql` for the database schema relevant to that feature.
@@ -211,14 +211,14 @@ We follow a standard feature-branch workflow:
   - `feat: add mutual fund filter by category`
   - `fix: resolve NAV fetch timeout`
   - `chore: update dependencies`
-- **Linting:** Run `npm run lint` before pushing. PRs with lint errors will not be merged.
+- **Linting:** Run `pnpm lint` before pushing. PRs with lint errors will not be merged.
 
 ---
 
 ## Submitting a Pull Request
 
 1. Ensure your branch is up to date with `main`.
-2. Run `npm run lint` and fix any issues.
+2. Run `pnpm lint` and fix any issues.
 3. Open a Pull Request with:
    - A clear title describing the change.
    - A short description of *what* changed and *why*.
