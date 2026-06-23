@@ -114,13 +114,13 @@ export function SchemeTable({
     count: data.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_HEIGHT,
-    overscan: 5,
+    overscan: 10,
   })
 
   if (isPending) {
     return (
       <div>
-        {[...Array(5)].map((_, i) => (
+        {[...Array(10)].map((_, i) => (
           <SkeletonRow key={i} />
         ))}
       </div>
@@ -129,7 +129,7 @@ export function SchemeTable({
 
   if (data.length === 0) {
     return (
-      <div className="flex h-[280px] flex-col items-center justify-center py-16 text-center">
+      <div className="flex h-[560px] flex-col items-center justify-center py-16 text-center">
         <div className="mb-3 text-4xl">🔍</div>
         <p className="text-foreground text-lg font-medium">No schemes found</p>
         <p className="text-muted-foreground mt-1 text-sm">
@@ -143,7 +143,7 @@ export function SchemeTable({
     <div
       ref={scrollRef}
       className="overflow-y-auto"
-      style={{ height: '280px' }}
+      style={{ height: '560px' }}
     >
       <div
         style={{
