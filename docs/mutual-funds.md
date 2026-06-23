@@ -192,10 +192,10 @@ CRON_SECRET=<a-strong-random-secret>
 #    -> See /app/mutual-funds/schema.sql
 
 # 2. Seed schemes and latest NAV
-npm run seed:mf
+pnpm seed:mf
 
 # 3. Backfill full NAV history (takes 5–15 min for 500 schemes)
-npm run backfill:returns
+pnpm backfill:returns
 ```
 
 ### Adding More AMCs
@@ -219,11 +219,11 @@ After editing, run:
 
 ```bash
 # Seed new AMC schemes (uses ignoreDuplicates — safe to re-run)
-npm run seed:mf
+pnpm seed:mf
 
 # Backfill NAV history for all schemes
 # (existing rows are replaced via DELETE + INSERT — idempotent and safe to re-run)
-npm run backfill:returns
+pnpm backfill:returns
 ```
 
 ### Clearing All Data
@@ -243,10 +243,10 @@ Then re-run the seed and backfill scripts.
 
 | Command | Script | What it does |
 |---------|--------|-------------|
-| `npm run seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV |
-| `npm run backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
+| `pnpm seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV |
+| `pnpm backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
 
-### `npm run seed:mf`
+### `pnpm seed:mf`
 
 ```
 📥  Discovering schemes via search queries …
@@ -271,7 +271,7 @@ Then re-run the seed and backfill scripts.
    Fetch errors:      0
 ```
 
-### `npm run backfill:returns`
+### `pnpm backfill:returns`
 
 ```
 🚀  Starting full NAV history backfill (with downsampling)…

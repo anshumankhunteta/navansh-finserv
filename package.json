@@ -2,6 +2,7 @@
   "name": "navansh-finserv-v0.3",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.8.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "@blocknote/core": "^0.51.2",
     "@blocknote/mantine": "^0.51.2",
     "@blocknote/react": "^0.51.2",
     "@hookform/resolvers": "^5.2.2",
