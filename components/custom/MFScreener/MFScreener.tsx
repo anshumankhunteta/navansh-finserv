@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState, useTransition } from 'react'
+import { useCallback, useTransition } from 'react'
 import dynamic from 'next/dynamic'
 import type { MFScheme } from '@/lib/mf-utils'
 import { FilterPanel } from './FilterPanel'
@@ -39,13 +39,24 @@ export function MFScreener({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const [selectedScheme, setSelectedScheme] = useState<MFScheme | null>(null)
 
   const totalPages = Math.ceil(totalCount / itemsPerPage)
+
+  // Derive the selected scheme from the URL (?scheme=<schemeCode>) so the
+  // overlay is shareable and deep-linkable. Falls back to null if the scheme
+  // isn't in the current page's data (e.g. different page or filter set).
+  const selectedSchemeCode = searchParams.get('scheme')
+  const selectedScheme = selectedSchemeCode
+    ? (initialData.find((s) => String(s.scheme_code) === selectedSchemeCode) ??
+      null)
+    : null
 
   const updateParams = useCallback(
     (updates: Partial<MFFilters>) => {
       const params = new URLSearchParams(searchParams.toString())
+
+      // Close the scheme overlay whenever any filter/sort/page changes.
+      params.delete('scheme')
 
       Object.entries(updates).forEach(([key, value]) => {
         if (
@@ -70,6 +81,24 @@ export function MFScreener({
     },
     [router, searchParams, startTransition]
   )
+
+  // Open the scheme overlay by adding ?scheme=<schemeCode> to the URL.
+  // Uses a dedicated handler so it doesn't reset the page/filter params.
+  const openScheme = useCallback(
+    (scheme: MFScheme) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('scheme', String(scheme.scheme_code))
+      router.replace(`/mf?${params.toString()}`, { scroll: false })
+    },
+    [router, searchParams]
+  )
+
+  // Close the scheme overlay by removing the ?scheme param from the URL.
+  const closeScheme = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('scheme')
+    router.replace(`/mf?${params.toString()}`, { scroll: false })
+  }, [router, searchParams])
 
   return (
     <div className="space-y-6">
@@ -101,7 +130,7 @@ export function MFScreener({
         <SchemeTable
           data={initialData}
           isPending={isPending}
-          onSchemeClick={(scheme: MFScheme) => setSelectedScheme(scheme)}
+          onSchemeClick={(scheme: MFScheme) => openScheme(scheme)}
         />
       </div>
 
@@ -191,7 +220,7 @@ export function MFScreener({
         <NAVChart
           scheme={selectedScheme}
           isModal
-          onClose={() => setSelectedScheme(null)}
+          onClose={() => closeScheme()}
         />
       )}
     </div>
