@@ -26,6 +26,11 @@ export interface MFNav {
   nav: number
 }
 
+// ---- Table Sizing Constants ---------------------------------
+export const TABLE_ROW_HEIGHT = 56
+export const TABLE_VISIBLE_ROWS = 10
+export const TABLE_CONTAINER_HEIGHT = TABLE_ROW_HEIGHT * TABLE_VISIBLE_ROWS
+
 // ---- API response shapes (from api.mfapi.in) ----------------
 
 /** Single entry returned from `GET /mf` (scheme list). */

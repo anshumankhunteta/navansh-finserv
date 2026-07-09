@@ -1,0 +1,81 @@
+name: Biweekly MF NAV Backfill
+
+# Runs on the 1st and 15th of every month at 02:00 UTC (07:30 IST).
+# Scheduled runs always target production. Manual runs let you choose dev or prod.
+#
+# Usage:
+#   Scheduled  → always runs against PROD
+#   Manual     → Actions tab → Run workflow → choose environment (dev / prod)
+#
+# Required GitHub Secrets (Settings → Secrets → Actions):
+#   DEV_SUPABASE_URL          Dev Supabase project URL
+#   DEV_SERVICE_ROLE_KEY      Dev service-role key
+#   PROD_SUPABASE_URL         Prod Supabase project URL
+#   PROD_SERVICE_ROLE_KEY     Prod service-role key
+
+on:
+  schedule:
+    - cron: '0 2 1,15 * *'   # 02:00 UTC on the 1st and 15th of each month
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target database'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  backfill:
+    name: Full NAV backfill & returns recalculation (${{ github.event_name == 'schedule' && 'prod' || inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30        # backfill takes ~5–10 min; 30 min is a safe ceiling
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # pnpm/action-setup MUST come before setup-node so that setup-node
+      # can locate the pnpm store path and enable dependency caching.
+      # No 'version' key — auto-detected from "packageManager" in package.json.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'        # caches the pnpm store; skips re-downloading on repeat runs
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Resolve which secret set to use.
+      # Scheduled runs always target prod; manual runs use the 'environment' input.
+      - name: Resolve target environment credentials
+        run: |
+          TARGET="${{ github.event_name == 'schedule' && 'prod' || inputs.environment }}"
+          echo "TARGET=$TARGET" >> $GITHUB_ENV
+
+          if [ "$TARGET" = "prod" ]; then
+            echo "SUPABASE_URL=${{ secrets.PROD_SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_KEY=${{ secrets.PROD_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          else
+            echo "SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_KEY=${{ secrets.DEV_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run backfill script
+        # dotenv.config() silently skips the missing .env.local in CI.
+        # Secrets resolved in the previous step are already in $GITHUB_ENV,
+        # which Actions injects into process.env for all subsequent steps.
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_KEY }}
+        run: |
+          echo "▶  Running backfill against $TARGET database"
+          pnpm backfill:returns

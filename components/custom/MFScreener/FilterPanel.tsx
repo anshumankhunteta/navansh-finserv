@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,8 +10,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { Check, ChevronsUpDown, SlidersHorizontal, X } from 'lucide-react'
 import type { MFFilters } from './MFScreener'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 
 const CATEGORIES = [
   { label: 'All', value: 'all' },
@@ -27,13 +40,85 @@ interface FilterPanelProps {
   onFilterChange: (updates: Partial<MFFilters>) => void
 }
 
+interface AmcSelectorProps {
+  selectedAmcs: string[]
+  availableAmcs: string[]
+  toggleAmc: (amc: string) => void
+  modal?: boolean
+}
+
+function AmcSelector({
+  selectedAmcs,
+  availableAmcs,
+  toggleAmc,
+  modal = false,
+}: AmcSelectorProps) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="border-border bg-card text-foreground hover:border-primary/40 flex h-10 w-full shrink-0 items-center justify-between rounded-lg border px-3 py-2 text-sm font-normal transition-colors"
+        >
+          <span className="text-muted-foreground max-w-[90%] truncate">
+            {selectedAmcs.length === 0
+              ? 'Select fund houses…'
+              : selectedAmcs.length === 1
+                ? selectedAmcs[0]
+                : `${selectedAmcs[0]} +${selectedAmcs.length - 1} more`}
+          </span>
+          <ChevronsUpDown className="text-muted-foreground size-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] min-w-[280px] p-0"
+        align="start"
+      >
+        <Command>
+          <CommandInput placeholder="Search AMCs…" className="h-9" />
+          <CommandList>
+            <CommandEmpty>No AMCs found.</CommandEmpty>
+            <CommandGroup>
+              {availableAmcs.map((amc) => {
+                const isSelected = selectedAmcs.includes(amc)
+                return (
+                  <CommandItem
+                    key={amc}
+                    value={amc}
+                    onSelect={() => toggleAmc(amc)}
+                    className="flex cursor-pointer items-center gap-2 px-2.5 py-1.5"
+                  >
+                    <div
+                      className={cn(
+                        'border-primary flex size-4 items-center justify-center rounded-sm border transition-colors',
+                        isSelected
+                          ? 'bg-primary text-white'
+                          : 'bg-transparent opacity-50'
+                      )}
+                    >
+                      {isSelected && <Check className="size-3" />}
+                    </div>
+                    <span className="truncate text-sm">{amc}</span>
+                  </CommandItem>
+                )
+              })}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 export function FilterPanel({
   currentFilters,
   availableAmcs,
   onFilterChange,
 }: FilterPanelProps) {
-  const [amcOpen, setAmcOpen] = useState(false)
-  const [amcSearch, setAmcSearch] = useState('')
   const selectedAmcs = currentFilters.amc
     ? currentFilters.amc.split(',').filter(Boolean)
     : []
@@ -54,34 +139,8 @@ export function FilterPanel({
     onFilterChange({ category: 'all', amc: '', q: '' })
   }
 
-  const filteredAmcs = amcSearch
-    ? availableAmcs.filter((a) =>
-        a.toLowerCase().includes(amcSearch.toLowerCase())
-      )
-    : availableAmcs
-
-  // Click-outside: close the AMC dropdown
-  const amcDropdownRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!amcOpen) return
-    function handleOutsideClick(e: MouseEvent | TouchEvent) {
-      if (
-        amcDropdownRef.current &&
-        !amcDropdownRef.current.contains(e.target as Node)
-      ) {
-        setAmcOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleOutsideClick)
-    document.addEventListener('touchstart', handleOutsideClick)
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick)
-      document.removeEventListener('touchstart', handleOutsideClick)
-    }
-  }, [amcOpen])
-
   // Shared filter content for both desktop and mobile
-  const filterContent = (
+  const renderFilterContent = (isMobile = false) => (
     <>
       {/* Category pills */}
       <div>
@@ -112,111 +171,39 @@ export function FilterPanel({
       </div>
 
       {/* AMC multi-select */}
-      <div className="relative" ref={amcDropdownRef}>
+      <div className="relative">
         <label className="text-muted-foreground mb-2 block text-xs font-semibold tracking-wider uppercase">
           Fund House (AMC)
         </label>
 
-        {/* Selected AMC chips */}
-        {selectedAmcs.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-1.5">
-            {selectedAmcs.map((amc) => (
-              <span
-                key={amc}
-                className="bg-primary/15 text-primary inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
-              >
-                {amc.length > 25 ? amc.slice(0, 25) + '…' : amc}
-                <button
-                  onClick={() => toggleAmc(amc)}
-                  className="hover:bg-primary/20 rounded-full p-0.5"
-                >
-                  <X className="size-3" />
-                </button>
-              </span>
-            ))}
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <AmcSelector
+              selectedAmcs={selectedAmcs}
+              availableAmcs={availableAmcs}
+              toggleAmc={toggleAmc}
+              modal={isMobile}
+            />
           </div>
-        )}
 
-        {/* Dropdown trigger */}
-        <button
-          type="button"
-          id="amc-dropdown-trigger"
-          onClick={() => setAmcOpen(!amcOpen)}
-          aria-haspopup="listbox"
-          aria-expanded={amcOpen}
-          aria-controls="amc-dropdown-panel"
-          className="border-border bg-card text-foreground hover:border-primary/40 flex w-full items-center justify-between rounded-lg border px-3 py-2 text-sm transition-colors"
-        >
-          <span className="text-muted-foreground">
-            {selectedAmcs.length > 0
-              ? `${selectedAmcs.length} selected`
-              : 'Select fund houses…'}
-          </span>
-          <svg
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearAll}
+            disabled={!hasActiveFilters}
+            tabIndex={hasActiveFilters ? 0 : -1}
             className={cn(
-              'text-muted-foreground size-4 transition-transform',
-              amcOpen && 'rotate-180'
+              'hover:border-border h-10 shrink-0 gap-1.5 border border-transparent px-3 text-xs font-semibold transition-opacity duration-200',
+              hasActiveFilters
+                ? 'pointer-events-auto opacity-100'
+                : 'pointer-events-none opacity-0'
             )}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-
-        {/* Dropdown panel */}
-        {amcOpen && (
-          <div
-            id="amc-dropdown-panel"
-            role="listbox"
-            className="border-border bg-card relative z-50 mt-1 w-full rounded-lg border p-2 shadow-xl md:absolute"
-          >
-            <input
-              type="text"
-              placeholder="Search AMCs…"
-              value={amcSearch}
-              onChange={(e) => setAmcSearch(e.target.value)}
-              className="border-border bg-input text-foreground placeholder:text-muted-foreground focus:ring-ring mb-2 w-full rounded-md border px-3 py-1.5 text-sm focus:ring-1 focus:outline-none"
-            />
-            <div className="max-h-48 overflow-y-auto">
-              {filteredAmcs.length === 0 ? (
-                <p className="text-muted-foreground px-2 py-3 text-center text-sm">
-                  No AMCs found
-                </p>
-              ) : (
-                filteredAmcs.map((amc) => (
-                  <label
-                    key={amc}
-                    className="text-foreground hover:bg-accent/20 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedAmcs.includes(amc)}
-                      onChange={() => toggleAmc(amc)}
-                      className="accent-primary size-4"
-                    />
-                    <span className="truncate">{amc}</span>
-                  </label>
-                ))
-              )}
-            </div>
-          </div>
-        )}
+            <X className="size-3.5" />
+            Clear
+          </Button>
+        </div>
       </div>
-
-      {/* Clear all */}
-      {hasActiveFilters && (
-        <Button variant="ghost" size="sm" onClick={clearAll} className="w-fit">
-          <X className="size-3.5" />
-          Clear all filters
-        </Button>
-      )}
     </>
   )
 
@@ -224,7 +211,7 @@ export function FilterPanel({
     <>
       {/* Desktop: visible on md+ */}
       <div className="border-border bg-card/50 hidden space-y-4 rounded-xl border p-4 backdrop-blur-sm md:block">
-        {filterContent}
+        {renderFilterContent(false)}
       </div>
 
       {/* Mobile: bottom sheet */}
@@ -250,7 +237,9 @@ export function FilterPanel({
             <SheetHeader>
               <SheetTitle>Filters</SheetTitle>
             </SheetHeader>
-            <div className="space-y-6 px-4 pb-8">{filterContent}</div>
+            <div className="space-y-6 px-4 pb-8">
+              {renderFilterContent(true)}
+            </div>
           </SheetContent>
         </Sheet>
       </div>

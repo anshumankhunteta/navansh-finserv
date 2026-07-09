@@ -146,7 +146,11 @@ Directory structure:
     │       ├── sheet.tsx
     │       └── slider.tsx
     ├── docs/
-    │   └── mutual-funds.md
+    │   ├── mutual-funds.md
+    │   ├── calculators.md
+    │   ├── blog-cms.md
+    │   ├── enquiry-system.md
+    │   └── CONTRIBUTING.md
     ├── lib/
     │   ├── blog-upload.ts
     │   ├── calculator-store.ts
@@ -164,7 +168,9 @@ Directory structure:
     │       └── navansh-context.md
     ├── .github/
     │   └── workflows/
-    │       └── mf-sync.yml
+    │       ├── ci.yml
+    │       ├── mf-sync.yml
+    │       └── mf-backfill.yml
     └── .husky/
         └── pre-commit
 ```
@@ -181,11 +187,13 @@ Directory structure:
 - **State Sync**: Uses Zustand with a custom hydration guard (`useHydrateStore`) to prevent Next.js SSR mismatches.
 - **Shareability**: Granular state management supports URL-based restoration (`?calc=sip&amt=...`), allowing agents and users to share pre-filled calculation states.
 
-### 3. Mutual Fund Screener & Cron Sync
+### 3. Mutual Fund Screener & Automated Data Pipeline
 - **Screener UI**: Filters by AMCs, categories, and sorts by CAGR. Employs `@tanstack/react-virtual` to maintain 60fps scrolling on large scheme tables.
-- **Data Pipeline**: 
-  - Syncs daily from `mfapi.in` via a Vercel Cron Job (`POST /api/mf/sync`). Protected by `x-cron-secret`.
-  - Fetches metadata and NAV history, automatically prunes "dead" funds (no NAV updates >6 months), and recalculates 1Y/3Y/5Y CAGR in a single batch upsert to avoid N+1 queries.
+- **Data Pipeline** (three-tier automation):
+  - **Seed** (`scripts/seed-mf.ts`): One-time discovery of all schemes for configured AMCs via the mfapi.in search endpoint. Writes a local JSON cache (`scripts/mf-seed-cache.json`) so failed Supabase upserts can be replayed with `--from-cache`.
+  - **Biweekly backfill** (GitHub Actions `mf-backfill.yml`, 1st & 15th of each month): Runs `scripts/backfill-returns.ts` directly on a CI runner. Fetches the complete NAV history per scheme, calculates 1Y/3Y/5Y CAGR from the full dataset, downsamples to ≤ 1,000 points/scheme (to stay within Supabase's PostgREST row limit), and replaces stored rows via DELETE + INSERT. Prunes dead funds (no NAV update > 6 months).
+  - **Daily sync** (GitHub Actions `mf-sync.yml`, weekdays at 06:00 & 14:20 IST): Triggers `POST /api/mf/sync`. Fetches only the latest NAV per scheme and recalculates returns in a single batched upsert. Protected by `x-cron-secret`.
+  - Both GH Actions workflows support a `workflow_dispatch` input to target **dev or prod** on demand.
 
 ### 4. Blog CMS
 - **Custom Admin**: Authenticated via Supabase (`/blog/admin`). Uses RLS to ensure public users only query `published = true` rows.
@@ -212,11 +220,13 @@ Calculators parse `window.location.search` (`?calc=sip&amt=...`) to dynamically 
 
 
 ### 3. Mutual Fund Data Pipeline & DOM Recycling
-**Ingestion & Processing:**
-Automated via GitHub Actions cron (`00:30 UTC` / `08:50 UTC`) triggering `POST /api/mf/sync` route (secured by `x-cron-secret`). 
-**Performance Optimization:** The sync controller actively avoids N+1 database queries. It fetches all `mf_nav` rows simultaneously, constructs an in-memory `Map` keyed by `scheme_code`, computes the 1Y/3Y/5Y CAGR via `calculateReturns()`, and pushes a single batched upsert to the `mf_schemes` table.
+**Ingestion & Processing (layered automation):**
+- **Seed** (`pnpm seed:mf`): Discovers schemes via targeted search queries against mfapi.in (15-result cap bypassed with multiple queries per AMC). Deduplicates and upserts into Supabase. Writes `scripts/mf-seed-cache.json` for crash recovery (`--from-cache` flag replays upserts without re-hitting the API).
+- **Biweekly backfill** (GitHub Actions `mf-backfill.yml`): Runs on the CI runner (not via HTTP — the script takes 5–10 min and is too heavy for a serverless function). Fetches the entire NAV history per scheme from mfapi.in, calculates CAGR from the full raw data, downsamples to ≤ 1,000 rows/scheme, and replaces stored rows (DELETE + INSERT). Dead fund pruning runs here. Targets prod on schedule; dev or prod selectable via `workflow_dispatch` input.
+- **Daily sync** (GitHub Actions `mf-sync.yml` → `POST /api/mf/sync`): Lightweight — fetches only the latest NAV, fetches all `mf_nav` rows in one query, groups in-memory by `scheme_code` via a `Map`, computes 1Y/3Y/5Y CAGR with `calculateReturns()`, and pushes a single batched upsert to `mf_schemes`. Zero N+1 queries.
+
 **UI Rendering:**
-The frontend utilizes `@tanstack/react-virtual` to recycle DOM nodes, allowing the screener to maintain 60fps scrolling while rendering thousands of scheme rows.
+The frontend utilises `@tanstack/react-virtual` to recycle DOM nodes, allowing the screener to maintain 60fps scrolling while rendering hundreds of scheme rows.
 
 
 ### 4. Blog CMS Internal Abstraction

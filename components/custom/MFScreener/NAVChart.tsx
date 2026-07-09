@@ -260,7 +260,7 @@ export function NAVChart({
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={isModal ? 300 : 400}>
-            <LineChart data={chartData}>
+            <LineChart key={range} data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="var(--border)"

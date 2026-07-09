@@ -3,10 +3,15 @@
 import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { cn } from '@/lib/utils'
-import type { MFScheme } from '@/lib/mf-utils'
 import { COLUMNS } from './SortControls'
+import {
+  TABLE_ROW_HEIGHT,
+  TABLE_VISIBLE_ROWS,
+  TABLE_CONTAINER_HEIGHT,
+} from '@/lib/mf-utils'
+import type { MFScheme } from '@/lib/mf-utils'
 
-const ROW_HEIGHT = 56
+const ROW_HEIGHT = TABLE_ROW_HEIGHT
 
 interface SchemeTableProps {
   data: MFScheme[]
@@ -70,7 +75,10 @@ function categoryBadge(category: string | null): {
 
 function SkeletonRow() {
   return (
-    <div className="border-border flex h-[56px] w-full animate-pulse items-center gap-4 border-b px-4">
+    <div
+      className="border-border flex w-full animate-pulse items-center gap-4 border-b px-4"
+      style={{ height: `${TABLE_ROW_HEIGHT}px` }}
+    >
       {/* Scheme Name */}
       <div className={cn('flex flex-col gap-2', COLUMNS[0].className)}>
         <div className="bg-muted h-4 w-3/4 rounded" />
@@ -114,13 +122,13 @@ export function SchemeTable({
     count: data.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_HEIGHT,
-    overscan: 5,
+    overscan: 10,
   })
 
   if (isPending) {
     return (
       <div>
-        {[...Array(5)].map((_, i) => (
+        {[...Array(TABLE_VISIBLE_ROWS)].map((_, i) => (
           <SkeletonRow key={i} />
         ))}
       </div>
@@ -129,7 +137,10 @@ export function SchemeTable({
 
   if (data.length === 0) {
     return (
-      <div className="flex h-[280px] flex-col items-center justify-center py-16 text-center">
+      <div
+        className="flex flex-col items-center justify-center py-16 text-center"
+        style={{ height: `${TABLE_CONTAINER_HEIGHT}px` }}
+      >
         <div className="mb-3 text-4xl">🔍</div>
         <p className="text-foreground text-lg font-medium">No schemes found</p>
         <p className="text-muted-foreground mt-1 text-sm">
@@ -143,7 +154,7 @@ export function SchemeTable({
     <div
       ref={scrollRef}
       className="overflow-y-auto"
-      style={{ height: '280px' }}
+      style={{ height: `${TABLE_CONTAINER_HEIGHT}px` }}
     >
       <div
         style={{
