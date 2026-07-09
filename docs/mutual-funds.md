@@ -63,25 +63,32 @@ A `—` in any return column means there is insufficient NAV history to calculat
 ```
 External API (mfapi.in)
         │
-        │  One-time backfill (full history)
-        │  Daily cron (latest NAV only)
-        ▼
-  Supabase PostgreSQL
-  ┌─────────────┐      ┌─────────┐
-  │  mf_schemes │ ─FK─ │  mf_nav │
-  └─────────────┘      └─────────┘
+        ├── One-time / on-demand ──────────────────────────────────────────
+        │   seed-mf.ts          discovers schemes, seeds latest NAV
         │
-        ▼
-  Next.js Server Component (page.tsx)
-  → Queries, paginates, joins latest NAV
+        ├── Biweekly (GitHub Actions: mf-backfill.yml) ──────────────────
+        │   backfill-returns.ts  full NAV history + CAGR recalculation
         │
-        ▼
-  MFScreener (Client Component)
-  → URL-driven filter/sort state
-  → SchemeTable (virtualized, @tanstack/react-virtual)
-  → NAVChart (lazy-loaded Recharts modal)
-        │
-  /api/mf/[schemeCode]/history  ← fetches from mf_nav
+        └── Daily (GitHub Actions → HTTP: mf-sync.yml) ────────────────
+            POST /api/mf/sync   latest NAV only + lightweight returns update
+                    │
+                    ▼
+          Supabase PostgreSQL
+          ┌─────────────┐      ┌─────────┐
+          │  mf_schemes │ ─FK─ │  mf_nav │
+          └─────────────┘      └─────────┘
+                  │
+                  ▼
+          Next.js Server Component (page.tsx)
+          → Queries, paginates, joins latest NAV
+                  │
+                  ▼
+          MFScreener (Client Component)
+          → URL-driven filter/sort state
+          → SchemeTable (virtualized, @tanstack/react-virtual)
+          → NAVChart (lazy-loaded Recharts modal)
+                  │
+          /api/mf/[schemeCode]/history  ← fetches from mf_nav
 ```
 
 ### Key Design Decisions
@@ -90,6 +97,7 @@ External API (mfapi.in)
 - **No external API calls at page-view time** — NAV history is stored locally in Supabase. No risk of rate-limiting during user browsing.
 - **Virtualized table** — the table renders only visible rows using `@tanstack/react-virtual` (56px row height, 5 overscan) so 500+ schemes render smoothly.
 - **Lazy-loaded chart** — `NAVChart` is imported via `next/dynamic` with `ssr: false`, so it does not bloat the initial page bundle.
+- **Layered automation** — three separate cron tiers handle different concerns: daily sync (cheap, HTTP-triggered) handles freshness; biweekly backfill (expensive, runner-executed) handles accuracy and history depth; seed runs only on-demand when AMC lists change.
 
 ---
 
@@ -109,9 +117,11 @@ seed-mf.ts
   6. Upsert latest NAV into mf_nav
 ```
 
-### Phase 2: Backfill (one-time after seed)
+### Phase 2: Recurring Backfill (biweekly via GitHub Actions, or on-demand)
 
 Fetches the **complete daily NAV history** for every scheme, calculates returns from the full dataset, then stores a **downsampled** subset of ≤ 1,000 points per scheme. This powers the chart while staying within Supabase's PostgREST default row limit.
+
+Runs automatically every two weeks via [`.github/workflows/mf-backfill.yml`](file:///c:/Users/khunt/Documents/GitHub/navansh-finserv-v0.3/.github/workflows/mf-backfill.yml) (1st and 15th of each month, 02:00 UTC). Can also be triggered manually from the GitHub Actions tab or run locally with `pnpm backfill:returns`.
 
 ```
 backfill-returns.ts
@@ -243,33 +253,38 @@ Then re-run the seed and backfill scripts.
 
 | Command | Script | What it does |
 |---------|--------|-------------|
-| `pnpm seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV |
+| `pnpm seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV, writes `scripts/mf-seed-cache.json` |
+| `pnpm seed:mf -- --from-cache` | `scripts/seed-mf.ts` | Skips API discovery/fetch, reads `mf-seed-cache.json` and upserts directly — fast retry when Supabase was unreachable |
 | `pnpm backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
 
 ### `pnpm seed:mf`
 
 ```
 📥  Discovering schemes via search queries …
-   → HDFC Mutual Fund: 221 unique schemes
-   → SBI Mutual Fund: 189 unique schemes
-   → Motilal Oswal Mutual Fund: 92 unique schemes
-   → 502 total unique schemes discovered
+   → HDFC Mutual Fund: ~350 unique schemes
+   → SBI Mutual Fund: ~280 unique schemes
+   → Motilal Oswal Mutual Fund: ~76 unique schemes
+   → 706 total unique schemes discovered
 
 💾  Upserting scheme names into mf_schemes …
-   → 502 / 502
+   → 706 / 706
 
 📥  Fetching latest NAV + metadata per scheme …
-   → 100 / 502 schemes processed
-   → 200 / 502 schemes processed
+   → 100 / 706 schemes processed
+   → 200 / 706 schemes processed
    ...
 
-✅  Seed complete in 87.3s
+✅  Seed complete in 148.7s
    AMCs: HDFC Mutual Fund, SBI Mutual Fund, Motilal Oswal Mutual Fund
-   Schemes seeded:    502
-   Metadata updated:  502
-   NAV rows inserted: 502
+   Schemes seeded:    706
+   Metadata updated:  706
+   NAV rows inserted: 706
    Fetch errors:      0
 ```
+
+> **Note on the 2026-07-06 query refinement**: The discovery count jumped from 502 → 706 (+41%) after a systematic overhaul of the search queries. See the Gotchas section for the rationale.
+
+> **Local cache**: Every full run writes a `scripts/mf-seed-cache.json` file containing all discovered schemes, enriched metadata, and latest NAV rows. If Supabase upserts fail, fix the connection issue and re-run with `pnpm seed:mf -- --from-cache` to replay the upserts without hitting the API again (completes in seconds instead of ~150s).
 
 ### `pnpm backfill:returns`
 
@@ -351,10 +366,14 @@ jobs:
 
 | Secret | Value |
 |--------|-------|
-| `CRON_SECRET` | Same value as your `.env.local` `CRON_SECRET` |
-| `APP_URL` | Your production URL, e.g. `https://navansh-finserv.vercel.app` |
+| `PROD_CRON_SECRET` | Same value as your prod `.env.local` `CRON_SECRET` |
+| `PROD_APP_URL` | Your production URL, e.g. `https://navansh-finserv.vercel.app` |
+| `DEV_CRON_SECRET` | Same value as your dev `.env.local` `CRON_SECRET` |
+| `DEV_APP_URL` | Your dev/preview URL, e.g. a Vercel preview branch URL |
 
-> The `workflow_dispatch` trigger lets you manually run a sync from the GitHub Actions tab — useful after adding new AMCs.
+> The `workflow_dispatch` trigger lets you manually run a sync from the GitHub Actions tab and choose the target environment (dev / prod). Scheduled runs always target prod.
+
+> **Dev target note**: The sync job hits an HTTP endpoint, so the dev target only works when you have a deployed dev instance (e.g. a Vercel preview deployment for a `develop` or `staging` branch). It will not work against `localhost`.
 
 ### Option C: cron-job.org (Free, no GitHub required)
 
@@ -366,10 +385,95 @@ jobs:
    - **Headers**: Add `x-cron-secret: <your-secret>`
 3. Save and enable
 
-### Testing the Sync Manually
+### Option D: GitHub Actions — Biweekly Full Backfill (separate from daily sync)
+
+This runs the Node.js `backfill-returns.ts` script **directly on a GitHub Actions runner** — not via HTTP. It is necessary because the backfill takes 5–10 minutes and makes 700+ API calls to mfapi.in, far exceeding any serverless function timeout. The `workflow_dispatch` input lets you choose whether to run against dev or prod.
+
+The workflow file is already in the repo at [`.github/workflows/mf-backfill.yml`](file:///c:/Users/khunt/Documents/GitHub/navansh-finserv-v0.3/.github/workflows/mf-backfill.yml). Abbreviated:
+
+```yaml
+on:
+  schedule:
+    - cron: '0 2 1,15 * *'   # always targets prod
+  workflow_dispatch:
+    inputs:
+      environment:             # choose dev or prod when triggering manually
+        type: choice
+        options: [dev, prod]
+        default: prod
+
+jobs:
+  backfill:
+    steps:
+      # ... checkout, pnpm, node setup ...
+      - name: Resolve target environment credentials
+        run: |
+          TARGET="${{ inputs.environment || 'prod' }}"
+          if [ "$TARGET" = "prod" ]; then
+            echo "SUPABASE_URL=${{ secrets.PROD_SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_KEY=${{ secrets.PROD_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          else
+            echo "SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}" >> $GITHUB_ENV
+            echo "SUPABASE_KEY=${{ secrets.DEV_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          fi
+      - run: pnpm backfill:returns
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_KEY }}
+```
+
+> **Step order matters**: `pnpm/action-setup` must run *before* `setup-node` so that Node can detect the pnpm store location and enable the `cache: 'pnpm'` optimisation. Reversing the order silently disables caching.
+
+> **dotenv in CI**: The script calls `dotenv.config({ path: '.env.local' })` at startup. In CI there is no `.env.local` file — dotenv silently skips it and the secrets set in `$GITHUB_ENV` are already present in `process.env`, so no code change is required.
+
+**Required GitHub Secrets** (Settings → Secrets → Actions):
+
+| Secret | Value |
+|--------|-------|
+| `DEV_SUPABASE_URL` | Dev Supabase project URL |
+| `DEV_SERVICE_ROLE_KEY` | Dev service-role key (Supabase → Settings → API) |
+| `PROD_SUPABASE_URL` | Prod Supabase project URL |
+| `PROD_SERVICE_ROLE_KEY` | Prod service-role key |
+
+---
+
+### Automation summary
+
+| Workflow | File | Scheduled trigger | Manual env selection | Duration | Purpose |
+|----------|------|------------------|---------------------|----------|---------|
+| Daily NAV Sync | `mf-sync.yml` | Weekdays 00:30 + 08:50 UTC → prod | dev / prod | ~30s | Keep latest NAV current |
+| Biweekly Backfill | `mf-backfill.yml` | 1st & 15th at 02:00 UTC → prod | dev / prod | ~5–10 min | Full history accuracy + dead fund pruning |
+
+The two jobs are complementary: the daily sync handles freshness cheaply; the biweekly backfill corrects drift in older history and processes any newly listed schemes that were missed between seed runs.
+
+---
+
+### Testing workflows before merging to main
+
+GitHub Actions `workflow_dispatch` runs on **whichever branch you select** — not just `main`. This is the primary testing mechanism:
+
+**Step-by-step for testing a workflow change:**
+1. Push your branch to GitHub (e.g. `git push origin feature/fix-backfill`)
+2. Go to **Actions tab → select the workflow → Run workflow**
+3. In the dropdown, select your feature branch instead of `main`
+4. Choose `dev` as the environment (never test against prod)
+5. Watch the live log
+
+This runs your *branch’s version* of the workflow file, so you’re testing exactly what will land on `main` after merge.
+
+**Testing the backfill locally (fastest iteration loop):**
 
 ```bash
-# From your local machine (requires the app running or deployed)
+# This is identical to what the CI runner does — no Docker required
+pnpm backfill:returns
+```
+
+Your `.env.local` already has dev credentials, so this hits the dev DB. The script output is identical to what you’d see in the Actions log.
+
+**Testing the sync endpoint locally:**
+
+```bash
+# Start the dev server first, then:
 curl -X POST \
   -H "x-cron-secret: YOUR_CRON_SECRET" \
   http://localhost:3000/api/mf/sync
@@ -377,6 +481,26 @@ curl -X POST \
 # Expected response:
 # {"updated":478,"failed":0,"pruned":24,"duration_ms":34821}
 ```
+
+**Local runner with `act` (advanced, requires Docker):**
+
+[`act`](https://github.com/nektos/act) runs GitHub Actions workflows locally using Docker containers. Useful when you need to test the full CI step sequence (checkout → pnpm install → script) without pushing to GitHub:
+
+```bash
+# Install (Windows, via Chocolatey)
+choco install act-cli
+
+# Dry-run the backfill workflow (--dryrun skips actual execution)
+act workflow_dispatch --dryrun -W .github/workflows/mf-backfill.yml
+
+# Run it for real (supply secrets via .secrets file or --secret flag)
+act workflow_dispatch \
+  --secret NEXT_PUBLIC_SUPABASE_URL=<url> \
+  --secret SUPABASE_SERVICE_ROLE_KEY=<key> \
+  -W .github/workflows/mf-backfill.yml
+```
+
+> `act` has known limitations with pnpm cache steps on Windows hosts. If it fails on the cache step, add `--no-cache-server` or skip directly to the local `pnpm backfill:returns` approach instead.
 
 ---
 
@@ -517,7 +641,15 @@ Returns `503 Service Unavailable` if `CRON_SECRET` env var is not set on the ser
 
 ## Gotchas & Known Limitations
 
-- **`mfapi.in` search caps at 15 results per query** — the seed script uses multiple targeted queries per AMC (e.g. `"HDFC Equity"`, `"HDFC Debt"`) to work around this. If you add a new AMC, make sure to add enough query variants to capture all scheme types.
+- **`mfapi.in` search caps at 15 results per query** — the seed script uses multiple targeted queries per AMC to work around this. The query strategy was overhauled on 2026-07-06 after empirical testing:
+
+  **Key rules for writing queries:**
+  1. **Match on full scheme name substrings** — the API does a substring search on the complete scheme name (e.g. `"HDFC Midcap Opportunities Fund - Direct - Growth"`). A query only matches if it appears as a contiguous substring in that name.
+  2. **Use the full fund-house prefix for AMCs with a compound name** — Motilal Oswal schemes are all named `"Motilal Oswal <type>"`. Queries like `"Motilal Nifty"` or `"Motilal Midcap"` return **zero results** because `"Oswal"` sits between the two words in the actual name. Always use `"Motilal Oswal Nifty"`, `"Motilal Oswal Midcap"`, etc.
+  3. **Avoid plan-suffix terms as standalone queries** — words like `"Growth"`, `"Dividend"`, `"IDCW"` appear in the plan suffix of *every* scheme (`"... - Growth Option"`). A query of `"HDFC Growth"` will return 15 random HDFC schemes with no useful discrimination, wasting a query slot. Removed: `HDFC Growth`, `HDFC Dividend`, `SBI Growth`, `SBI Dividend`.
+  4. **Use category-specific terms** — queries like `"HDFC Flexi Cap"`, `"HDFC Balanced Advantage"`, `"SBI Midcap"`, `"Motilal Oswal Business"` each surface a distinct, non-overlapping set of schemes. After the 2026-07-06 update, HDFC has 39 queries, SBI has 38, and Motilal Oswal has 22 — covering all active open-ended fund categories.
+
+  If you add a new AMC, make sure to add enough query variants to capture all scheme types, following the rules above.
 
 - **`/mf/latest` is unreliable for large fetches** — the endpoint that returns all schemes + latest NAVs in one call gets connection-reset at ~128KB. We deliberately avoid it and use per-scheme fetches instead.
 

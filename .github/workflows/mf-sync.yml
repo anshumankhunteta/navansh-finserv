@@ -1,19 +1,55 @@
 name: Daily MF NAV Sync
 
+# Runs twice on weekdays to keep latest NAV values current.
+# Scheduled runs always target production. Manual runs let you choose dev or prod.
+#
+# NOTE: The 'dev' target requires a deployed dev instance (e.g. a Vercel
+# preview deployment). It will not work against localhost.
+#
+# Required GitHub Secrets (Settings → Secrets → Actions):
+#   DEV_APP_URL       Base URL of the dev deployment, e.g. https://navansh-dev.vercel.app
+#   DEV_CRON_SECRET   CRON_SECRET value from the dev .env
+#   PROD_APP_URL      Base URL of the prod deployment, e.g. https://navansh-finserv.vercel.app
+#   PROD_CRON_SECRET  CRON_SECRET value from the prod .env
+
 on:
   schedule:
     - cron: '30 0 * * 1-5'     # 00:30 UTC = 6:00 AM IST, weekdays
     - cron: '50 8 * * 1-5'     # 08:50 UTC = 2:20 PM IST, weekdays
-  workflow_dispatch:           # allow manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target deployment'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - prod
 
 jobs:
   sync:
+    name: Trigger sync (${{ github.event_name == 'schedule' && 'prod' || inputs.environment }})
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve target environment
+        run: |
+          TARGET="${{ github.event_name == 'schedule' && 'prod' || inputs.environment }}"
+          echo "TARGET=$TARGET" >> $GITHUB_ENV
+
+          if [ "$TARGET" = "prod" ]; then
+            echo "APP_URL=${{ secrets.PROD_APP_URL }}" >> $GITHUB_ENV
+            echo "CRON_SECRET=${{ secrets.PROD_CRON_SECRET }}" >> $GITHUB_ENV
+          else
+            echo "APP_URL=${{ secrets.DEV_APP_URL }}" >> $GITHUB_ENV
+            echo "CRON_SECRET=${{ secrets.DEV_CRON_SECRET }}" >> $GITHUB_ENV
+          fi
+
       - name: Trigger MF Sync
         run: |
+          echo "▶  Syncing $TARGET at $APP_URL"
           curl -sS -f --max-time 60 -X POST \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: $CRON_SECRET" \
             -H "Content-Type: application/json" \
-            "${{ secrets.APP_URL }}/api/mf/sync" \
+            "$APP_URL/api/mf/sync" \
             | jq . || exit 1
