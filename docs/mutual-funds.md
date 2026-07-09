@@ -121,7 +121,7 @@ seed-mf.ts
 
 Fetches the **complete daily NAV history** for every scheme, calculates returns from the full dataset, then stores a **downsampled** subset of ≤ 1,000 points per scheme. This powers the chart while staying within Supabase's PostgREST default row limit.
 
-Runs automatically every two weeks via [`.github/workflows/mf-backfill.yml`](file:///c:/Users/khunt/Documents/GitHub/navansh-finserv-v0.3/.github/workflows/mf-backfill.yml) (1st and 15th of each month, 02:00 UTC). Can also be triggered manually from the GitHub Actions tab or run locally with `pnpm backfill:returns`.
+Runs automatically every two weeks via [`.github/workflows/mf-backfill.yml`](../.github/workflows/mf-backfill.yml) (1st and 15th of each month, 02:00 UTC). This workflow can also be triggered manually from the GitHub Actions tab, or the script can be run locally using `pnpm backfill:returns`.
 
 ```
 backfill-returns.ts
@@ -389,7 +389,7 @@ jobs:
 
 This runs the Node.js `backfill-returns.ts` script **directly on a GitHub Actions runner** — not via HTTP. It is necessary because the backfill takes 5–10 minutes and makes 700+ API calls to mfapi.in, far exceeding any serverless function timeout. The `workflow_dispatch` input lets you choose whether to run against dev or prod.
 
-The workflow file is already in the repo at [`.github/workflows/mf-backfill.yml`](file:///c:/Users/khunt/Documents/GitHub/navansh-finserv-v0.3/.github/workflows/mf-backfill.yml). Abbreviated:
+The workflow file is already in the repo at [`.github/workflows/mf-backfill.yml`](../.github/workflows/mf-backfill.yml). Abbreviated:
 
 ```yaml
 on:
@@ -647,7 +647,7 @@ Returns `503 Service Unavailable` if `CRON_SECRET` env var is not set on the ser
   1. **Match on full scheme name substrings** — the API does a substring search on the complete scheme name (e.g. `"HDFC Midcap Opportunities Fund - Direct - Growth"`). A query only matches if it appears as a contiguous substring in that name.
   2. **Use the full fund-house prefix for AMCs with a compound name** — Motilal Oswal schemes are all named `"Motilal Oswal <type>"`. Queries like `"Motilal Nifty"` or `"Motilal Midcap"` return **zero results** because `"Oswal"` sits between the two words in the actual name. Always use `"Motilal Oswal Nifty"`, `"Motilal Oswal Midcap"`, etc.
   3. **Avoid plan-suffix terms as standalone queries** — words like `"Growth"`, `"Dividend"`, `"IDCW"` appear in the plan suffix of *every* scheme (`"... - Growth Option"`). A query of `"HDFC Growth"` will return 15 random HDFC schemes with no useful discrimination, wasting a query slot. Removed: `HDFC Growth`, `HDFC Dividend`, `SBI Growth`, `SBI Dividend`.
-  4. **Use category-specific terms** — queries like `"HDFC Flexi Cap"`, `"HDFC Balanced Advantage"`, `"SBI Midcap"`, `"Motilal Oswal Business"` each surface a distinct, non-overlapping set of schemes. After the 2026-07-06 update, HDFC has 39 queries, SBI has 38, and Motilal Oswal has 22 — covering all active open-ended fund categories.
+  4. **Use category-specific terms** — queries like `"HDFC Flexi Cap"`, `"HDFC Balanced Advantage"`, `"SBI Midcap"`, `"Motilal Oswal Business"` each surface a distinct, non-overlapping set of schemes. After the 2026-07-06 update, HDFC has 43 queries, SBI has 42, and Motilal Oswal has 21 — covering all active open-ended fund categories.
 
   If you add a new AMC, make sure to add enough query variants to capture all scheme types, following the rules above.
 

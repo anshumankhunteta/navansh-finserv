@@ -1,3 +1,5 @@
+import { TABLE_ROW_HEIGHT, TABLE_VISIBLE_ROWS } from '@/lib/mf-utils'
+
 export default function MutualFundsLoading() {
   return (
     <section className="mx-auto max-w-7xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
@@ -51,10 +53,11 @@ export default function MutualFundsLoading() {
         </div>
 
         {/* Rows — h-[56px] matches ROW_HEIGHT = 56 */}
-        {Array.from({ length: 10 }, (_, i) => (
+        {Array.from({ length: TABLE_VISIBLE_ROWS }, (_, i) => (
           <div
             key={i}
-            className="border-border flex h-[56px] w-full items-center gap-4 border-b px-4"
+            className="border-border flex w-full items-center gap-4 border-b px-4"
+            style={{ height: `${TABLE_ROW_HEIGHT}px` }}
           >
             <div className="flex min-w-[200px] flex-1 flex-col gap-2">
               <div className="bg-muted h-4 w-3/4 animate-pulse rounded" />

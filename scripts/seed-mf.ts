@@ -269,10 +269,10 @@ interface SeedCache {
   navRows: NavRow[]
 }
 
-function saveCache(data: SeedCache): void {
+function saveCache(data: SeedCache, filePath: string = CACHE_FILE): void {
   try {
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(data, null, 2), 'utf-8')
-    console.log(`💾  Cache saved → ${CACHE_FILE}\n`)
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8')
+    console.log(`💾  Cache saved → ${filePath}\n`)
   } catch (err) {
     console.warn(`   ⚠ Could not write cache: ${(err as Error).message}`)
   }
@@ -603,14 +603,19 @@ async function main() {
     process.exit(1)
   }
 
-  // Save a partial cache now (schemes list only) so that even if Step 3
-  // fails partway, the discovery work is not lost.
-  saveCache({
-    createdAt: new Date().toISOString(),
-    schemes,
-    schemeMetadata: [],
-    navRows: [],
-  })
+  // Save a partial cache now to a temporary file so that if Step 3 fails
+  // partway, we don't lose the discovery work, but we also don't overwrite
+  // the main cache file with empty metadata/navRows arrays.
+  const TEMP_CACHE_FILE = CACHE_FILE + '.tmp'
+  saveCache(
+    {
+      createdAt: new Date().toISOString(),
+      schemes,
+      schemeMetadata: [],
+      navRows: [],
+    },
+    TEMP_CACHE_FILE
+  )
 
   // 2. Upsert scheme names
   await upsertSchemeNames(schemes)
@@ -625,12 +630,27 @@ async function main() {
   } = await fetchAndUpsertLatestNav(schemes)
 
   // 4. Overwrite cache with the full dataset (metadata + NAV rows)
-  saveCache({
-    createdAt: new Date().toISOString(),
-    schemes,
-    schemeMetadata: allSchemeMetadata,
-    navRows: allNavRows,
-  })
+  if (allSchemeMetadata.length > 0) {
+    saveCache({
+      createdAt: new Date().toISOString(),
+      schemes,
+      schemeMetadata: allSchemeMetadata,
+      navRows: allNavRows,
+    })
+
+    // Clean up temporary file
+    try {
+      if (fs.existsSync(TEMP_CACHE_FILE)) {
+        fs.unlinkSync(TEMP_CACHE_FILE)
+      }
+    } catch {
+      // ignore unlink error
+    }
+  } else {
+    console.warn(
+      '   ⚠ fetchAndUpsertLatestNav returned no metadata. Skipping final cache overwrite to preserve existing cache.'
+    )
+  }
 
   // 5. Summary
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1)
