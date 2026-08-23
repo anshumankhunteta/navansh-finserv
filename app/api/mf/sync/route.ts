@@ -139,29 +139,61 @@ export async function POST(request: Request) {
 
       // Prune dead funds — if latest NAV is older than STALE_MONTHS, delete
       if (isSchemeStale(latestNavPoint.date)) {
-        await supabase
+        const { error: delNavErr } = await supabase
           .from('mf_nav')
           .delete()
           .eq('scheme_code', meta.scheme_code)
-        await supabase
+        if (delNavErr) {
+          console.error(
+            `   ⚠ Failed to delete NAV rows for stale scheme ${meta.scheme_code}:`,
+            delNavErr.message
+          )
+          failed++
+          continue // don't delete mf_schemes if mf_nav deletion failed
+        }
+        const { error: delSchemeErr } = await supabase
           .from('mf_schemes')
           .delete()
           .eq('scheme_code', meta.scheme_code)
-        pruned++
+        if (delSchemeErr) {
+          console.error(
+            `   ⚠ Failed to delete stale scheme ${meta.scheme_code}:`,
+            delSchemeErr.message
+          )
+          failed++
+        } else {
+          pruned++ // only count after both deletions succeed
+        }
         continue
       }
 
       // Prune non-Growth-Regular variants (Direct, IDCW, Dividend) — safety net
       if (!isGrowthRegular(meta.scheme_name)) {
-        await supabase
+        const { error: delNavErr } = await supabase
           .from('mf_nav')
           .delete()
           .eq('scheme_code', meta.scheme_code)
-        await supabase
+        if (delNavErr) {
+          console.error(
+            `   ⚠ Failed to delete NAV rows for non-Growth scheme ${meta.scheme_code}:`,
+            delNavErr.message
+          )
+          failed++
+          continue // don't delete mf_schemes if mf_nav deletion failed
+        }
+        const { error: delSchemeErr } = await supabase
           .from('mf_schemes')
           .delete()
           .eq('scheme_code', meta.scheme_code)
-        pruned++
+        if (delSchemeErr) {
+          console.error(
+            `   ⚠ Failed to delete non-Growth scheme ${meta.scheme_code}:`,
+            delSchemeErr.message
+          )
+          failed++
+        } else {
+          pruned++ // only count after both deletions succeed
+        }
         continue
       }
 

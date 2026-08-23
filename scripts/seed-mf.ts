@@ -563,9 +563,15 @@ async function upsertFromCache(
     `   → ${metaUpdated} / ${cache.schemeMetadata.length} scheme metadata rows upserted (Growth-Regular only)\n`
   )
 
-  // Upsert NAV rows
+  // Upsert NAV rows — only for schemes that passed the Growth-Regular filter
+  // qualifiedMeta was already filtered above; reuse its scheme_codes as the
+  // canonical allow-list so no orphan NAV rows are written for excluded schemes.
+  const qualifiedCodes = new Set(qualifiedMeta.map((m) => m.scheme_code))
+  const qualifiedNavRows = cache.navRows.filter((r) =>
+    qualifiedCodes.has(r.scheme_code)
+  )
   console.log('💾  Upserting NAV rows …')
-  for (const batch of chunk(cache.navRows, UPSERT_BATCH)) {
+  for (const batch of chunk(qualifiedNavRows, UPSERT_BATCH)) {
     const { error } = await supabase.from('mf_nav').upsert(batch, {
       onConflict: 'scheme_code,nav_date',
       ignoreDuplicates: false,
@@ -573,7 +579,9 @@ async function upsertFromCache(
     if (error) console.error('   ❌ NAV upsert error:', error.message)
     else navInserted += batch.length
   }
-  console.log(`   → ${navInserted} NAV rows upserted\n`)
+  console.log(
+    `   → ${navInserted} / ${cache.navRows.length} NAV rows upserted (Growth-Regular only)\n`
+  )
 
   return { navInserted, metaUpdated }
 }
@@ -629,7 +637,10 @@ async function pruneNonGrowthFromDb(): Promise<void> {
       .from('mf_nav')
       .delete()
       .in('scheme_code', batch)
-    if (navErr) console.error('   ❌ mf_nav delete error:', navErr.message)
+    if (navErr) {
+      console.error('   ❌ mf_nav delete error:', navErr.message)
+      continue // don't delete mf_schemes if mf_nav deletion failed
+    }
 
     const { error: schemeErr } = await supabase
       .from('mf_schemes')
@@ -637,7 +648,7 @@ async function pruneNonGrowthFromDb(): Promise<void> {
       .in('scheme_code', batch)
     if (schemeErr)
       console.error('   ❌ mf_schemes delete error:', schemeErr.message)
-    else deleted += batch.length
+    else deleted += batch.length // only count after both deletions succeed
   }
 
   console.log(`   🗑  Pruned ${deleted} non-Growth-Regular schemes from DB\n`)

@@ -32,6 +32,8 @@ jobs:
     name: Full NAV backfill & returns recalculation (${{ github.event_name == 'schedule' && 'prod' || inputs.environment }})
     runs-on: ubuntu-latest
     timeout-minutes: 30        # backfill takes ~5–10 min; 30 min is a safe ceiling
+    permissions:
+      contents: read           # minimum required by actions/checkout; all others default to none
 
     steps:
       - name: Checkout repository
