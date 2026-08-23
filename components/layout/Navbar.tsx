@@ -47,6 +47,7 @@ const navLinks = [
     label: 'Home',
     icon: Home,
     description: 'Back to homepage',
+    new: false,
   },
   // {
   //   href: '/services',
@@ -59,26 +60,28 @@ const navLinks = [
     label: 'About',
     icon: Users,
     description: 'Learn about us',
+    new: false,
   },
   {
     href: '/contact',
     label: 'Contact',
     icon: Mail,
     description: 'Get in touch',
+    new: false,
   },
   {
     href: '/blog',
     label: 'Blog',
     icon: Book,
     description: 'Read our articles',
-    new: true,
+    new: false,
   },
   {
     href: '/mf',
     label: 'Funds',
     icon: TrendingUp,
     description: 'Explore our offerings',
-    new: true,
+    new: false,
   },
 ]
 
