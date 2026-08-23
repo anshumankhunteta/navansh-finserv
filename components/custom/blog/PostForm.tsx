@@ -42,6 +42,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -358,7 +359,7 @@ export function PostForm({ post }: { post?: Partial<PostRow> | null }) {
                           if (!foundImage) {
                             alert('No image found in clipboard')
                           }
-                        } catch (err) {
+                        } catch {
                           alert(
                             'Please press Ctrl+V (or Cmd+V) to paste from clipboard.'
                           )

@@ -62,7 +62,7 @@ export function AdminPostActions({
     setLoading(true)
     try {
       await duplicatePost(id)
-    } catch (e) {
+    } catch {
       alert('Failed to duplicate post.')
     } finally {
       setLoading(false)

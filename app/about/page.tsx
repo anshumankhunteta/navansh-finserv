@@ -3,8 +3,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { RefractiveContainer } from '@/components/landing/RefractiveContainer'
-import { Target, Users2, Briefcase } from 'lucide-react'
-import { AnimatedCounter } from '@/components/custom/AnimatedCounter'
 
 export const metadata: Metadata = {
   title: 'Our Story',

@@ -115,9 +115,12 @@ seed-mf.ts
   3. Filter: keep only Growth-Regular funds (see below)
   4. Upsert into mf_schemes (scheme_code, scheme_name)
   5. Fetch /mf/{schemeCode}/latest for each scheme (concurrency 10)
-  6. Secondary filter on canonical meta.scheme_name
-  7. Upsert fund metadata into mf_schemes
-  8. Upsert latest NAV into mf_nav
+  6. Secondary filter on canonical meta.scheme_name → builds qualifiedMeta
+  7. Upsert fund metadata into mf_schemes (qualifiedMeta only)
+  8. Derive qualified scheme_code allow-list from qualifiedMeta
+  9. Filter cache.navRows to only scheme_codes in the allow-list
+ 10. Upsert filtered NAV rows into mf_nav
+     (prevents orphan mf_nav rows for schemes excluded in step 6)
 ```
 
 ### Phase 2: Recurring Backfill (biweekly via GitHub Actions, or on-demand)
@@ -131,9 +134,11 @@ backfill-returns.ts
   1. Load all scheme_codes from mf_schemes
   2. Fetch /mf/{schemeCode} for each (concurrency 5 — responses are 100KB–2MB)
   3. Check latest NAV date (data[0].date) — if older than STALE_MONTHS (default 6),
-     delete from mf_nav + mf_schemes and skip (dead fund pruning)
+     atomically delete from mf_nav first, then mf_schemes; skip if mf_nav delete fails
+     (dead fund pruning — pruned counter increments only after both succeed)
   4. Check scheme name — if not Growth-Regular (Direct, IDCW, Dividend),
-     delete from mf_nav + mf_schemes and skip (variant pruning)
+     atomically delete from mf_nav first, then mf_schemes; skip if mf_nav delete fails
+     (variant pruning — pruned counter increments only after both succeed)
   5. Parse ALL NAV data points into memory
   6. Calculate CAGR returns (1Y, 3Y, 5Y) from the FULL dataset
   7. Downsample to ≤ MAX_STORED_POINTS (default 1,000):
@@ -175,9 +180,11 @@ POST /api/mf/sync
      (returns 503 if CRON_SECRET env var is not set)
   2. Fetch /mf/{schemeCode}/latest for all schemes (concurrency 20, 10s timeout)
   3. Check latest NAV date — if older than STALE_MONTHS (default 6),
-     delete from mf_nav + mf_schemes (dead fund pruning)
+     atomically delete from mf_nav first, then mf_schemes; errors are captured,
+     mf_schemes deletion is skipped if mf_nav delete fails, failed++ in that case
+     (dead fund pruning — pruned++ only after both succeed)
   4. Check scheme name — if not Growth-Regular (Direct, IDCW, Dividend),
-     delete from mf_nav + mf_schemes (safety-net variant pruning)
+     same atomic delete pattern (safety-net variant pruning)
   5. Upsert 1 new row per active scheme into mf_nav
   6. Fetch ALL mf_nav rows once, group in-memory by scheme_code
   7. Recalculate CAGR returns for all schemes in a single batch upsert
@@ -465,6 +472,8 @@ on:
 
 jobs:
   backfill:
+    permissions:
+      contents: read   # least-privilege — only actions/checkout needs the token
     steps:
       # ... checkout, pnpm, node setup ...
       - name: Resolve target environment credentials
@@ -718,7 +727,9 @@ Returns `503 Service Unavailable` if `CRON_SECRET` env var is not set on the ser
 
 - **Inactive/historical schemes return empty data** — some schemes are delisted or merged. Their `/mf/{code}` endpoint returns `status: "ERROR"` or empty `data`. These are counted as fetch errors in the backfill summary and safely skipped.
 
-- **Dead fund pruning** — both the backfill script and the daily sync check the latest NAV date before upserting. A fund whose most recent NAV is older than **6 months** (`STALE_MONTHS` constant in both files) is treated as dead: its rows are deleted from `mf_nav` and `mf_schemes` and the fund is skipped. Adjust `STALE_MONTHS` in `scripts/backfill-returns.ts` and `app/api/mf/sync/route.ts` to change the threshold. Pruned funds appear in the summary output and the sync JSON response (`pruned` field).
+- **Dead fund pruning** — all three pipeline files (`seed-mf.ts --prune-db`, `backfill-returns.ts`, and `/api/mf/sync`) check the latest NAV date before upserting. A fund whose most recent NAV is older than **6 months** (`STALE_MONTHS` constant in the backfill and sync files) is treated as dead. The two-table delete is **atomic**: `mf_nav` is deleted first; if that fails the `mf_schemes` delete is skipped entirely and the failure is logged (sync route also increments `failed`). The pruned counter increments only when both deletes succeed. The same guard applies to non-Growth-Regular variant pruning. Adjust `STALE_MONTHS` in `scripts/backfill-returns.ts` and `app/api/mf/sync/route.ts` to change the threshold. Pruned funds appear in the summary output and the sync JSON response (`pruned` field).
+
+- **Filtered NAV upsert in seed** — `seed-mf.ts` derives a `Set` of qualified `scheme_code` values from the already-filtered `qualifiedMeta` array (Growth-Regular only) and filters `cache.navRows` against it before batching. This prevents orphan rows in `mf_nav` for schemes that were excluded by the canonical name filter in step 6 of the seed pipeline.
 
 - **Returns recalculation uses a single bulk query** — the sync route fetches all `mf_nav` rows in one query, groups them in-memory by `scheme_code`, and upserts all computed returns in a single batch. This avoids an N+1 query pattern (one query per scheme).
 

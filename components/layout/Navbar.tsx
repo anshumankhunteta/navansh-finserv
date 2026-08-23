@@ -13,7 +13,6 @@ import {
 import {
   ArrowRight,
   Book,
-  Briefcase,
   Home,
   Mail,
   Menu,

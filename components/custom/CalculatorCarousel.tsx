@@ -27,7 +27,6 @@ import { useHydrateStore } from '@/lib/calculator-store'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import Navansh from '../icons/Navansh'
 
 // ── All available calculators ──
 export const ALL_CALCULATORS = {
