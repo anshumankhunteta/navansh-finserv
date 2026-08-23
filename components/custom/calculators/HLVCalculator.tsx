@@ -4,7 +4,7 @@ import { Slider } from '@/components/ui/slider'
 import { buildShareUrl, useCalculatorStore } from '@/lib/calculator-store'
 import { calcHLV, formatINR, formatINRCompact } from '@/lib/finance-math'
 import { Landmark, Shield } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import CalculatorActionButtons from './CalculatorActionButtons'
 
 const currentYear = new Date().getFullYear()

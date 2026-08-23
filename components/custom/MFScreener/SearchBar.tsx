@@ -15,6 +15,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
 
   // Sync when parent value changes (e.g. clear all)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocal(value)
   }, [value])
 

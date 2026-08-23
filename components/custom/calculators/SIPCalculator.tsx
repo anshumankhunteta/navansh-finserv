@@ -18,7 +18,7 @@ import {
   formatINRCompact,
 } from '@/lib/finance-math'
 import { Calculator, ChevronDown, Target, TrendingUp } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import CalculatorActionButtons from './CalculatorActionButtons'
 
 const currentYear = new Date().getFullYear()

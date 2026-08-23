@@ -13,7 +13,7 @@ import {
   type MediclaimInput,
 } from '@/lib/finance-math'
 import { Heart, Minus, Plus, Users } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import CalculatorActionButtons from './CalculatorActionButtons'
 
 const SUM_INSURED_OPTIONS = [
