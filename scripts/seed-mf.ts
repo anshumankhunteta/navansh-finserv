@@ -24,6 +24,7 @@ dotenv.config({ path: '.env.local' })
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
+import { isGrowthRegular } from '../lib/mf-utils'
 
 // ---- Types --------------------------------------------------------
 
@@ -357,7 +358,7 @@ async function discoverSchemes(): Promise<MFApiSchemeListItem[]> {
 
       if (results) {
         for (const s of results) {
-          if (!seen.has(s.schemeCode)) {
+          if (!seen.has(s.schemeCode) && isGrowthRegular(s.schemeName)) {
             seen.add(s.schemeCode)
             all.push(s)
             amcCount++
@@ -447,6 +448,14 @@ async function fetchAndUpsertLatestNav(
       }
 
       const { meta } = data
+
+      // Secondary filter — verify canonical scheme name from the API also qualifies.
+      // Handles edge cases where the search name differed from the API's canonical name.
+      if (!isGrowthRegular(meta.scheme_name)) {
+        fetchErrors++ // not really an error, but keeps the counter honest
+        continue
+      }
+
       const metaRow: SchemeMetadataRow = {
         scheme_code: meta.scheme_code,
         scheme_name: meta.scheme_name,
@@ -519,9 +528,12 @@ async function upsertFromCache(
   let metaUpdated = 0
   let navInserted = 0
 
-  // Upsert scheme names first
+  // Upsert scheme names first (only Growth-Regular)
+  const qualifiedSchemes = cache.schemes.filter((s) =>
+    isGrowthRegular(s.schemeName)
+  )
   console.log('💾  Upserting scheme names …')
-  for (const batch of chunk(cache.schemes, UPSERT_BATCH)) {
+  for (const batch of chunk(qualifiedSchemes, UPSERT_BATCH)) {
     const rows = batch.map((s) => ({
       scheme_code: s.schemeCode,
       scheme_name: s.schemeName,
@@ -531,22 +543,35 @@ async function upsertFromCache(
       .upsert(rows, { onConflict: 'scheme_code', ignoreDuplicates: false })
     if (error) console.error('   ❌ Upsert error:', error.message)
   }
-  console.log(`   → ${cache.schemes.length} scheme names upserted\n`)
+  console.log(
+    `   → ${qualifiedSchemes.length} / ${cache.schemes.length} scheme names upserted (Growth-Regular only)\n`
+  )
 
-  // Upsert enriched metadata
+  // Upsert enriched metadata (only Growth-Regular)
+  const qualifiedMeta = cache.schemeMetadata.filter((m) =>
+    isGrowthRegular(m.scheme_name)
+  )
   console.log('💾  Upserting scheme metadata …')
-  for (const batch of chunk(cache.schemeMetadata, UPSERT_BATCH)) {
+  for (const batch of chunk(qualifiedMeta, UPSERT_BATCH)) {
     const { error } = await supabase
       .from('mf_schemes')
       .upsert(batch, { onConflict: 'scheme_code', ignoreDuplicates: false })
     if (error) console.error('   ❌ Metadata upsert error:', error.message)
     else metaUpdated += batch.length
   }
-  console.log(`   → ${metaUpdated} scheme metadata rows upserted\n`)
+  console.log(
+    `   → ${metaUpdated} / ${cache.schemeMetadata.length} scheme metadata rows upserted (Growth-Regular only)\n`
+  )
 
-  // Upsert NAV rows
+  // Upsert NAV rows — only for schemes that passed the Growth-Regular filter
+  // qualifiedMeta was already filtered above; reuse its scheme_codes as the
+  // canonical allow-list so no orphan NAV rows are written for excluded schemes.
+  const qualifiedCodes = new Set(qualifiedMeta.map((m) => m.scheme_code))
+  const qualifiedNavRows = cache.navRows.filter((r) =>
+    qualifiedCodes.has(r.scheme_code)
+  )
   console.log('💾  Upserting NAV rows …')
-  for (const batch of chunk(cache.navRows, UPSERT_BATCH)) {
+  for (const batch of chunk(qualifiedNavRows, UPSERT_BATCH)) {
     const { error } = await supabase.from('mf_nav').upsert(batch, {
       onConflict: 'scheme_code,nav_date',
       ignoreDuplicates: false,
@@ -554,9 +579,79 @@ async function upsertFromCache(
     if (error) console.error('   ❌ NAV upsert error:', error.message)
     else navInserted += batch.length
   }
-  console.log(`   → ${navInserted} NAV rows upserted\n`)
+  console.log(
+    `   → ${navInserted} / ${cache.navRows.length} NAV rows upserted (Growth-Regular only)\n`
+  )
 
   return { navInserted, metaUpdated }
+}
+
+// ---- Step 4: Prune non-Growth-Regular schemes from DB ---------------
+// One-time cleanup invoked via --prune-db flag.
+// Pages through all mf_schemes rows, collects any whose scheme_name does
+// not pass isGrowthRegular(), then deletes them from mf_nav and mf_schemes.
+
+async function pruneNonGrowthFromDb(): Promise<void> {
+  console.log('🧹  Pruning non-Growth-Regular schemes from DB …\n')
+
+  // Fetch all scheme codes + names (paged — Supabase default limit is 1000)
+  let allSchemes: { scheme_code: number; scheme_name: string }[] = []
+  let from = 0
+  const PAGE = 1000
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('mf_schemes')
+      .select('scheme_code, scheme_name')
+      .range(from, from + PAGE - 1)
+
+    if (error) {
+      console.error('   ❌ Failed to fetch schemes page:', error.message)
+      break
+    }
+    if (!data || data.length === 0) break
+    allSchemes = allSchemes.concat(data)
+    if (data.length < PAGE) break
+    from += PAGE
+  }
+
+  console.log(`   → ${allSchemes.length} total schemes in DB`)
+
+  const toPrune = allSchemes.filter(
+    (s) => !isGrowthRegular(s.scheme_name ?? '')
+  )
+
+  if (toPrune.length === 0) {
+    console.log('   ✅ Nothing to prune — DB is already clean.\n')
+    return
+  }
+
+  console.log(`   → ${toPrune.length} non-Growth-Regular schemes to delete …\n`)
+
+  const codes = toPrune.map((s) => s.scheme_code)
+
+  // Delete in batches of 200 to avoid oversized IN clauses
+  let deleted = 0
+  for (const batch of chunk(codes, 200)) {
+    const { error: navErr } = await supabase
+      .from('mf_nav')
+      .delete()
+      .in('scheme_code', batch)
+    if (navErr) {
+      console.error('   ❌ mf_nav delete error:', navErr.message)
+      continue // don't delete mf_schemes if mf_nav deletion failed
+    }
+
+    const { error: schemeErr } = await supabase
+      .from('mf_schemes')
+      .delete()
+      .in('scheme_code', batch)
+    if (schemeErr)
+      console.error('   ❌ mf_schemes delete error:', schemeErr.message)
+    else deleted += batch.length // only count after both deletions succeed
+  }
+
+  console.log(`   🗑  Pruned ${deleted} non-Growth-Regular schemes from DB\n`)
 }
 
 // ---- Main ----------------------------------------------------------
@@ -564,6 +659,15 @@ async function upsertFromCache(
 async function main() {
   const t0 = Date.now()
   const fromCache = process.argv.includes('--from-cache')
+  const pruneDb = process.argv.includes('--prune-db')
+
+  if (pruneDb) {
+    await pruneNonGrowthFromDb()
+    console.log(
+      `✅  Prune complete in ${((Date.now() - t0) / 1000).toFixed(1)}s`
+    )
+    return
+  }
 
   if (fromCache) {
     // ── Restore mode ─────────────────────────────────────────────────
