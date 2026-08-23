@@ -9,6 +9,7 @@
 - [User Guide](#user-guide)
 - [Architecture Overview](#architecture-overview)
 - [Data Pipeline](#data-pipeline)
+  - [Growth-Regular Fund Filter](#growth-regular-fund-filter)
 - [Developer Setup](#developer-setup)
 - [Script Reference](#script-reference)
 - [Cron Job Setup](#cron-job-setup)
@@ -111,10 +112,12 @@ Fetches scheme metadata and the latest NAV for each fund in the curated AMC list
 seed-mf.ts
   1. Fire /mf/search?q=<query> for each configured query per AMC
   2. Deduplicate by schemeCode
-  3. Upsert into mf_schemes (scheme_code, scheme_name)
-  4. Fetch /mf/{schemeCode}/latest for each scheme (concurrency 10)
-  5. Upsert fund metadata into mf_schemes
-  6. Upsert latest NAV into mf_nav
+  3. Filter: keep only Growth-Regular funds (see below)
+  4. Upsert into mf_schemes (scheme_code, scheme_name)
+  5. Fetch /mf/{schemeCode}/latest for each scheme (concurrency 10)
+  6. Secondary filter on canonical meta.scheme_name
+  7. Upsert fund metadata into mf_schemes
+  8. Upsert latest NAV into mf_nav
 ```
 
 ### Phase 2: Recurring Backfill (biweekly via GitHub Actions, or on-demand)
@@ -129,14 +132,16 @@ backfill-returns.ts
   2. Fetch /mf/{schemeCode} for each (concurrency 5 — responses are 100KB–2MB)
   3. Check latest NAV date (data[0].date) — if older than STALE_MONTHS (default 6),
      delete from mf_nav + mf_schemes and skip (dead fund pruning)
-  4. Parse ALL NAV data points into memory
-  5. Calculate CAGR returns (1Y, 3Y, 5Y) from the FULL dataset
-  6. Downsample to ≤ MAX_STORED_POINTS (default 1,000):
+  4. Check scheme name — if not Growth-Regular (Direct, IDCW, Dividend),
+     delete from mf_nav + mf_schemes and skip (variant pruning)
+  5. Parse ALL NAV data points into memory
+  6. Calculate CAGR returns (1Y, 3Y, 5Y) from the FULL dataset
+  7. Downsample to ≤ MAX_STORED_POINTS (default 1,000):
        • Last RECENT_YEARS_DAILY years (default 2) → keep every trading day
        • Older data → keep the last point of each calendar month
        • Safety trim if monthly + daily still exceeds 1,000
-  7. Replace mf_nav rows (DELETE + INSERT) with the downsampled set
-  8. Update mf_schemes.return_1y/3y/5y
+  8. Replace mf_nav rows (DELETE + INSERT) with the downsampled set
+  9. Update mf_schemes.return_1y/3y/5y
 ```
 
 > **Why downsampling?** Supabase's PostgREST anon key enforces a hard 1,000-row default limit on SELECT queries. Without downsampling a 13-year-old fund would have ~3,000 rows and the history API would silently return only the oldest 1,000, making the chart appear to end in 2017 even though data exists through today.
@@ -171,13 +176,68 @@ POST /api/mf/sync
   2. Fetch /mf/{schemeCode}/latest for all schemes (concurrency 20, 10s timeout)
   3. Check latest NAV date — if older than STALE_MONTHS (default 6),
      delete from mf_nav + mf_schemes (dead fund pruning)
-  4. Upsert 1 new row per active scheme into mf_nav
-  5. Fetch ALL mf_nav rows once, group in-memory by scheme_code
-  6. Recalculate CAGR returns for all schemes in a single batch upsert
-  7. Return JSON summary: { updated, failed, pruned, duration_ms }
+  4. Check scheme name — if not Growth-Regular (Direct, IDCW, Dividend),
+     delete from mf_nav + mf_schemes (safety-net variant pruning)
+  5. Upsert 1 new row per active scheme into mf_nav
+  6. Fetch ALL mf_nav rows once, group in-memory by scheme_code
+  7. Recalculate CAGR returns for all schemes in a single batch upsert
+  8. Return JSON summary: { updated, failed, pruned, duration_ms }
 ```
 
 ---
+
+### Growth-Regular Fund Filter
+
+The screener only stores **Growth Option – Regular Plan** funds. Direct plans, IDCW (formerly Dividend) options, and legacy Dividend options are excluded at every pipeline layer.
+
+#### Filter rule (applied in all three pipeline layers)
+
+```ts
+function isGrowthRegular(schemeName: string): boolean {
+  const name = schemeName.toUpperCase()
+  return (
+    name.includes('GROWTH') &&
+    !name.includes('DIRECT') &&
+    !name.includes('IDCW') &&
+    !name.includes('DIVIDEND')
+  )
+}
+```
+
+| Variant | Passes filter? | Example |
+|---------|:--------------:|--------|
+| Growth – Regular | ✅ | `HDFC Equity Fund - Growth Option` |
+| Growth – Direct | ❌ | `HDFC Equity Fund - Growth Option - Direct Plan` |
+| IDCW – Regular | ❌ | `HDFC Equity Fund - IDCW Option` |
+| IDCW – Direct | ❌ | `HDFC Equity Fund - IDCW Option - Direct Plan` |
+| Dividend (legacy) | ❌ | `HDFC Equity Fund - Dividend Option` |
+| Index Growth – Regular | ✅ | `HDFC Nifty 50 Index Fund - Growth Plan` |
+| FoF Growth – Regular | ✅ | `SBI International Access US Equity FoF - Growth` |
+
+#### Where the filter is applied
+
+| Layer | File | When |
+|-------|------|------|
+| Discovery (primary) | `seed-mf.ts` → `discoverSchemes()` | Before counting or storing a search result |
+| Fetch (secondary) | `seed-mf.ts` → `fetchAndUpsertLatestNav()` | After fetching canonical meta — catches any name drift |
+| Cache restore | `seed-mf.ts` → `upsertFromCache()` | Before upserting from `mf-seed-cache.json` |
+| Backfill | `backfill-returns.ts` | After stale check — prunes any pre-existing non-qualifying rows |
+| Daily sync | `app/api/mf/sync/route.ts` | After stale check — safety net against any drift |
+
+#### One-time DB cleanup
+
+If non-qualifying funds already exist in the database, run the `--prune-db` flag once **before** re-running the backfill:
+
+```bash
+# Step 1 — delete non-Growth-Regular rows from the DB
+pnpm seed:mf -- --prune-db
+
+# Step 2 — re-backfill (will also prune any stragglers)
+pnpm backfill:returns
+```
+
+The `--prune-db` flag pages through all `mf_schemes` rows, collects any whose `scheme_name` does not pass `isGrowthRegular()`, and deletes them from both `mf_nav` and `mf_schemes` in batches of 200.
+
 
 ## Developer Setup
 
@@ -253,9 +313,10 @@ Then re-run the seed and backfill scripts.
 
 | Command | Script | What it does |
 |---------|--------|-------------|
-| `pnpm seed:mf` | `scripts/seed-mf.ts` | Discovers schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV, writes `scripts/mf-seed-cache.json` |
-| `pnpm seed:mf -- --from-cache` | `scripts/seed-mf.ts` | Skips API discovery/fetch, reads `mf-seed-cache.json` and upserts directly — fast retry when Supabase was unreachable |
-| `pnpm backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
+| `pnpm seed:mf` | `scripts/seed-mf.ts` | Discovers Growth-Regular schemes for configured AMCs via `/mf/search`, upserts metadata + latest NAV, writes `scripts/mf-seed-cache.json` |
+| `pnpm seed:mf -- --from-cache` | `scripts/seed-mf.ts` | Skips API discovery/fetch, reads `mf-seed-cache.json` and upserts directly (Growth-Regular filter applied) — fast retry when Supabase was unreachable |
+| `pnpm seed:mf -- --prune-db` | `scripts/seed-mf.ts` | One-time DB cleanup — deletes all non-Growth-Regular schemes (Direct, IDCW, Dividend) from `mf_nav` + `mf_schemes`. Run before the first backfill after enabling the filter. |
+| `pnpm backfill:returns` | `scripts/backfill-returns.ts` | Fetches full NAV history, prunes stale + non-Growth-Regular schemes, calculates CAGR from full data, downsamples to ≤ 1,000 pts/scheme, replaces stored rows |
 
 ### `pnpm seed:mf`
 
@@ -650,6 +711,8 @@ Returns `503 Service Unavailable` if `CRON_SECRET` env var is not set on the ser
   4. **Use category-specific terms** — queries like `"HDFC Flexi Cap"`, `"HDFC Balanced Advantage"`, `"SBI Midcap"`, `"Motilal Oswal Business"` each surface a distinct, non-overlapping set of schemes. After the 2026-07-06 update, HDFC has 43 queries, SBI has 42, and Motilal Oswal has ~22 — covering all active open-ended fund categories.
 
   If you add a new AMC, make sure to add enough query variants to capture all scheme types, following the rules above.
+
+- **Growth-Regular-only filter** — the screener only shows Growth Option – Regular Plan funds. Direct Plans, IDCW, and legacy Dividend options are filtered out at the search result stage (primary) and again after fetching full metadata (secondary). Any non-qualifying funds that were in the DB before this filter was introduced can be removed with `pnpm seed:mf -- --prune-db`. The filter is also applied in `backfill-returns.ts` and the daily sync route as a safety net. Index funds and FoF with "Growth" in the name pass the filter intentionally.
 
 - **`/mf/latest` is unreliable for large fetches** — the endpoint that returns all schemes + latest NAVs in one call gets connection-reset at ~128KB. We deliberately avoid it and use per-scheme fetches instead.
 

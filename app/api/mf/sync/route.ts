@@ -1,5 +1,6 @@
 import {
   calculateReturns,
+  isGrowthRegular,
   type MFApiLatestResponse,
   parseMfApiDate,
 } from '@/lib/mf-utils'
@@ -138,6 +139,20 @@ export async function POST(request: Request) {
 
       // Prune dead funds — if latest NAV is older than STALE_MONTHS, delete
       if (isSchemeStale(latestNavPoint.date)) {
+        await supabase
+          .from('mf_nav')
+          .delete()
+          .eq('scheme_code', meta.scheme_code)
+        await supabase
+          .from('mf_schemes')
+          .delete()
+          .eq('scheme_code', meta.scheme_code)
+        pruned++
+        continue
+      }
+
+      // Prune non-Growth-Regular variants (Direct, IDCW, Dividend) — safety net
+      if (!isGrowthRegular(meta.scheme_name)) {
         await supabase
           .from('mf_nav')
           .delete()

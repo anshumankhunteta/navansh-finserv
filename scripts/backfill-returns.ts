@@ -26,6 +26,7 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: '.env.local' })
 import { createClient } from '@supabase/supabase-js'
+import { isGrowthRegular } from '../lib/mf-utils'
 
 // ---- Types --------------------------------------------------------
 
@@ -386,6 +387,34 @@ async function main() {
         else
           console.log(
             `   🗑  Pruned dead fund ${schemeCode} (latest NAV: ${data.data[0].date})`
+          )
+        pruned++
+        continue
+      }
+
+      // Prune non-Growth-Regular variants (Direct, IDCW, Dividend)
+      if (!isGrowthRegular(data.meta.scheme_name)) {
+        const { error: delNavErr } = await supabase
+          .from('mf_nav')
+          .delete()
+          .eq('scheme_code', schemeCode)
+        const { error: delSchemeErr } = await supabase
+          .from('mf_schemes')
+          .delete()
+          .eq('scheme_code', schemeCode)
+        if (delNavErr)
+          console.error(
+            `   ⚠ Failed to delete NAV rows for non-Growth scheme ${schemeCode}:`,
+            delNavErr.message
+          )
+        if (delSchemeErr)
+          console.error(
+            `   ⚠ Failed to delete non-Growth scheme ${schemeCode}:`,
+            delSchemeErr.message
+          )
+        else
+          console.log(
+            `   🗑  Pruned non-Growth-Regular fund ${schemeCode} ("${data.meta.scheme_name}")`
           )
         pruned++
         continue

@@ -161,3 +161,24 @@ export function calculateReturns(navHistory: MFNav[]): MFReturns {
     return_5y: cagr(findClosestNav(5), 5),
   }
 }
+
+/**
+ * Returns true if this is a Growth-Regular fund (non-Direct, non-IDCW).
+ *
+ * Matching rules (case-insensitive on the scheme name):
+ *   • Must contain "GROWTH"
+ *   • Must NOT contain "DIRECT"
+ *   • Must NOT contain "IDCW"
+ *   • Must NOT contain "DIVIDEND" (legacy pre-2021 name for IDCW)
+ *
+ * Index funds and FoF with "Growth" in the name intentionally pass this filter.
+ */
+export function isGrowthRegular(schemeName: string): boolean {
+  const name = schemeName.toUpperCase()
+  return (
+    name.includes('GROWTH') &&
+    !name.includes('DIRECT') &&
+    !name.includes('IDCW') &&
+    !name.includes('DIVIDEND')
+  )
+}
