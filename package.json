@@ -49,7 +49,7 @@
     "react-hook-form": "^7.86.0",
     "recharts": "^3.10.1",
     "tailwind-merge": "^3.6.0",
-    "zod": "^4.4.3",
+    "zod": "^4.6.6",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
